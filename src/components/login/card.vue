@@ -17,7 +17,7 @@
                   shaped
                 >
                   <v-toolbar-title class="mx-auto">
-                    Bem-vindo ao Portal de Plúrimas!
+                    Bem-vindo ao Bern Plúrimas!
                   </v-toolbar-title>
                   <v-spacer></v-spacer>
   
@@ -31,10 +31,10 @@
                     right
                   >
                     <v-img
-                      lazy-src="../../assets/thinking-face-icon-yellow-file.png"
-                      max-height="40"
-                      max-width="40"
-                      src="../../assets/thinking-face-icon-yellow-file.png"
+                      lazy-src="../../assets/BernPlurimas_logo.png"
+                      max-height="30"
+                      max-width="30"
+                      src="../../assets/BernPlurimas_logo.png"
                     ></v-img>
                   </v-btn>
                 </v-toolbar>
