@@ -1,6 +1,8 @@
 <template>
   <v-app>
-    
+    <bar @update:drawer="drawer = !drawer" v-if="notIsLayout" />
+    <navDrawer app :drawer="drawer" v-if="notIsLayout" />
+
     <v-main
     :class="{ 'color-layout': notIsLayout, 'color-not-layout': !notIsLayout }"
     >
@@ -9,16 +11,21 @@
       </v-container>
     </v-main>
 
-    
+    <workFooter v-if="notIsLayout" />
   </v-app>
 </template>
 
 <script>
+import bar from "@/components/layout/bar.vue";
+import navDrawer from "@/components/layout/navDrawer.vue";
+import workFooter from "@/components/layout/workFooter.vue";
 
 export default {
   name: "home-app",
   components: {
-    
+    bar,
+    workFooter,
+    navDrawer
   },
 
   data() {

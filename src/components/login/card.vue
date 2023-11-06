@@ -118,7 +118,7 @@
             this.usuario = "";
             this.senha = "";
             localStorage.setItem("tokenSistema_1017", result.data.token);
-            this.$router.push({ name: "login" });
+            this.$router.push({ name: "plurimas" });
           })
           .catch((err) => {
             this.$refs.loading.dialog = false;
