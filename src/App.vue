@@ -3,11 +3,12 @@
     <bar @update:drawer="drawer = !drawer" v-if="notIsLayout" />
     <navDrawer app :drawer="drawer" v-if="notIsLayout" />
 
+
     <v-main
     :class="{ 'color-layout': notIsLayout, 'color-not-layout': !notIsLayout }"
     >
       <v-container>
-        <router-view class="fixed-content2" /> 
+        <router-view class="fixed-content2"/>
       </v-container>
     </v-main>
 
@@ -25,8 +26,8 @@ export default {
   components: {
     bar,
     workFooter,
-    navDrawer
-  },
+    navDrawer,
+},
 
   data() {
     return {
@@ -55,6 +56,7 @@ export default {
   right: 20px;
   bottom: 0px;
   overflow-x: hidden;
+  
 }
 .color-not-layout {
 background: #B39DDB;  /* fallback for old browsers */
@@ -62,6 +64,7 @@ background: -webkit-linear-gradient(to right, #B39DDB, #B39DDB);  /* Chrome 10-2
 background: linear-gradient(to right, #B39DDB, #B39DDB); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
 
 }
+
 
 </style>
 
