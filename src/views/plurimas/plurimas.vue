@@ -1,20 +1,36 @@
 <template>
   <v-sheet class="py-5 mt-4 px-10">
+    <v-sheet class="py-5 px-3">
+      <v-row class="justify-end">
+        <v-btn height="60" @click="dialogSolicitarProcesso = true" dark color="deep-purple lighten-2">
+          Solicitar plúrima
+          <v-icon right dark> mdi-file-document-plus </v-icon>
+        </v-btn>
+      </v-row>
+    </v-sheet>
 
-    <v-row class="pb-8">
-      <v-col cols="12" sm="3">
-        <cardStatus :qtd="emAberto" color="accent" titulo="Em Aberto" />
-      </v-col>
-      <v-col cols="12" sm="3">
-        <cardStatus :qtd="analise" color="orange lighten-4" titulo="Em Análise" />
-      </v-col>
-      <v-col cols="12" sm="3">
-        <cardStatus :qtd="emAndamento" color="brown lighten-4" titulo="Em Andamento" />
-      </v-col>
-      <v-col cols="12" sm="3">
-        <cardStatus :qtd="finalizado" color="green lighten-4" titulo="Finalizados" />
-      </v-col>
-    </v-row>
+    <v-sheet class="py-1 ml-0 px-1 d-flex align-center">
+      <v-row cols="15" class="pb-10">
+        <v-col cols="15" sm="2">
+          <cardStatus :qtd="emAberto" color="deep-purple lighten-3" titulo="Em Aberto" />
+        </v-col>
+        <v-col cols="15" sm="2">
+          <cardStatus :qtd="analise" color="orange lighten-3" titulo="Em Análise" />
+        </v-col>
+        <v-col cols="15" sm="2">
+          <cardStatus :qtd="emAndamento" color="brown lighten-3" titulo="Em Andamento" />
+        </v-col>
+        <v-col cols="15" sm="2">
+          <cardStatus :qtd="aguardandoSolicitante" color="blue-grey lighten-3" titulo="Aguardando Solicitante" />
+        </v-col>
+        <v-col cols="15" sm="2">
+          <cardStatus :qtd="aguardandoOP" color="red lighten-3" titulo="Aguardando OP" />
+        </v-col>
+        <v-col cols="15" sm="2">
+          <cardStatus :qtd="finalizado" color="green lighten-3" titulo="Finalizados" />
+        </v-col>
+      </v-row>
+    </v-sheet>
 
     <tabelaPlurimas :plurimas="plurimas" :loading="loadingTable"
       @initializeTable="(loadingTable = true), listarPlurimas(), listarStatus()" />
@@ -44,6 +60,8 @@ export default {
     emAndamento: null,
     analise: null,
     finalizado: null,
+    aguardandoOP: null,
+    aguardandoSolicitante: null
   }),
 
   async mounted() {
@@ -53,7 +71,7 @@ export default {
 
   methods: {
     async listarPlurimas() {
-
+      this.loadingTable = true;
 
       await axios
         .get(
@@ -65,9 +83,9 @@ export default {
           }
         )
         .then((result) => {
-
           this.loadingTable = false;
           this.plurimas = result.data.result;
+          this.loadingTable = false;
         })
         .catch((err) => {
           console.log(err.response.data);
@@ -93,13 +111,19 @@ export default {
             (processo) => processo.DESCRICAO === "EM ABERTO"
           ).length;
           this.emAndamento = result.data.result.filter(
-            (processo) => processo.DESCRICAO === "EM ANÁLISE"
+            (processo) => processo.DESCRICAO === "EM ANDAMENTO"
           ).length;
           this.analise = result.data.result.filter(
-            (processo) => processo.DESCRICAO === "EM ANDAMENTO"
+            (processo) => processo.DESCRICAO === "EM ANÁLISE"
           ).length;
           this.finalizado = result.data.result.filter(
             (processo) => processo.DESCRICAO === "FINALIZADA"
+          ).length;
+          this.aguardandoOP = result.data.result.filter(
+            (processo) => processo.DESCRICAO === "AGUARDANDO OP"
+          ).length;
+          this.aguardandoSolicitante = result.data.result.filter(
+            (processo) => processo.DESCRICAO === "AGUARDANDO SOLICITANTE"
           ).length;
           this.plurimas = result.data.result;
         })

@@ -10,7 +10,7 @@
                 max-width="calc(100% - 60px)"
               >
                 <v-toolbar
-                  color="#5E35B1"
+                  color="deep-purple lighten-2"
                   line-width="2"
                   padding="16"
                   dark
@@ -45,7 +45,7 @@
                   name="email"
                   label="Email"
                   type="text"
-                  color="#5E35B1"
+                  color="deep-purple lighten-2"
                   v-model="usuario"
                 ></v-text-field>
                 <v-text-field
@@ -55,7 +55,7 @@
                   :type="viewPassword ? 'text' : 'password'"
                   name="password"
                   label="Senha"
-                  color="#5E35B1"
+                  color="deep-purple lighten-2"
                   v-model="senha"
                   @click:append="viewPassword = !viewPassword"
                 ></v-text-field>
@@ -65,7 +65,7 @@
                   Esqueceu a senha?
                 </v-btn>
                 <v-spacer></v-spacer>
-                <v-btn type="submit" dark color="#5E35B1" class="ma-1"
+                <v-btn type="submit" dark color="deep-purple lighten-2" class="ma-1"
                   >Entrar</v-btn
                 >
               </v-card-actions>  

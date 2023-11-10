@@ -1,132 +1,28 @@
 <template>
   <!-- Início do template -->
-  <div>
-    <v-data-table :headers="headers" :items="PlurimasV" item-key="ID" dense :search="search" :loading="loadingTable"
-      class="mb-16 text-no-wrap" height="400" fixed-header :footer-props="{ 'items-per-page-options': [-1] }">
-
-      <template v-slot:top>
-
-        <v-btn height="60" @click="dialogSolicitarProcesso = true" color="primary" class="ma-2 white--text"
-          border-radius="4px">
-          Solicitar plúrima
-          <v-icon right dark> mdi-file-document-plus </v-icon>
-        </v-btn>
-
-
-        <v-form @submit.prevent="criarProcesso" ref="form" v-model="valid" lazy-validation>
-          <v-row justify="center">
-            <v-dialog v-model="dialogSolicitarProcesso" persistent max-width="600px">
-              <v-card>
-                <v-toolbar color="accent" dark>Solicitar Plúrima</v-toolbar>
-                <v-card-text>
-                  <v-container>
-                    <v-row>
-                      <v-col cols="12" sm="6" md="4">
-                        <v-menu ref="dataDevolutivaMenu" v-model="dataDevolutivaMenu" :close-on-content-click="false"
-                          transition="scale-transition" offset-y min-width="auto">
-                          <template v-slot:activator="{ on, attrs }">
-                            <v-text-field :rules="rules" v-model="prazoDevolutiva" label="Prazo Devolutiva*"
-                              prepend-icon="mdi-calendar" readonly v-bind="attrs" v-on="on" required></v-text-field>
-                          </template>
-                          <v-date-picker v-model="prazoDevolutiva" no-title scrollable :min="minData" locale="pt">
-                            <v-spacer></v-spacer>
-                            <v-btn text color="primary" @click="dataDevolutivaMenu = false">
-                              Cancel
-                            </v-btn>
-                            <v-btn text color="primary" @click="
-                              $refs.dataDevolutivaMenu.save(prazoDevolutiva)
-                              ">
-                              OK
-                            </v-btn>
-                          </v-date-picker>
-                        </v-menu>
-                      </v-col>
-
-
-                      <v-col cols="12" sm="6" md="4">
-                        <v-checkbox v-model="docfisico" label="Docs físicos" required></v-checkbox>
-                      </v-col>
-
-                      <v-col cols="12" sm="6" md="4">
-                        <v-checkbox v-model="timePlurimas" label="Time Plúrimas" required></v-checkbox>
-                      </v-col>
-                      <v-col cols="12" sm="6" md="4">
-                        <v-text-field v-model="reclamante" :rules="rules" label="ID Fase*" persistent-hint
-                          required></v-text-field>
-                      </v-col>
-
-                      <v-col cols="12" sm="6" md="4">
-                        <v-text-field v-model="reclamante" :rules="rules" label="ID Solicitante*" persistent-hint
-                          required></v-text-field>
-                      </v-col>
-
-                      <v-col cols="12" sm="6" md="4">
-                        <v-text-field v-model="reclamante" :rules="rules" label="ID Cliente*" persistent-hint
-                          required></v-text-field>
-                      </v-col>
-
-                      <v-col cols="12" sm="6" md="4">
-                        <v-text-field v-model="reclamante" :rules="rules" label="ID Trabalho*" persistent-hint
-                          required></v-text-field>
-                      </v-col>
-
-                      <v-col cols="12" sm="6">
-                        <v-text-field :rules="rules" return-masked-value v-mask="'#######-##.####.#.##.####'"
-                          label="Processo*" type="text" v-model="processo" required></v-text-field>
-                      </v-col>
-
-                      <v-col cols="12">
-                        <v-text-field v-model="link" :rules="rules" label="Link*" type="text" required></v-text-field>
-                      </v-col>
-
-
-                      <v-col cols="12">
-                        <v-textarea v-model="obs" :rules="rules" outlined name="input-7-4" label="Observação"
-                          :value="null" required></v-textarea>
-                      </v-col>
-                    </v-row>
-                  </v-container>
-                  <small>*indica campo obrigatório</small>
-                </v-card-text>
-                <v-card-actions>
-                  <v-spacer></v-spacer>
-                  <v-btn color="blue darken-1" @click="(dialogSolicitarProcesso = false), reset()" text>
-                    Fechar
-                  </v-btn>
-                  <v-btn :disabled="!valid" type="submit" color="blue darken-1" text
-                    @click="(valid = false), salvarProcesso()">
-                    Salvar
-                  </v-btn>
-                </v-card-actions>
-              </v-card>
-            </v-dialog>
-          </v-row>
-        </v-form>
-
-
-        <!-- Segunda barra de ferramentas (barra de busca) -->
-        <v-toolbar flat class="mb-8">
+  <div>    
+    <v-data-table :headers="headers" :items="PlurimasV" item-key="ID" :search="search" :loading="loadingTable"
+      class="mb-16 text-no-wrap" height="380" fixed-header :footer-props="{ 'items-per-page-options': [-1] }">
+      <template v-slot:top>        
+        <v-toolbar flat class="mb-8 rounded" dark color="deep-purple lighten-2">
+          <v-toolbar-title>Plúrimas</v-toolbar-title>
+          <v-divider class="mx-4" inset vertical></v-divider>
           <v-spacer></v-spacer>
           <v-text-field append-icon="mdi-magnify" label="Buscar" single-line hide-details class="mr-6" tile
             v-model="search"></v-text-field>
-          <v-icon @click="initializeTable" color="accent" large class="mr-2">mdi-update</v-icon>
+          <v-icon @click="initializeTable"  large class="mr-2">mdi-update</v-icon>
         </v-toolbar>
-
       </template>
-
-
-
       <template v-slot:[`item.actions`]="{ item }">
         <v-tooltip bottom>
           <template v-slot:activator="{ on, attrs }">
             <v-icon v-bind="attrs" v-on="on" color="#a07aff" :size="26" @click="getCalculoById(item)" class="mr-2"
-              :disabled="loadingTableCalculos">
+              :disabled="loadingTable">
               mdi-eye-outline
             </v-icon>
           </template>
-          <span>Visualizar Cálculo</span>
+          <span>Visualizar Plúrima</span>
         </v-tooltip>
-
       </template>
 
       <template v-slot:[`item.DATA_CRIACAO`]="{ item }">
@@ -138,8 +34,6 @@
           {{ item.DESCRICAO }}
         </v-chip>
       </template>
-
-
     </v-data-table>
 
     <loading ref="loading" />
@@ -147,15 +41,14 @@
   </div>
 </template>
 
-
-
-
 <script>
 import config from "@/config/store";
 import loading from "@/components/shared/loading.vue";
 import snack from "@/components/shared/snackBar.vue";
 import dayjs from "dayjs";
 import axios from "axios";
+import urls from "@/config/urls";
+
 export default {
   name: "cardProduto",
   components: { loading, snack },
@@ -180,20 +73,25 @@ export default {
       headers: [
         { text: "Ações", value: "actions", sortable: false },
         { text: "PROCESSO", value: "NUMERO_PROCESSO" },
-        { text: "CRIACAO", value: "DATA_CRIACAO" },
+        { text: "CRIAÇÃO", value: "DATA_CRIACAO",align: "center"  },
         { text: "SOLICITANTE", value: "NOME_SOLICITANTE" },
         { text: "CLIENTE", value: "NOME_CLIENTE" },
-        { text: "FASE", value: "FASE" },
-        { text: "TRABALHO", value: "TRABALHO" },
-        { text: "ETAPA", value: "ETAPA" },
-        { text: "STATUS", value: "DESCRICAO" },
-        { text: "TIME PLURIMAS", value: "TIME_PLURIMAS" },
+        { text: "FASE", value: "FASE",align: "center"  },
+        { text: "TRABALHO", value: "TRABALHO",align: "center"  },
+        { text: "ETAPA", value: "ETAPA",align: "center"  },
+        { text: "STATUS", value: "DESCRICAO",align: "center"  },
+        { text: "TIME PLURIMAS", value: "TIME_PLURIMAS",align: "center"  },
       ],
       PlurimasV: this.plurimas,
       selecao: [],
+      fases: [],
+      trabalhos: [],
+      clientes: []
     };
   },
-
+  mounted(){
+    this.getClientes();
+  },
   watch: {
     plurimas(newValue) {
       this.PlurimasV = newValue;
@@ -204,8 +102,9 @@ export default {
   },
 
   methods: {
-
     async criarProcesso() {
+      
+
       if (!this.$refs.form.validate()) {
         return;
       }
@@ -266,11 +165,30 @@ export default {
           }
         });
     },
+    async getClientes(){
+      await axios({
+        method: "get",
+        url: urls.urlLocal + "clientes",
+      })
+        .then((result) => {
+          result.data.cliente.forEach((element) => {
+            this.clientes.push({
+              Id: element.Id,
+              cliente: element.NomeCliente,
+            });
+          });
 
-
+          console.log(this.clientes);
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+    },
     initializeTable() {
-      this.Empreitadas = [];
+      this.loadingTable = true;
+      this.PlurimasV = [];
       this.$emit("initializeTable");
+      this.loadingTable = false;
     },
     selectedRow(item) {
       this.selecao = item.slice();
@@ -285,12 +203,12 @@ export default {
     },
 
     getColorStatus(item) {
-      if (item.DESCRICAO == "EM ABERTO") return "green lighten-4";
-      if (item.DESCRICAO == "EM ANÁLISE") return "brown lighten-4";
+      if (item.DESCRICAO == "EM ABERTO") return "deep-purple lighten-3";
+      if (item.DESCRICAO == "EM ANÁLISE") return "orange lighten-3";
       if (item.DESCRICAO == "AGUARDANDO CLIENTE") return "orange lighten-4";
-      if (item.DESCRICAO == "AGUARDANDO SOLICITANTE") return "green lighten-4";
-      if (item.DESCRICAO == "AGUARDANDO OP") return "green lighten-4";
-      if (item.DESCRICAO == "EM ANDAMENTO") return "green lighten-4";
+      if (item.DESCRICAO == "AGUARDANDO SOLICITANTE") return "blue-grey lighten-3";
+      if (item.DESCRICAO == "AGUARDANDO OP") return "red lighten-3";
+      if (item.DESCRICAO == "EM ANDAMENTO") return "brown lighten-3";
       if (item.DESCRICAO == "CANCELADA") return "green lighten-4";
       if (item.DESCRICAO == "RECUSADA") return "green lighten-4";
       if (item.DESCRICAO == "FINALIZADA") return "green lighten-4";

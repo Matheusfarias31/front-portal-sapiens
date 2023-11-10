@@ -1,6 +1,6 @@
 <template>
     <div>
-      <v-app-bar dark app color="#5E35B1" elevation="10">
+      <v-app-bar dark app color="deep-purple lighten-2" elevation="10">
         <v-app-bar-nav-icon @click="toggleDrawer()"></v-app-bar-nav-icon>
         <v-spacer></v-spacer>
         <v-menu offset-y transition="slide-x-transition">

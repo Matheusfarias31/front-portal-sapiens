@@ -9,7 +9,7 @@
               color="transparent"
               max-width="calc(100% - 60px)"
             >
-              <v-toolbar color="#7E57C2" line-width="2" padding="16" dark shaped>
+              <v-toolbar color="deep-purple lighten-2" line-width="2" padding="16" dark shaped>
                 <v-toolbar-title class="mx-auto">
                   Solicitar Nova Senha
                 </v-toolbar-title>
@@ -40,13 +40,13 @@
                 name="email"
                 label="Email"
                 type="text"
-                color="#7E57C2"
+                color="deep-purple lighten-2"
                 v-model="usuario"
               ></v-text-field>
             </v-card-text>
             <v-card-actions>
               <v-spacer></v-spacer>
-              <v-btn type="submit" dark color="#7E57C2" class="ma-1"
+              <v-btn type="submit" dark color="deep-purple lighten-2" class="ma-1"
                 >Solicitar</v-btn
               >
             </v-card-actions>

@@ -3,8 +3,9 @@
     shaped
     :color="color"
     class="mt-6"
-    max-width="300"
-    max-height="100"
+    max-width="500"
+    max-height="400"
+    
     elevation="12"
   >
     <div class="d-flex">
@@ -20,7 +21,7 @@
           {{ qtd }}
         </v-card-text>
       </div>
-      <v-img height="180" width="120" :src="img"></v-img>
+      <v-img height="120" width="100" :src="img"></v-img>
     </div>
   </v-card>
 </template>
@@ -31,7 +32,8 @@ export default {
   props: {
     qtd: Number,
     color: String,
-    titulo: String
+    titulo: String,
+    img: String
     
   },
 };

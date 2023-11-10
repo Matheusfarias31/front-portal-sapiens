@@ -4,7 +4,7 @@
         <v-card
           width="100%"
           class="text-center d-flex flex-row"
-          color="#5E35B1"
+          color="deep-purple lighten-2"
           flat
           tile
         >
