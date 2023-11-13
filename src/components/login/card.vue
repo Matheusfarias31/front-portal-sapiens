@@ -31,10 +31,10 @@
                     right
                   >
                     <v-img
-                      lazy-src="../../assets/BernPlurimas_logo.png"
-                      max-height="30"
-                      max-width="30"
-                      src="../../assets/BernPlurimas_logo.png"
+                      lazy-src="../../assets/Plurify2_Menu_500x500_Circle.png"
+                      max-height="60"
+                      max-width="60"
+                      src="../../assets/Plurify2_Menu_500x500_Circle.png"
                     ></v-img>
                   </v-btn>
                 </v-toolbar>

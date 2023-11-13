@@ -59,9 +59,9 @@ export default {
   
 }
 .color-not-layout {
-background: #B39DDB;  /* fallback for old browsers */
-background: -webkit-linear-gradient(to right, #B39DDB, #B39DDB);  /* Chrome 10-25, Safari 5.1-6 */
-background: linear-gradient(to right, #B39DDB, #B39DDB); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
+background: #EDE7F6;  /* fallback for old browsers */
+background: -webkit-linear-gradient(to right, #EDE7F6, #EDE7F6);  /* Chrome 10-25, Safari 5.1-6 */
+background: linear-gradient(to right, #EDE7F6, #EDE7F6); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
 
 }
 

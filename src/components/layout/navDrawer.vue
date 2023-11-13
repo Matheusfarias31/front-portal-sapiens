@@ -5,7 +5,7 @@
           <v-img
             max-height="180"
             max-width="180"
-            src="../../assets/BernPlurimas_500x500.png"
+            src="../../assets/Plurify2_Menu_500x500.png"
           ></v-img>
         </v-list-item>
         <v-divider light></v-divider>

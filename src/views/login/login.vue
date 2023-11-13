@@ -3,9 +3,9 @@
       <v-col cols="7">
         <div class="espacoLogo" style="position: relative; z-index: 2;">
         <v-img
-          max-width="600"
+          max-width="800"
           max-height="800"
-          src="../../assets/BernPlurimas.png"
+          src="../../assets/Plurify2.png"
           class="mx-auto"
         ></v-img>
         </div>
@@ -63,13 +63,13 @@
               },
             },
             color: {
-              value: "#E8EAF6",
+              value: "#9575CD",
             },
             shape: {
               type: "circle",
               stroke: {
                 width: 0,
-                color: "#E8EAF6",
+                color: "#9575CD",
               },
               polygon: {
                 nb_sides: 5,
@@ -98,7 +98,7 @@
             line_linked: {
               enable: true,
               distance: 150,
-              color: "#E8EAF6",
+              color: "#9575CD",
               opacity: 0.4,
               width: 1,
             },
@@ -168,11 +168,11 @@
   .colorcolum2 {
     background-image: linear-gradient(
       to right top,
+      #B39DDB,
+      #B39DDB,
+      #B39DDB,
       #D1C4E9,
-      #D1C4E9,
-      #D1C4E9,
-      #D1C4E9,
-      #D1C4E9
+      #EDE7F6
     );
   }
   
