@@ -16,12 +16,29 @@
       <template v-slot:[`item.actions`]="{ item }">
         <v-tooltip bottom>
           <template v-slot:activator="{ on, attrs }">
-            <v-icon v-bind="attrs" v-on="on" color="#a07aff" :size="26" @click="getCalculoById(item)" class="mr-2"
+            <v-icon v-bind="attrs" v-on="on" color="deep-purple lighten-2" :size="26" @click="getCalculoById(item)" class="mr-2"
               :disabled="loadingTable">
               mdi-eye-outline
             </v-icon>
           </template>
           <span>Visualizar Plúrima</span>
+        </v-tooltip>
+      </template>
+
+      <template v-slot:[`item.TIME_PLURIMAS`]="{ item }">
+        <v-tooltip bottom>
+          <template v-slot:activator="{ on, attrs }">
+            <v-icon v-if="!item.TIME_PLURIMAS" v-bind="attrs" v-on="on" color="indigo lighten-2" :size="26" class="mr-2"
+              :disabled="loadingTable">
+              mdi-account
+            </v-icon>
+            <v-icon v-if="item.TIME_PLURIMAS" v-bind="attrs" v-on="on" color="deep-purple lighten-2" :size="26" class="mr-2"
+              :disabled="loadingTable">
+              mdi-school-outline
+            </v-icon>
+          </template>
+          <span v-if="!item.TIME_PLURIMAS">Individual</span>
+          <span v-if="item.TIME_PLURIMAS">Time Plúrimas</span>        
         </v-tooltip>
       </template>
 
@@ -46,8 +63,6 @@ import config from "@/config/store";
 import loading from "@/components/shared/loading.vue";
 import snack from "@/components/shared/snackBar.vue";
 import dayjs from "dayjs";
-import axios from "axios";
-import urls from "@/config/urls";
 
 export default {
   name: "cardProduto",
@@ -56,7 +71,6 @@ export default {
     plurimas: Array,
     loading: Boolean,
   },
-
   data() {
     return {
       search: null,
@@ -73,20 +87,17 @@ export default {
       headers: [
         { text: "Ações", value: "actions", sortable: false },
         { text: "PROCESSO", value: "NUMERO_PROCESSO" },
-        { text: "CRIAÇÃO", value: "DATA_CRIACAO",align: "center"  },
-        { text: "SOLICITANTE", value: "NOME_SOLICITANTE" },
+        { text: "CRIAÇÃO", value: "DATA_CRIACAO",align: "center"  },        
         { text: "CLIENTE", value: "NOME_CLIENTE" },
         { text: "FASE", value: "FASE",align: "center"  },
         { text: "TRABALHO", value: "TRABALHO",align: "center"  },
         { text: "ETAPA", value: "ETAPA",align: "center"  },
         { text: "STATUS", value: "DESCRICAO",align: "center"  },
         { text: "TIME PLURIMAS", value: "TIME_PLURIMAS",align: "center"  },
+        { text: "SOLICITANTE", value: "NOME_SOLICITANTE" },
       ],
       PlurimasV: this.plurimas,
-      selecao: [],
-      fases: [],
-      trabalhos: [],
-      clientes: []
+      selecao: [],      
     };
   },
   mounted(){
@@ -101,89 +112,7 @@ export default {
     },
   },
 
-  methods: {
-    async criarProcesso() {
-      
-
-      if (!this.$refs.form.validate()) {
-        return;
-      }
-
-      this.$refs.loading.dialog = true;
-      await axios({
-        method: "post",
-        url: this.hostApiDigitacao + "processos",
-        data: {
-          PrazoDevolutiva: this.prazoDevolutiva,
-          fase: this.fase.length == 0 ? undefined : this.fase.Id,
-          reclamante: this.reclamante,
-          periodoDe: this.periodoDe,
-          periodoAte: this.periodoAte,
-          link: this.link,
-          solicitante: this.idUser,
-          tipo_solici:
-            this.tipoSolicitacao.length == 0
-              ? undefined
-              : this.tipoSolicitacao.Id,
-          processo: this.processo,
-          cliente: this.cliente.length == 0 ? undefined : this.cliente.Id,
-          obs: this.obs,
-          filial: this.filial.length == 0 ? undefined : this.filial.Id,
-          idSistema: this.idSistema,
-        },
-        headers: {
-          Authorization: this.Authorization,
-        },
-      })
-        .then((result) => {
-          (this.prazoDevolutiva = null),
-            (this.fase = null),
-            (this.reclamante = null),
-            (this.periodoDe = null),
-            (this.periodoAte = null),
-            (this.link = null),
-            (this.tipoSolicitacao = null),
-            (this.processo = null),
-            (this.cliente = null),
-            (this.obs = null),
-            (this.filial = null),
-            this.reset(),
-            (this.dialogSolicitarProcesso = false);
-
-          this.$refs.snackbar.show({
-            message: result.data.msg,
-            status: result.data.status,
-          });
-          this.$refs.loading.dialog = false;
-          this.initialize();
-          this.valid = true;
-        })
-        .catch((err) => {
-          console.log(err.response.data);
-          if (err.response.data.msg == "Token expirado!") {
-            window.location.href = "http://192.168.4.45:3011/digitabern/logout";
-          }
-        });
-    },
-    async getClientes(){
-      await axios({
-        method: "get",
-        url: urls.urlLocal + "clientes",
-      })
-        .then((result) => {
-          result.data.cliente.forEach((element) => {
-            this.clientes.push({
-              Id: element.Id,
-              cliente: element.NomeCliente,
-            });
-          });
-
-          console.log(this.clientes);
-        })
-        .catch((err) => {
-          console.log(err);
-        });
-    },
+  methods: {    
     initializeTable() {
       this.loadingTable = true;
       this.PlurimasV = [];
