@@ -37,7 +37,7 @@
               mdi-school-outline
             </v-icon>
           </template>
-          <span v-if="!item.TIME_PLURIMAS">Individual</span>
+          <span v-if="!item.TIME_PLURIMAS">Solicitante</span>
           <span v-if="item.TIME_PLURIMAS">Time Plúrimas</span>        
         </v-tooltip>
       </template>
@@ -93,7 +93,7 @@ export default {
         { text: "TRABALHO", value: "TRABALHO",align: "center"  },
         { text: "ETAPA", value: "ETAPA",align: "center"  },
         { text: "STATUS", value: "DESCRICAO",align: "center"  },
-        { text: "TIME PLURIMAS", value: "TIME_PLURIMAS",align: "center"  },
+        { text: "EXECUÇÃO", value: "TIME_PLURIMAS",align: "center"  },
         { text: "SOLICITANTE", value: "NOME_SOLICITANTE" },
       ],
       PlurimasV: this.plurimas,
