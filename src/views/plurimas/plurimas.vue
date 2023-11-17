@@ -2,7 +2,7 @@
   <v-sheet class="py-5 mt-4 px-10">
     <v-sheet class="py-5 px-3">
       <v-row class="justify-end">
-        <v-btn height="60" @click="dialogSolicitarProcesso = true" dark color="deep-purple lighten-2">
+        <v-btn height="40" @click="dialogSolicitarProcesso = true" dark color="deep-purple lighten-2">
           Solicitar plúrima
           <v-icon right dark> mdi-file-document-plus </v-icon>
         </v-btn>
@@ -11,7 +11,7 @@
 
     <formSolicitacao :show="dialogSolicitarProcesso" @closeFormSolicitacao="dialogSolicitarProcesso = false, listarPlurimas()"/>
 
-    <v-sheet class="py-1 ml-0 px-1 d-flex align-center">
+    <v-sheet class="mt-5 py-1 ml-0 px-1 d-flex align-center">
       <v-row cols="15" class="pb-10">
         <v-col cols="15" sm="2">
           <cardStatus :qtd="emAberto" color="deep-purple lighten-3" titulo="Em Aberto" />
@@ -53,7 +53,7 @@ export default {
   components: {
     cardStatus,
     tabelaPlurimas,
-    formSolicitacao
+    formSolicitacao    
   },
   data: () => ({
     idUsuario: config.user().ID_USUARIO,

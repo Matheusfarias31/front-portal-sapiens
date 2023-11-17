@@ -5,7 +5,7 @@
                 <v-dialog v-model="dialog" persistent max-width="600px">
                     <v-card>
                         <v-toolbar color="deep-purple lighten-2" title="Application" dark>Solicitar Plúrima</v-toolbar>
-                        <v-card-text>
+                        <v-card-text class="mt-8">                            
                             <small>Formulário de solicitação</small>
                             <v-container>
                                 <v-row class="mb-0 mt-0">
@@ -130,19 +130,6 @@ export default {
     },
     methods: {
         async solicitarPlurima() {
-
-            console.log({
-                NUMERO_PROCESSO: this.numeroProcesso,
-                ID_SOLICITANTE: this.idUsuario,
-                ID_CLIENTE: this.selectedCliente.Id,
-                DOC_FISICO: this.docFisico,
-                PRAZO_ENTREGA: this.prazoEntrega,
-                ID_FASE: this.selecectFase.ID,
-                ID_TRABALHO: this.selectedTrabalho.ID,
-                LINK: this.link,
-                TIME_PLURIMAS: this.timePlurimas
-            });
-
             await axios.post(`${urls.urlLocal}plurimas`, {
                 NUMERO_PROCESSO: this.numeroProcesso,
                 ID_SOLICITANTE: this.idUsuario,
