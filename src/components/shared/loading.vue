@@ -7,7 +7,7 @@
         width="300"
       >
         <v-card
-          color="#5E35B1"
+          color="deep-purple lighten-2"
           dark
         >
           <v-card-text>

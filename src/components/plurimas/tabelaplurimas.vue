@@ -100,8 +100,7 @@ export default {
       selecao: [],      
     };
   },
-  mounted(){
-    this.getClientes();
+  mounted(){    
   },
   watch: {
     plurimas(newValue) {

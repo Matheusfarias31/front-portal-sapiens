@@ -9,6 +9,8 @@
       </v-row>
     </v-sheet>
 
+    <formSolicitacao :show="dialogSolicitarProcesso" @closeFormSolicitacao="dialogSolicitarProcesso = false, listarPlurimas()"/>
+
     <v-sheet class="py-1 ml-0 px-1 d-flex align-center">
       <v-row cols="15" class="pb-10">
         <v-col cols="15" sm="2">
@@ -44,12 +46,14 @@ import urls from "@/config/urls";
 import axios from "axios";
 import tabelaPlurimas from "@/components/plurimas/tabelaplurimas";
 import cardStatus from "@/components/plurimas/cardStatus.vue";
+import formSolicitacao from "@/components/plurimas/formSolicitacao.vue";
 
 export default {
   name: "plurimas",
   components: {
     cardStatus,
-    tabelaPlurimas
+    tabelaPlurimas,
+    formSolicitacao
   },
   data: () => ({
     idUsuario: config.user().ID_USUARIO,
@@ -61,7 +65,8 @@ export default {
     analise: null,
     finalizado: null,
     aguardandoOP: null,
-    aguardandoSolicitante: null
+    aguardandoSolicitante: null,
+    dialogSolicitarProcesso: false
   }),
 
   async mounted() {
@@ -70,6 +75,9 @@ export default {
   },
 
   methods: {
+    reset() {
+      this.$refs.form.reset();
+    },
     async listarPlurimas() {
       this.loadingTable = true;
 
@@ -91,7 +99,6 @@ export default {
           console.log(err.response.data);
         });
     },
-
     async listarStatus() {
       this.loadingTable = true;
 
