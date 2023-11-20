@@ -20,7 +20,7 @@
           <cardStatus :qtd="analise" color="orange lighten-3" titulo="Em Análise" />
         </v-col>
         <v-col cols="15" sm="2">
-          <cardStatus :qtd="emAndamento" color="brown lighten-3" titulo="Em Andamento" />
+          <cardStatus :qtd="emAndamento" color="indigo lighten-3" titulo="Em Andamento" />
         </v-col>
         <v-col cols="15" sm="2">
           <cardStatus :qtd="aguardandoSolicitante" color="blue-grey lighten-3" titulo="Aguardando Solicitante" />

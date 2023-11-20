@@ -187,8 +187,7 @@ export default {
                 console.log(err.response.data);
             });
         },
-        closeForm() {
-            console.log("Fechando o formulário");
+        closeForm() {            
             this.docFisico = false;
             this.prazoEntrega = '';
             this.link = '';

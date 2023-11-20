@@ -1,6 +1,6 @@
 <template>  
   <div>
-    <plurimaView :show="dialogPlurima" :plurimaProp="plurima"/>
+    <plurimaView :show="dialogPlurima" :plurimaProp="plurima" @closePlurimaView="dialogPlurima = false"/>
     <v-data-table :headers="headers" :items="PlurimasV" item-key="ID" :search="search" :loading="loadingTable"
       class="mb-16 text-no-wrap" height="380" fixed-header :footer-props="{ 'items-per-page-options': [-1] }">
       <template v-slot:top>
@@ -157,7 +157,7 @@ export default {
       if (item.DESCRICAO == "AGUARDANDO CLIENTE") return "orange lighten-4";
       if (item.DESCRICAO == "AGUARDANDO SOLICITANTE") return "blue-grey lighten-3";
       if (item.DESCRICAO == "AGUARDANDO OP") return "red lighten-3";
-      if (item.DESCRICAO == "EM ANDAMENTO") return "brown lighten-3";
+      if (item.DESCRICAO == "EM ANDAMENTO") return "indigo lighten-3";
       if (item.DESCRICAO == "CANCELADA") return "green lighten-4";
       if (item.DESCRICAO == "RECUSADA") return "green lighten-4";
       if (item.DESCRICAO == "FINALIZADA") return "green lighten-4";
