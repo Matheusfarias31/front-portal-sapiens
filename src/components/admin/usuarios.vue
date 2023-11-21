@@ -160,6 +160,7 @@
 import axios from "axios";
 import JsonExcel from "vue-json-excel";
 import snack from "../shared/snackBar.vue";
+import urls from "@/config/urls";
 
 export default {
   name: "usuarios",
@@ -210,8 +211,8 @@ export default {
       { Id: 1, Nome: "Ativo" },
     ],
     ItemsSkills: [],
-    idSistema: [13],
-    Authorization: "Bearer " + localStorage.getItem("tokenSistema_13"),
+    idSistema: [1017],
+    Authorization: "Bearer " + localStorage.getItem("tokenSistema_1017"),
   }),
 
   created() {
@@ -247,7 +248,7 @@ export default {
         .catch((err) => {
           console.log(err.response.data);
           if (err.response.data.msg == "Token expirado!") {
-            window.location.href = "http://192.168.4.45:3011/digitabern/logout";
+            window.location.href = `${urls.urlNetwork}logout`;
           }
         });
     },
@@ -296,7 +297,7 @@ export default {
             status: err.response.data.status,
           });
           if (err.response.data.msg == "Token expirado!") {
-            window.location.href = "http://192.168.4.45:3011/digitabern/logout";
+            window.location.href = `${urls.urlNetwork}logout`;
           }
         });
     },
@@ -347,7 +348,7 @@ export default {
             status: err.response.datas.tatus,
           });
           if (err.response.data.msg == "Token expirado!") {
-            window.location.href = "http://192.168.4.45:3011/digitabern/logout";
+            window.location.href = `${urls.urlNetwork}logout`;
           }
         });
     },
