@@ -39,7 +39,7 @@
 
           <v-list-item to="/portalplurimas/admin/trabalho">
             <v-list-item-icon>
-              <v-icon>mdi-tag-check</v-icon>
+              <v-icon>mdi-briefcase</v-icon>
             </v-list-item-icon>
             <v-list-item-title>Trabalho</v-list-item-title>
           </v-list-item>  
