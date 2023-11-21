@@ -22,7 +22,6 @@ class store {
                     })
                     .join("")
             );
-
             return JSON.parse(jsonPayload);
         }
     }
