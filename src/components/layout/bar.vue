@@ -5,14 +5,8 @@
       <v-spacer></v-spacer>
       <v-menu offset-y transition="slide-x-transition">
         <template v-slot:activator="{ on, attrs }">
-          <v-btn
-            slot="activator"
-            v-bind="attrs"
-            v-on="on"
-            color="transparent"
-            elevation="0"
-          >
-            <span class="pr-2"> {{nameUser}} </span>
+          <v-btn slot="activator" v-bind="attrs" v-on="on" color="transparent" elevation="0">
+            <span class="pr-2"> {{ nameUser }} </span>
             <v-avatar size="32">
               <gravatar :size="30" email="email@bernhoeft.com.br" />
             </v-avatar>
@@ -22,27 +16,27 @@
         </template>
 
         <v-list v-if="skillUser == 'ADMINISTRADOR'">
-          
+
           <v-list-item to="/portalplurimas/admin/usuarios">
             <v-list-item-icon>
               <v-icon>mdi-account-multiple</v-icon>
             </v-list-item-icon>
-            <v-list-item-title>Usuarios</v-list-item-title>
-          </v-list-item>  
+            <v-list-item-title>Usuários</v-list-item-title>
+          </v-list-item>
 
           <v-list-item to="/portalplurimas/admin/fase">
             <v-list-item-icon>
-              <v-icon>mdi-alpha-f-circle</v-icon>
+              <v-icon>mdi-flag</v-icon>
             </v-list-item-icon>
             <v-list-item-title>Fase</v-list-item-title>
-          </v-list-item>  
+          </v-list-item>
 
           <v-list-item to="/portalplurimas/admin/trabalho">
             <v-list-item-icon>
               <v-icon>mdi-briefcase</v-icon>
             </v-list-item-icon>
             <v-list-item-title>Trabalho</v-list-item-title>
-          </v-list-item>  
+          </v-list-item>
         </v-list>
       </v-menu>
 
@@ -54,15 +48,15 @@
 </template>
 
 <script>
-import gravatar from "vue-gravatar";  
+import gravatar from "vue-gravatar";
 import config from "../../config/store";
 
 export default {
   name: "App",
   components: {
-    gravatar      
+    gravatar
   },
-  data: () => ({      
+  data: () => ({
     nameUser: config.user().NOME,
     emailUser: config.user().EMAIL,
     skillUser: config.user().SKILL,

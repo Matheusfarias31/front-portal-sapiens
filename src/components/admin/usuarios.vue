@@ -1,57 +1,30 @@
 <template>
   <v-sheet class="py-5 px-10">
-    <v-data-table
-      :headers="headersUsuarios"
-      :items="dessertsUsuarios"
-      :search="search"
-      :loading="loadingTable"
-      loading-text="Carregando... Aguarde por  favor!"
-      class="text-no-wrap"
-    >
+    <v-data-table :headers="headersUsuarios" :items="dessertsUsuarios" :search="search" :loading="loadingTable"
+      loading-text="Carregando... Aguarde por  favor!" class="text-no-wrap">
       <template v-slot:[`item.ATIVO`]="{ item }">
         <v-chip :color="getColorStatus(item.ATIVO)" dark>
           {{ formatStatus(item.ATIVO) }}
         </v-chip>
       </template>
       <template v-slot:top>
-        <v-toolbar flat>
-          <v-toolbar-title>Usuarios</v-toolbar-title>
+        <v-toolbar flat class="mb-8 rounded" dark color="deep-purple lighten-2">
+          <v-toolbar-title>Usuários</v-toolbar-title>
           <v-divider class="mx-4" inset vertical></v-divider>
           <v-spacer></v-spacer>
 
-          <v-text-field
-            v-model="search"
-            append-icon="mdi-magnify"
-            label="Search"
-            single-line
-            hide-details
-            class="mr-6"
-            tile
-          ></v-text-field>
-          <v-icon
-            color="green lighten-1"
-            large
-            class="mr-2"
-            @click="dialogForm = true"
-          >
+          <v-text-field v-model="search" append-icon="mdi-magnify" label="Search" single-line hide-details class="mr-6"
+            tile></v-text-field>
+          <v-icon color="white" large class="mr-2" @click="dialogForm = true">
             mdi-account-plus-outline
           </v-icon>
 
-          <v-icon
-            color="green lighten-1"
-            large
-            class="mr-2"
-            @click="initialize"
-          >
+          <v-icon color="white" large class="mr-2" @click="initialize">
             mdi-update
           </v-icon>
 
-          <JsonExcel
-            :data="dessertsUsuarios"
-            :fields="headersUsuarios.text"
-            name="Usuarios.xls"
-          >
-            <v-btn icon color="green lighten-1" large>
+          <JsonExcel :data="dessertsUsuarios" :fields="headersUsuarios.text" name="Usuarios.xls">
+            <v-btn icon color="white" large>
               <v-icon> mdi-tray-arrow-down</v-icon>
             </v-btn>
           </JsonExcel>
@@ -69,47 +42,22 @@
                   <v-container>
                     <v-row>
                       <v-col cols="12" sm="6" md="4">
-                        <v-text-field
-                          v-model="editedItem.NOME"
-                          label="Nome"
-                          required
-                        ></v-text-field>
+                        <v-text-field v-model="editedItem.NOME" label="Nome" required></v-text-field>
                       </v-col>
                       <v-col cols="12" sm="6" md="4">
-                        <v-text-field
-                          v-model="editedItem.EMAIL"
-                          label="Email"
-                          required
-                        ></v-text-field>
+                        <v-text-field v-model="editedItem.EMAIL" label="Email" required></v-text-field>
                       </v-col>
                       <v-col cols="12" sm="6" md="4" v-if="indexSkill == -1">
-                        <v-text-field
-                          v-model="editedItem.SENHA"
-                          label="Senha"
-                          type="password"
-                          required
-                        ></v-text-field>
+                        <v-text-field v-model="editedItem.SENHA" label="Senha" type="password" required></v-text-field>
                       </v-col>
                       <v-col cols="12" sm="6" md="4">
-                        <v-combobox
-                          item-text="Nome"
-                          item-value="Id"
-                          v-model="editedItem.SKILL"
-                          :items="ItemsSkills"
-                          label="Selecione o Skill"
-                          required
-                        >
+                        <v-combobox item-text="Nome" item-value="Id" v-model="editedItem.SKILL" :items="ItemsSkills"
+                          label="Selecione o Skill" required>
                         </v-combobox>
                       </v-col>
                       <v-col cols="12" sm="6" md="4" v-if="indexSkill != -1">
-                        <v-combobox
-                          item-text="Nome"
-                          item-value="Id"
-                          v-model="editedItem.ATIVO"
-                          :items="ItemsStatusUssuario"
-                          label="Selecione o Status"
-                          required
-                        >
+                        <v-combobox item-text="Nome" item-value="Id" v-model="editedItem.ATIVO"
+                          :items="ItemsStatusUssuario" label="Selecione o Status" required>
                         </v-combobox>
                       </v-col>
                     </v-row>
@@ -141,12 +89,7 @@
         </v-toolbar>
       </template>
       <template v-slot:[`item.actions`]="{ item }">
-        <v-icon
-          color="green lighten-1"
-          dense
-          @click="editarUsuarioForm(item)"
-          class="mr-2"
-        >
+        <v-icon color="green lighten-1" dense @click="editarUsuarioForm(item)" class="mr-2">
           mdi-pencil
         </v-icon>
       </template>
