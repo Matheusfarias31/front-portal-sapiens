@@ -1,8 +1,7 @@
-<template>  
-  <div>
-    <plurimaView :show="dialogPlurima" :plurimaProp="plurima" @closePlurimaView="dialogPlurima = false"/>
+<template>
+  <div>    
     <v-data-table :headers="headers" :items="PlurimasV" item-key="ID" :search="search" :loading="loadingTable"
-      class="mb-16 text-no-wrap" height="380" fixed-header :footer-props="{ 'items-per-page-options': [-1] }">
+      class="mb-16 text-no-wrap" height="400" fixed-header :footer-props="{ 'items-per-page-options': [-1] }">
       <template v-slot:top>
         <v-toolbar flat class="mb-8 rounded" dark color="deep-purple lighten-2">
           <v-toolbar-title>Plúrimas</v-toolbar-title>
@@ -16,7 +15,7 @@
       <template v-slot:[`item.actions`]="{ item }">
         <v-tooltip bottom>
           <template v-slot:activator="{ on, attrs }">
-            <v-icon v-bind="attrs" v-on="on" color="deep-purple lighten-2" :size="26" @click="getPlurimaID(item.ID)"
+            <v-icon v-bind="attrs" v-on="on" color="deep-purple lighten-2" :size="26" @click="showPlurima(item)"
               class="mr-2" :disabled="loadingTable">
               mdi-eye-outline
             </v-icon>
@@ -42,8 +41,10 @@
         </v-tooltip>
       </template>
 
-      <template v-slot:[`item.DATA_CRIACAO`]="{ item }">
-        {{ convertData2(item.DATA_CRIACAO) }}
+      <template v-slot:[`item.PRAZO_ENTREGA`]="{ item }">
+        <v-chip :color="getColorPrazo(item.PRAZO_ENTREGA)" dark>
+          {{ convertData2(item.PRAZO_ENTREGA) }}
+        </v-chip>
       </template>
 
       <template v-slot:[`item.DESCRICAO`]="{ item }">
@@ -52,7 +53,7 @@
         </v-chip>
       </template>
     </v-data-table>
-
+    <plurimaView :show="dialogPlurima" :plurimaProp="plurima" :detalheEtapa="detalheEtapa" :logStatus="logStatusPlurima" @closePlurimaView="dialogPlurima = false" />
     <loading ref="loading" />
     <snack ref="snackbar" />
   </div>
@@ -90,18 +91,19 @@ export default {
       headers: [
         { text: "Ações", value: "actions", sortable: false },
         { text: "PROCESSO", value: "NUMERO_PROCESSO" },
-        { text: "CRIAÇÃO", value: "DATA_CRIACAO", align: "center" },
+        { text: "PRAZO", value: "PRAZO_ENTREGA", align: "center" },
         { text: "CLIENTE", value: "NOME_CLIENTE" },
         { text: "FASE", value: "FASE", align: "center" },
         { text: "TRABALHO", value: "TRABALHO", align: "center" },
         { text: "ETAPA", value: "ETAPA", align: "center" },
         { text: "STATUS", value: "DESCRICAO", align: "center" },
-        { text: "EXECUÇÃO", value: "TIME_PLURIMAS", align: "center" },
-        // { text: "SOLICITANTE", value: "NOME_SOLICITANTE" },
+        { text: "EXECUÇÃO", value: "TIME_PLURIMAS", align: "center" }        
       ],
       PlurimasV: this.plurimas,
       selecao: [],
-      plurima: null,
+      plurima: [],
+      detalheEtapa: [],
+      logStatusPlurima: [],
       dialogPlurima: false
     };
   },
@@ -115,15 +117,38 @@ export default {
       this.loadingTable = newValue;
     },
   },
-
   methods: {
+    async showPlurima(item){
+      this.$refs.loading.dialog = true;
+      await this.getAtividadesEtapa(item.ID, item.ID_ETAPA);
+      await this.getPlurimaID(item.ID);
+      await this.getLogStatusPlurima(item.ID);
+      this.$refs.loading.dialog = false;
+      this.dialogPlurima = true;
+    },
+    async getLogStatusPlurima(idPlurima){      
+      await axios.get(
+        `${urls.urlLocal}log/status/plurima/${idPlurima}`
+      ).then((response) => {         
+        this.logStatusPlurima = response.data.log;           
+      }).catch((err) => {
+        console.log(err.response.data);
+      });
+    },
+    async getAtividadesEtapa(idPlurima, idEtapa){
+      await axios.get(
+        `${urls.urlLocal}atividades/etapas/plurima/${idPlurima}/${idEtapa}`
+      ).then((response) => {        
+        this.detalheEtapa = response.data.result;          
+      }).catch((err) => {
+        console.log(err.response.data);
+      });
+    },
     async getPlurimaID(idPlurima) {
       await axios.get(
         `${urls.urlLocal}plurimas/${idPlurima}`
       ).then((response) => {
         this.plurima = response.data.result[0];                
-        console.log(this.plurima)
-        this.dialogPlurima = true;        
       }).catch((err) => {
         console.log(err.response.data);
       });
@@ -162,6 +187,19 @@ export default {
       if (item.DESCRICAO == "RECUSADA") return "green lighten-4";
       if (item.DESCRICAO == "FINALIZADA") return "green lighten-4";
     },
+    getColorPrazo(item) {
+      const currentDate = dayjs().startOf('day');
+      const givenDate = dayjs(item).startOf('day');
+      const marginDate = currentDate.add(5, 'day');
+
+      if (givenDate.isBefore(currentDate)) {
+        return "red lighten-2";
+      } else if (givenDate.isBefore(marginDate)) {
+        return "amber lighten-2"
+      } else {
+        return "green lighten-2";
+      }
+    }
   },
 };
 </script>
