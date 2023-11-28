@@ -86,7 +86,7 @@
                                                 }}</v-card-text></v-card>
                                 </v-col>
                                 <v-col cols="12" sm="6" md="4">
-                                    <v-card :color="getColorStatus(this.vPlurima.DESCRICAO)" class="mt-0" light
+                                    <v-card :color="this.vPlurima.COLOR_STATUS" class="mt-0" light
                                         elevation="0" flat height="60"><v-card-text class="mt-1"><v-icon light
                                                 right>mdi-list-status</v-icon><v-divider class="mx-2" inset
                                                 vertical></v-divider>Status: {{
@@ -112,7 +112,7 @@
                                                 <v-col cols="12" sm="11" md="11">
                                                     <v-timeline align-top dense>
                                                         <v-timeline-item v-for="item in this.vLogStatusPlurima"
-                                                            :key="item.ID" :color="getColorStatus(item.STATUS)" small>
+                                                            :key="item.ID" :color="item.COLOR" small>
                                                             <v-row justify="start">
                                                                 <v-col cols="10">
                                                                     <strong>{{ item.STATUS }}</strong>
@@ -268,18 +268,7 @@ export default {
                     );
                 }
             }
-        },
-        getColorStatus(item) {
-            if (item == "EM ABERTO") return "deep-purple lighten-3";
-            if (item == "EM ANÁLISE") return "orange lighten-3";
-            if (item == "AGUARDANDO CLIENTE") return "orange lighten-4";
-            if (item == "AGUARDANDO SOLICITANTE") return "blue-grey lighten-3";
-            if (item == "AGUARDANDO OP") return "red lighten-3";
-            if (item == "EM ANDAMENTO") return "indigo lighten-3";
-            if (item == "CANCELADA") return "green lighten-4";
-            if (item == "RECUSADA") return "green lighten-4";
-            if (item == "FINALIZADA") return "green lighten-4";
-        },
+        },        
         getColorPrazo(item) {
             const currentDate = dayjs().startOf('day');
             const givenDate = dayjs(item).startOf('day');

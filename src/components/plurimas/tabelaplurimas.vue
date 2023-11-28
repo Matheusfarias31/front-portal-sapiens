@@ -48,7 +48,7 @@
       </template>
 
       <template v-slot:[`item.DESCRICAO`]="{ item }">
-        <v-chip :color="getColorStatus(item)" dark>
+        <v-chip :color="item.COLOR_STATUS" dark>
           {{ item.DESCRICAO }}
         </v-chip>
       </template>
@@ -175,17 +175,6 @@ export default {
           "YYYY-MM-DD"
         );
       }
-    },
-    getColorStatus(item) {
-      if (item.DESCRICAO == "EM ABERTO") return "deep-purple lighten-3";
-      if (item.DESCRICAO == "EM ANÁLISE") return "orange lighten-3";
-      if (item.DESCRICAO == "AGUARDANDO CLIENTE") return "orange lighten-4";
-      if (item.DESCRICAO == "AGUARDANDO SOLICITANTE") return "blue-grey lighten-3";
-      if (item.DESCRICAO == "AGUARDANDO OP") return "red lighten-3";
-      if (item.DESCRICAO == "EM ANDAMENTO") return "indigo lighten-3";
-      if (item.DESCRICAO == "CANCELADA") return "green lighten-4";
-      if (item.DESCRICAO == "RECUSADA") return "green lighten-4";
-      if (item.DESCRICAO == "FINALIZADA") return "green lighten-4";
     },
     getColorPrazo(item) {
       const currentDate = dayjs().startOf('day');
