@@ -4,7 +4,9 @@
             <v-row justify="center">
                 <v-dialog v-model="dialog" persistent max-width="600px">
                     <v-card>
-                        <v-toolbar color="deep-purple lighten-2" title="Application" dark>Solicitar Plúrima</v-toolbar>
+                        <v-toolbar color="deep-purple lighten-2" title="Application" dark>
+                            <v-toolbar-title>Solicitar Plúrima</v-toolbar-title>
+                        </v-toolbar>
                         <v-card-text class="mt-8">                            
                             <small>Formulário de solicitação</small>
                             <v-container>

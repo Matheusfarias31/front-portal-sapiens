@@ -37,6 +37,13 @@
             </v-list-item-icon>
             <v-list-item-title>Trabalho</v-list-item-title>
           </v-list-item>
+
+          <v-list-item to="/portalplurimas/admin/status">
+            <v-list-item-icon>
+              <v-icon>mdi-list-status</v-icon>
+            </v-list-item-icon>
+            <v-list-item-title>Status</v-list-item-title>
+          </v-list-item>
         </v-list>
       </v-menu>
 

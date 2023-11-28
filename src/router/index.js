@@ -7,6 +7,7 @@ import config from '@/config/store';
 import trabalho from '../components/admin/trabalho.vue'
 import usuarios from '../views/usuarios.vue'
 import fase from '../views/fase.vue';
+import statusview from '../views/status.vue';
 
 Vue.use(VueRouter)
 
@@ -43,6 +44,12 @@ const routes = [
     path: '/portalplurimas/admin/trabalho',
     name: 'tarefas',
     component: trabalho,
+    beforeEnter: config.auth
+  },
+  {
+    path: '/portalplurimas/admin/status',
+    name: 'status',
+    component: statusview,
     beforeEnter: config.auth
   },
   { path: "*", redirect: '/portalplurimas/logout' }

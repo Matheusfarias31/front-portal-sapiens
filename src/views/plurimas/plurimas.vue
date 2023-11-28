@@ -12,16 +12,18 @@
     <formSolicitacao :show="dialogSolicitarProcesso"
       @closeFormSolicitacao="dialogSolicitarProcesso = false, listarPlurimas()" />
 
-    <v-sheet class="mt-5 py-1 ml-0 px-1 d-flex align-center">
+    <v-sheet class="mt-12 py-1 ml-0 px-1 d-flex align-center">
       <v-row cols="15" class="pb-10">
-        <template >
+        <template>
           <v-col cols="15" sm="2" v-for="item in miniDash" :key="item.ID">
-            <cardStatus :qtd="item.QUANTIDADE" :color="item.COLOR" :titulo="item.DESCRICAO" />
+            <div @click="filtrarPlurimasStatus(item.DESCRICAO)">
+              <cardStatus :qtd="item.QUANTIDADE" :color="item.COLOR" :titulo="item.DESCRICAO"/>
+            </div>
           </v-col>
         </template>
       </v-row>
     </v-sheet>
-    
+
     <tabelaPlurimas :plurimas="plurimas" :loading="loadingTable"
       @initializeTable="(loadingTable = true), listarPlurimas(), listarStatus()" />
   </v-sheet>
@@ -55,15 +57,15 @@ export default {
     aguardandoOP: null,
     aguardandoSolicitante: null,
     dialogSolicitarProcesso: false,
-    miniDash: []
+    miniDash: [],
+    fitroStatus: false,
+    filtroAnterior: ''
   }),
-
   async mounted() {
     await this.getMiniDash();
     await this.listarPlurimas();
     await this.listarStatus();
   },
-
   methods: {
     reset() {
       this.$refs.form.reset();
@@ -79,7 +81,7 @@ export default {
           }
         )
         .then((result) => {
-          this.miniDash = result.data.result.filter(item => item.MINIDASH);          
+          this.miniDash = result.data.result.filter(item => item.MINIDASH);
         })
         .catch((err) => {
           console.log(err.response.data);
@@ -106,6 +108,21 @@ export default {
           console.log(err.response.data);
         });
     },
+    async filtrarPlurimasStatus(status) {      
+      this.loadingTable = true;
+      await this.listarPlurimas();
+      
+      if (this.fitroStatus && status === this.filtroAnterior) {                
+        this.filtroAnterior = '';
+        this.fitroStatus = false;
+      } else {        
+        this.plurimas = this.plurimas.filter(plurima => plurima.DESCRICAO === status)
+        this.filtroAnterior = status;
+        this.fitroStatus = true;
+      }
+
+      this.loadingTable = false;
+    },
     async listarStatus() {
       this.loadingTable = true;
 
@@ -120,7 +137,7 @@ export default {
         )
         .then((result) => {
           this.plurimas = result.data.result;
-          this.loadingTable = false;                    
+          this.loadingTable = false;
         })
         .catch((err) => {
           console.log(err.response.data);
