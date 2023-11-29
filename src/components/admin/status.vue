@@ -18,6 +18,7 @@
                     <v-spacer></v-spacer>
                     <v-text-field append-icon="mdi-magnify" label="Buscar" single-line hide-details class="mr-6" tile
                         v-model="search"></v-text-field>
+                    <v-icon @click="createStatus" large class="mr-2">mdi-playlist-plus</v-icon>
                     <v-icon @click="listarStatus" large class="mr-2">mdi-update</v-icon>
                 </v-toolbar>
             </template>
@@ -75,6 +76,43 @@
                 </v-tooltip>
             </template>
         </v-data-table>
+
+        <v-dialog v-model="dialogAddStatus" persistent max-width="600px">
+            <v-form @submit.prevent="saveAddStatus">
+                <v-card>
+                    <v-toolbar color="deep-purple lighten-2" title="CriarStatus" dark>
+                        <v-toolbar-title>Criar Status</v-toolbar-title>
+                    </v-toolbar>
+                    <v-card-text>
+                        <v-container>
+                            <v-row>
+                                <v-col cols="6">
+                                    <p class="mb-2">Cor do Status:</p>
+                                    <v-btn class="mt-0" size="small" :color="this.statusCreate.COLOR" dark
+                                        @click="selecionarCores(color)">{{
+                                            this.statusCreate.COLOR }}</v-btn>
+                                </v-col>
+                                <v-col cols="6">
+                                    <p class="mb-0">Status:</p>
+                                    <v-text-field class="mt-0" label="" type="text" v-model="statusCreate.DESCRICAO"
+                                        required></v-text-field>
+                                </v-col>
+                            </v-row>
+                        </v-container>
+                    </v-card-text>
+                    <v-card-actions>
+                        <v-spacer></v-spacer>
+                        <v-btn color="red darken-1" text @click="closeAddStatus">
+                            Cancelar
+                        </v-btn>
+                        <v-btn type="submit" color="deep-purple darken-1" text>
+                            Salvar
+                        </v-btn>
+                    </v-card-actions>
+                </v-card>
+            </v-form>
+        </v-dialog>
+
         <v-dialog v-model="dialogForm" persistent max-width="600px">
             <v-form @submit.prevent="save">
                 <v-card>
@@ -139,28 +177,62 @@
             </v-form>
         </v-dialog>
 
-        <template>
-            <v-dialog v-model="dialogMiniDash" persistent max-width="600px">
-                <v-form @submit.prevent="saveMiniDash">
-                    <v-card class="no-scroll-card" color="deep-purple lighten-4" flat>
-                        <v-toolbar color="deep-purple lighten-2" title="EditarStatus" dark>
-                            <v-toolbar-title>Defina os status presentes na Minidash</v-toolbar-title>
-                        </v-toolbar>
-                        <v-card-text class="mt-0 ml-0">
-                            <v-data-table :headers="headersMiniDash" :items="this.statusMiniDash" class="text-no-wrap">
-                                <template v-slot:[`item.MINIDASH`]="{ item }">
-                                    <template>
-                                        <v-row justify="center">
-                                            <v-switch v-model="item.MINIDASH"></v-switch>
-                                        </v-row>
-                                    </template>
+        <v-dialog v-model="dialogMiniDash" persistent width="600px">
+            <v-form @submit.prevent="saveMiniDash">
+                <v-card color="deep-purple lighten-4" flat width="600px">
+                    <v-toolbar color="deep-purple lighten-2" title="EditarStatus" dark class="mb-0">
+                        <v-toolbar-title>Defina os status presentes na Minidash</v-toolbar-title>
+                    </v-toolbar>
+                    <v-card-subtitle class="mt-0 mb-0">
+                        *A Minidash deve conter 6 itens.
+                    </v-card-subtitle>
+
+                    <v-card-text class="mt-0 ml-0">
+                        <v-data-table :headers="headersMiniDash" :items="statusMiniDash" class="text-no-wrap"
+                            :items-per-page="5">
+                            <template v-slot:[`item.MINIDASH`]="{ item }">
+                                <template>
+                                    <v-row justify="center">
+                                        <v-switch color="deep-purple lighten-2" v-model="item.MINIDASH"
+                                            @change="onSwitchChange(item)"></v-switch>
+                                    </v-row>
                                 </template>
-                            </v-data-table>
-                        </v-card-text>
-                    </v-card>
-                </v-form>
-            </v-dialog>
-        </template>
+                            </template>
+                            <template v-slot:[`item.ATIVO`]="{ item }">
+                                <v-tooltip bottom>
+                                    <template v-slot:activator="{ on, attrs }">
+                                        <v-icon v-if="!item.ATIVO" v-bind="attrs" v-on="on" color="red lighten-2" :size="30"
+                                            class="mr-2" :disabled="loadingTable">
+                                            mdi-lightbulb
+                                        </v-icon>
+                                        <v-icon v-if="item.ATIVO" v-bind="attrs" v-on="on" color="green lighten-2"
+                                            :size="40" class="mr-2" :disabled="loadingTable">
+                                            mdi-lightbulb-on
+                                        </v-icon>
+                                    </template>
+                                    <span v-if="!item.ATIVO">Inativo</span>
+                                    <span v-if="item.ATIVO">Ativo</span>
+                                </v-tooltip>
+                            </template>
+                        </v-data-table>
+                    </v-card-text>
+                    <v-card-subtitle class="mt-0 mb-0">
+                        {{ this.textMinidash }}
+                        <v-icon v-if="this.contMinidash === 6" color="green">mdi-check-circle</v-icon>
+                        <v-icon v-if="this.contMinidash != 6" color="red">mdi-alpha-x-circle</v-icon>
+                    </v-card-subtitle>
+                    <v-card-actions>
+                        <v-spacer></v-spacer>
+                        <v-btn color="red darken-1" text @click="closeEditMiniDash">
+                            Cancelar
+                        </v-btn>
+                        <v-btn type="submit" color="deep-purple darken-1" text>
+                            Salvar
+                        </v-btn>
+                    </v-card-actions>
+                </v-card>
+            </v-form>
+        </v-dialog>
 
         <loading ref="loading" />
         <snack ref="snackbar" />
@@ -206,10 +278,19 @@ export default {
         loading, snack
     },
     data: () => ({
+        dialogAddStatus: false,
+        statusCreate: {
+            DESCRICAO: '',
+            ID_COLOR: 88,
+            COLOR: 'deep-purple lighten-2'
+        },
+        textMinidash: '',
+        contMinidash: 6,
         statusMiniDash: [],
         headersMiniDash: [
             { text: "STATUS", value: "DESCRICAO" },
-            { text: "ATIVAR", value: "MINIDASH", align: "center" }
+            { text: "ATIVO", value: "ATIVO", align: "center" },
+            { text: "MNIDASH", value: "MINIDASH", align: "center" }
         ],
         status: [],
         headerStatus: [
@@ -238,13 +319,33 @@ export default {
         ]
     }),
     created() {
+        this.listarCores();
         this.listarStatus();
     },
     methods: {
+        createStatus() {
+            this.dialogAddStatus = true;
+        },
+        onSwitchChange(item) {
+            if (item.MINIDASH) {
+                this.contMinidash += 1;
+                this.textMinidash = `Você possui ${this.contMinidash} itens selecionados.`
+            } else {
+                this.contMinidash -= 1;
+                this.textMinidash = `Você possui ${this.contMinidash} itens selecionados.`
+            }
+        },
         corSelecionada(item) {
-            this.editedStatus.COLOR = item.COLOR;
-            this.editedStatus.ID_COLOR = item.ID;
-            this.dialogColor = false;
+
+            if (this.dialogForm) {
+                this.editedStatus.COLOR = item.COLOR;
+                this.editedStatus.ID_COLOR = item.ID;
+                this.dialogColor = false;
+            } else {
+                this.statusCreate.COLOR = item.COLOR;
+                this.statusCreate.ID_COLOR = item.ID;
+                this.dialogColor = false;
+            }
         },
         async selecionarCores() {
             await this.listarCores();
@@ -265,7 +366,6 @@ export default {
                 url: `${urls.urlLocal}status`,
             })
                 .then((result) => {
-                    this.statusMiniDash = result.data.result.filter(item => item.ATIVO === true);
                     this.status = result.data.result;
                     this.loadingTable = false;
                 })
@@ -289,12 +389,14 @@ export default {
         },
         async save() {
             this.$refs.loading.dialog = true;
+
+            console.log(this.editedStatus.ATIVO);
             await axios({
                 method: 'patch',
                 url: `${urls.urlLocal}status`,
                 data: {
                     ID_STATUS: this.editedStatus.ID,
-                    ATIVO: this.editedStatus.ATIVO.Nome === "SIM" ? 1 : 0,
+                    ATIVO: this.editedStatus.ATIVO.Nome === "NÃO" ? 0 : 1,
                     ID_COLOR: this.editedStatus.ID_COLOR
                 }
             }).then((result) => {
@@ -316,11 +418,92 @@ export default {
             this.dialogForm = false;
             await this.listarStatus()
         },
+        async closeEditMiniDash() {
+            this.dialogMiniDash = false;
+            this.contMinidash = 6;
+            this.statusMiniDash = [];
+            await this.listarStatus()
+        },
+        async saveMiniDash() {
+            if (this.contMinidash != 6) {
+                this.$refs.snackbar.show({
+                    message: `Você selecionou ${this.contMinidash} itens. A MiniDash deve conter 6 itens.`,
+                    status: false,
+                });
+            } else {
+                this.$refs.loading.dialog = true;
+                let statusArray = [];
+
+                for (let item of this.statusMiniDash) {
+                    statusArray.push({
+                        "ID_STATUS": item.ID,
+                        "MINIDASH": item.MINIDASH
+                    });
+                }
+
+                await axios.patch(`${urls.urlLocal}minidash`, {
+                    STATUS: statusArray
+                }).then((result) => {
+                    console.log(result);
+                    this.$refs.loading.dialog = false;
+                    this.$refs.snackbar.show({
+                        message: result.data.result,
+                        status: result.data.status,
+                    });
+                    this.closeEditMiniDash();
+                }).catch((err) => {
+                    this.$refs.loading.dialog = false;
+                    this.$refs.snackbar.show({
+                        message: err.response.data.msg,
+                        status: err.response.data.status,
+                    });
+                });
+            }
+        },
         editMiniDash() {
+            this.statusMiniDash = JSON.parse(JSON.stringify(this.status));
+            this.textMinidash = `Você possui ${this.contMinidash} itens selecionados.`
             this.dialogMiniDash = true;
+        },
+        async closeAddStatus() {
+            this.dialogAddStatus = false;
+            this.statusCreate = {
+                DESCRICAO: '',
+                ID_COLOR: 88,
+                COLOR: 'deep-purple lighten-2'
+            };
+
+            await this.listarStatus()
+        },
+        async saveAddStatus() {
+            this.$refs.loading.dialog = true;
+
+            if (this.statusCreate.DESCRICAO === "") {
+                this.$refs.loading.dialog = false;
+
+                this.$refs.snackbar.show({
+                    message: "O status não pode estar vazio.",
+                    status: false,
+                });
+            } else {
+                await axios.post(`${urls.urlLocal}status`, this.statusCreate).then((result) => {
+                    console.log(result);
+                    this.$refs.loading.dialog = false;
+                    this.$refs.snackbar.show({
+                        message: result.data.result,
+                        status: result.data.status,
+                    });
+                    this.closeAddStatus();
+                }).catch((err) => {
+                    this.$refs.loading.dialog = false;
+                    this.$refs.snackbar.show({
+                        message: err.response.data.msg,
+                        status: err.response.data.status,
+                    });
+                });
+            }
         }
     }
 }
-
 
 </script>

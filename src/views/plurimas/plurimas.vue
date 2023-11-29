@@ -28,6 +28,30 @@
       @initializeTable="(loadingTable = true), listarPlurimas(), listarStatus()" />
   </v-sheet>
 </template>
+
+<style scoped>
+/* Estilizando o scrollbar no WebKit (Chrome, Safari) */
+::-webkit-scrollbar {
+    width: 6px;
+    /* Largura do scrollbar */
+}
+
+::-webkit-scrollbar-track {
+    background: #EDE7F6;
+    /* Cor de fundo da área do scrollbar não preenchida */
+}
+
+::-webkit-scrollbar-thumb {
+    background: #B39DDB;
+    border-radius: 0px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: #B39DDB;
+    /* Cor do botão do scrollbar ao passar o mouse por cima */
+}
+
+</style>
   
 <script>
 

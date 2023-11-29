@@ -1,5 +1,5 @@
 <template>
-  <div>    
+  <div>
     <v-data-table :headers="headers" :items="PlurimasV" item-key="ID" :search="search" :loading="loadingTable"
       class="mb-16 text-no-wrap" height="400" fixed-header :footer-props="{ 'items-per-page-options': [-1] }">
       <template v-slot:top>
@@ -53,11 +53,35 @@
         </v-chip>
       </template>
     </v-data-table>
-    <plurimaView :show="dialogPlurima" :plurimaProp="plurima" :detalheEtapa="detalheEtapa" :logStatus="logStatusPlurima" @closePlurimaView="dialogPlurima = false" />
+    <plurimaView :show="dialogPlurima" :plurimaProp="plurima" :detalheEtapa="detalheEtapa" :logStatus="logStatusPlurima"
+      @closePlurimaView="dialogPlurima = false" />
     <loading ref="loading" />
     <snack ref="snackbar" />
   </div>
 </template>
+
+<style scoped>
+/* Estilizando o scrollbar no WebKit (Chrome, Safari) */
+::-webkit-scrollbar {
+  width: 6px;
+  /* Largura do scrollbar */
+}
+
+::-webkit-scrollbar-track {
+  background: #EDE7F6;
+  /* Cor de fundo da área do scrollbar não preenchida */
+}
+
+::-webkit-scrollbar-thumb {
+  background: #B39DDB;
+  border-radius: 0px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #B39DDB;
+  /* Cor do botão do scrollbar ao passar o mouse por cima */
+}
+</style>
 
 <script>
 import config from "@/config/store";
@@ -97,7 +121,7 @@ export default {
         { text: "TRABALHO", value: "TRABALHO", align: "center" },
         { text: "ETAPA", value: "ETAPA", align: "center" },
         { text: "STATUS", value: "DESCRICAO", align: "center" },
-        { text: "EXECUÇÃO", value: "TIME_PLURIMAS", align: "center" }        
+        { text: "EXECUÇÃO", value: "TIME_PLURIMAS", align: "center" }
       ],
       PlurimasV: this.plurimas,
       selecao: [],
@@ -118,7 +142,7 @@ export default {
     },
   },
   methods: {
-    async showPlurima(item){
+    async showPlurima(item) {
       this.$refs.loading.dialog = true;
       await this.getAtividadesEtapa(item.ID, item.ID_ETAPA);
       await this.getPlurimaID(item.ID);
@@ -126,20 +150,20 @@ export default {
       this.$refs.loading.dialog = false;
       this.dialogPlurima = true;
     },
-    async getLogStatusPlurima(idPlurima){      
+    async getLogStatusPlurima(idPlurima) {
       await axios.get(
         `${urls.urlLocal}log/status/plurima/${idPlurima}`
-      ).then((response) => {         
-        this.logStatusPlurima = response.data.log;           
+      ).then((response) => {
+        this.logStatusPlurima = response.data.log;
       }).catch((err) => {
         console.log(err.response.data);
       });
     },
-    async getAtividadesEtapa(idPlurima, idEtapa){
+    async getAtividadesEtapa(idPlurima, idEtapa) {
       await axios.get(
         `${urls.urlLocal}atividades/etapas/plurima/${idPlurima}/${idEtapa}`
-      ).then((response) => {        
-        this.detalheEtapa = response.data.result;          
+      ).then((response) => {
+        this.detalheEtapa = response.data.result;
       }).catch((err) => {
         console.log(err.response.data);
       });
@@ -148,7 +172,7 @@ export default {
       await axios.get(
         `${urls.urlLocal}plurimas/${idPlurima}`
       ).then((response) => {
-        this.plurima = response.data.result[0];                
+        this.plurima = response.data.result[0];
       }).catch((err) => {
         console.log(err.response.data);
       });
