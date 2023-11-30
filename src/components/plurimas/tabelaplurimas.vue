@@ -54,7 +54,7 @@
       </template>
     </v-data-table>
     <plurimaView :show="dialogPlurima" :plurimaProp="plurima" :detalheEtapa="detalheEtapa" :logStatus="logStatusPlurima"
-      @closePlurimaView="dialogPlurima = false" />
+      @closePlurimaView="dialogPlurima = false, closeDialogPlurimaView()"/>
     <loading ref="loading" />
     <snack ref="snackbar" />
   </div>
@@ -142,6 +142,9 @@ export default {
     },
   },
   methods: {
+    closeDialogPlurimaView(){      
+      this.$emit("closeViewPlurima");
+    },
     async showPlurima(item) {
       this.$refs.loading.dialog = true;
       await this.getAtividadesEtapa(item.ID, item.ID_ETAPA);

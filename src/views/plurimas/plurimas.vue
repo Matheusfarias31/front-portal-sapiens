@@ -25,7 +25,7 @@
     </v-sheet>
 
     <tabelaPlurimas :plurimas="plurimas" :loading="loadingTable"
-      @initializeTable="(loadingTable = true), listarPlurimas(), listarStatus()" />
+      @initializeTable="(loadingTable = true), listarPlurimas(), listarStatus()" @closeViewPlurima="listarPlurimas()"/>
   </v-sheet>
 </template>
 

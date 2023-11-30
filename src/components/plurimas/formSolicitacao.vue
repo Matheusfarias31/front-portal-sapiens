@@ -54,10 +54,10 @@
                         </v-card-text>
                         <v-card-actions>
                             <v-spacer></v-spacer>
-                            <v-btn color="blue darken-1" @click="reset(), closeForm()" text>
+                            <v-btn color="red darken-1" @click="reset(), closeForm()" text>
                                 Fechar
                             </v-btn>
-                            <v-btn :disabled="!valid" type="submit" color="blue darken-1" text @click="solicitarPlurima()">
+                            <v-btn :disabled="!valid" type="submit" color="deep-purple darken-1" text @click="solicitarPlurima()">
                                 Salvar
                             </v-btn>
                         </v-card-actions>

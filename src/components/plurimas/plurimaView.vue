@@ -86,8 +86,8 @@
                                                 }}</v-card-text></v-card>
                                 </v-col>
                                 <v-col cols="12" sm="6" md="4">
-                                    <v-card :color="this.vPlurima.COLOR_STATUS" class="mt-0" light
-                                        elevation="0" flat height="60"><v-card-text class="mt-1"><v-icon light
+                                    <v-card :color="this.vPlurima.COLOR_STATUS" class="mt-0" light elevation="0" flat
+                                        height="60"><v-card-text class="mt-1"><v-icon light
                                                 right>mdi-list-status</v-icon><v-divider class="mx-2" inset
                                                 vertical></v-divider>Status: {{
                                                     this.vPlurima.DESCRICAO
@@ -104,10 +104,17 @@
                                     <v-toolbar dense color="deep-purple lighten-3" dark>
                                         <v-icon dark right>mdi-timeline-check-outline</v-icon>
                                         <v-divider class="mx-4" inset vertical></v-divider>
-                                        <v-toolbar-title>Status da Atividade</v-toolbar-title>                                        
+                                        <v-toolbar-title>Status da Atividade</v-toolbar-title>
+                                        <v-spacer></v-spacer>
+                                        <v-toolbar-items>
+                                            <v-btn icon dark @click="showDialogAlterarStatus()">
+                                                <v-icon>mdi-tag-edit-outline</v-icon>
+                                            </v-btn>
+                                        </v-toolbar-items>
                                     </v-toolbar>
                                     <v-card-text class="mt-3 ml-2">
-                                        <v-card class="mt-0" color="deep-purple lighten-4" flat height="300" style="overflow-x: hidden;">
+                                        <v-card class="mt-0" color="deep-purple lighten-4" flat height="300"
+                                            style="overflow-x: hidden;">
                                             <v-row justify="center">
                                                 <v-col cols="12" sm="11" md="11">
                                                     <v-timeline align-top dense>
@@ -140,13 +147,13 @@
                                     <v-divider class="mx-4" inset vertical></v-divider><v-toolbar-title>Andamento da etapa
                                         atual
                                         ({{ this.vPlurima.ETAPA }})</v-toolbar-title>
-                                        <v-spacer></v-spacer>
-                                <v-toolbar-items>
-                                    <v-btn icon dark>
-                                        <v-icon>mdi-note-edit-outline</v-icon>
-                                    </v-btn>
-                                </v-toolbar-items>
-                                    </v-toolbar>
+                                    <v-spacer></v-spacer>
+                                    <v-toolbar-items>
+                                        <v-btn icon dark>
+                                            <v-icon>mdi-note-edit-outline</v-icon>
+                                        </v-btn>
+                                    </v-toolbar-items>
+                                </v-toolbar>
                                 <v-card-text class="mt-0 ml-2 mr-2">
                                     <v-row justify="start">
                                         <v-col cols="12" sm="12" md="12">
@@ -176,39 +183,83 @@
                         </v-col>
                     </v-row>
                 </v-card>
+
+                <v-dialog v-model="dialogAlterarStatus" persistent width="500px">
+                    <v-form @submit.prevent="saveStatus">
+                        <v-card>
+                            <v-toolbar color="deep-purple lighten-2" title="EditarStatus" dark>
+                                <v-toolbar-title>Alterar Status</v-toolbar-title>
+                            </v-toolbar>
+                            <v-card-text>
+                                <v-container>
+                                    <v-combobox item-text="DESCRICAO" item-value="ID" v-model="selectedStatus"
+                                        :items="statusAtivos" label="Status*" required class="mb-2"></v-combobox>
+                                    <v-textarea class="mt-2 mb-0 text-left align-start" label="Observação"
+                                        placeholder="Observação (Máx. 300 caracteres)" outlined maxlength="300"
+                                        v-model="observacaoStatus"></v-textarea>
+                                </v-container>
+                            </v-card-text>
+                            <v-card-actions>
+                                <v-spacer></v-spacer>
+                                <v-btn color="red darken-1" text @click="closeDialogAlterarStatus">
+                                    Cancelar
+                                </v-btn>
+                                <v-btn type="submit" color="deep-purple darken-1" text>
+                                    Salvar
+                                </v-btn>
+                            </v-card-actions>
+                        </v-card>
+                    </v-form>
+                </v-dialog>
             </v-dialog>
         </v-row>
+        <loading ref="loading" />
+        <snack ref="snackbar" />
     </div>
 </template>
 
 <style scoped>
-  /* Estilizando o scrollbar no WebKit (Chrome, Safari) */
-  ::-webkit-scrollbar {
-    width: 6px; /* Largura do scrollbar */
-  }
+/* Estilizando o scrollbar no WebKit (Chrome, Safari) */
+::-webkit-scrollbar {
+    width: 6px;
+    /* Largura do scrollbar */
+}
 
-  ::-webkit-scrollbar-track {
-    background: #EDE7F6; /* Cor de fundo da área do scrollbar não preenchida */
-  }
+::-webkit-scrollbar-track {
+    background: #EDE7F6;
+    /* Cor de fundo da área do scrollbar não preenchida */
+}
 
-  ::-webkit-scrollbar-thumb {
+::-webkit-scrollbar-thumb {
     background: #B39DDB;
-    border-radius: 0px; 
-  }
+    border-radius: 0px;
+}
 
-  ::-webkit-scrollbar-thumb:hover {
-    background: #B39DDB; /* Cor do botão do scrollbar ao passar o mouse por cima */
-  }
+::-webkit-scrollbar-thumb:hover {
+    background: #B39DDB;
+    /* Cor do botão do scrollbar ao passar o mouse por cima */
+}
 </style>
 
 <script>
-
+import loading from "@/components/shared/loading.vue";
+import snack from "@/components/shared/snackBar.vue";
+import axios from "axios";
 import dayjs from "dayjs";
+import urls from "@/config/urls";
+import config from "@/config/store";
 
 export default {
     name: 'plurimaview',
+    components:{
+        snack, loading
+    },
     data() {
         return {
+            dialogAlterarStatus: false,
+            selectedStatus: { ID: null, DESCRICAO: null },
+            observacaoStatus: '',
+            statusAtivos: [],
             vPlurima: this.plurimaProp,
             vDetalheEtapa: this.detalheEtapa,
             vLogStatusPlurima: this.logStatus,
@@ -217,7 +268,9 @@ export default {
                 { text: "Responsável", value: "NOME", align: "center" },
                 { text: "Início", value: "DATA_CRIACAO", align: "center" },
                 { text: "Ativo", value: "ATIVO", align: "center" },
-            ]
+            ],
+            idUsuario: config.user().ID_USUARIO,
+            Authorization: "Bearer " + localStorage.getItem("tokenSistema_1017"),
         }
     },
     props: {
@@ -259,7 +312,63 @@ export default {
             }
         }
     },
+    async mounted() {
+        await this.getStatusAtivos();
+    },
     methods: {
+        async saveStatus() {
+            this.$refs.loading.dialog = true;
+            await axios.post(`${urls.urlLocal}log/status/plurima`, {
+                ID_STATUS: this.selectedStatus.ID,
+                OBSERVACAO: this.observacaoStatus,
+                ID_PLURIMA: this.vPlurima.ID,
+                ID_USUARIO: this.idUsuario
+            }).then((response) => {                
+                this.getLogStatusPlurima();
+                this.dialogAlterarStatus = false;
+                this.$refs.loading.dialog = false;
+
+                this.vPlurima.ID_STATUS = this.selectedStatus.ID;
+                this.vPlurima.DESCRICAO = this.selectedStatus.DESCRICAO;
+                this.vPlurima.COLOR_STATUS = this.selectedStatus.COLOR;
+
+                this.$refs.snackbar.show({
+                    message: response.data.result,
+                    status: response.data.status,
+                });
+            }).catch((err) => {
+                console.log(err);
+            });
+        },
+        async getLogStatusPlurima() {
+            await axios.get(
+                `${urls.urlLocal}log/status/plurima/${this.vPlurima.ID}`
+            ).then((response) => {
+                this.vLogStatusPlurima = response.data.log;
+            }).catch((err) => {
+                console.log(err.response.data);
+            });
+        },
+        showDialogAlterarStatus() {
+            this.dialogAlterarStatus = true;
+        },
+        closeDialogAlterarStatus() {
+            this.dialogAlterarStatus = false;
+        },
+        async getStatusAtivos() {
+            this.statusAtivos = [];
+
+            await axios({
+                method: "get",
+                url: `${urls.urlLocal}status/ativos`,
+            })
+                .then((response) => {
+                    this.statusAtivos = response.data.result;
+                })
+                .catch((err) => {
+                    console.log(err);
+                });
+        },
         convertData(item) {
             if (item && typeof item === 'string') {
                 if (dayjs(item).format("YYYY-MM-DD") != "Invalid Date") {
@@ -268,7 +377,7 @@ export default {
                     );
                 }
             }
-        },        
+        },
         getColorPrazo(item) {
             const currentDate = dayjs().startOf('day');
             const givenDate = dayjs(item).startOf('day');
@@ -296,7 +405,7 @@ export default {
             this.selecectFase = { FASE: null, ID: null };
             this.selectedTrabalho = { TRABALHO: null, ID: null };
             this.timePlurimas = false;
-            this.numeroProcesso = '';
+            this.numeroProcesso = '';            
             this.$emit("closePlurimaView");
         },
         reset() {
