@@ -19,6 +19,10 @@
               class="mr-2" :disabled="loadingTable">
               mdi-eye-outline
             </v-icon>
+            <v-icon v-bind="attrs" v-on="on" color="deep-purple lighten-2" :size="26" @click="showAprova(item)"
+              class="mr-2" :disabled="loadingTable">
+              mdi-thumbs-up-down-outline
+            </v-icon>
           </template>
           <span>Visualizar Plúrima</span>
         </v-tooltip>
@@ -55,6 +59,9 @@
     </v-data-table>
     <plurimaView :show="dialogPlurima" :plurimaProp="plurima" :detalheEtapa="detalheEtapa" :logStatus="logStatusPlurima"
       @closePlurimaView="dialogPlurima = false, closeDialogPlurimaView()"/>
+     
+    <formAprovacao :show="dialogPlurima" :plurimaProp="plurima"/>
+
     <loading ref="loading" />
     <snack ref="snackbar" />
   </div>
@@ -90,11 +97,12 @@ import snack from "@/components/shared/snackBar.vue";
 import dayjs from "dayjs";
 import axios from "axios";
 import urls from "@/config/urls";
-import plurimaView from "./plurimaView.vue";
+//import plurimaView from "./plurimaView.vue";
+import formAprovacao from "./formAprovacao.vue";
 
 export default {
   name: "cardProduto",
-  components: { loading, snack, plurimaView },
+  components: { loading, snack, formAprovacao },
   props: {
     plurimas: Array,
     loading: Boolean,
@@ -146,6 +154,14 @@ export default {
       this.$emit("closeViewPlurima");
     },
     async showPlurima(item) {
+      this.$refs.loading.dialog = true;
+      await this.getAtividadesEtapa(item.ID, item.ID_ETAPA);
+      await this.getPlurimaID(item.ID);
+      await this.getLogStatusPlurima(item.ID);
+      this.$refs.loading.dialog = false;
+      this.dialogPlurima = true;
+    },
+    async showAprova(item) {
       this.$refs.loading.dialog = true;
       await this.getAtividadesEtapa(item.ID, item.ID_ETAPA);
       await this.getPlurimaID(item.ID);
