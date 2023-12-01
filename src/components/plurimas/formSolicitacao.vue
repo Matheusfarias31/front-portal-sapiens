@@ -132,6 +132,7 @@ export default {
     },
     methods: {
         async solicitarPlurima() {
+            this.$refs.loading.dialog = true;
             await axios.post(`${urls.urlLocal}plurimas`, {
                 NUMERO_PROCESSO: this.numeroProcesso,
                 ID_SOLICITANTE: this.idUsuario,
@@ -142,13 +143,14 @@ export default {
                 ID_TRABALHO: this.selectedTrabalho.ID,
                 LINK: this.link,
                 TIME_PLURIMAS: this.timePlurimas
-            }).then((response) => {
+            }).then(() => {
                 this.reset();                
                 this.closeForm();
                 this.$refs.snackbar.show({
-                    message: response.data.result,
-                    status: response.data.status,
+                    message: "Plúrima Cadastrada!",
+                    status: true,
                 });
+                this.$refs.loading.dialog = false;
             }).catch((err) => {
                 console.log(err);
             });

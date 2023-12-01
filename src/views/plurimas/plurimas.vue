@@ -10,7 +10,7 @@
     </v-sheet>
 
     <formSolicitacao :show="dialogSolicitarProcesso"
-      @closeFormSolicitacao="dialogSolicitarProcesso = false, listarPlurimas()" />
+      @closeFormSolicitacao="dialogSolicitarProcesso = false, listarPlurimas(), getMiniDash()" />
 
     <v-sheet class="mt-12 py-1 ml-0 px-1 d-flex align-center">
       <v-row cols="15" class="pb-10">

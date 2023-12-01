@@ -19,12 +19,17 @@
               class="mr-2" :disabled="loadingTable">
               mdi-eye-outline
             </v-icon>
-            <v-icon v-bind="attrs" v-on="on" color="deep-purple lighten-2" :size="26" @click="showAprova(item)"
-              class="mr-2" :disabled="loadingTable">
-              mdi-thumbs-up-down-outline
-            </v-icon>
           </template>
           <span>Visualizar Plúrima</span>
+        </v-tooltip>
+        <v-tooltip bottom>
+          <template v-slot:activator="{ on, attrs }">
+            <v-icon v-bind="attrs" v-on="on" color="deep-purple lighten-2" :size="26" @click="showAprova(item)"
+              class="mr-2" :disabled="disabeIconAprovavao(item)">
+              mdi-check-decagram-outline
+            </v-icon>
+          </template>
+          <span>Aprovar</span>
         </v-tooltip>
       </template>
 
@@ -58,9 +63,10 @@
       </template>
     </v-data-table>
     <plurimaView :show="dialogPlurima" :plurimaProp="plurima" :detalheEtapa="detalheEtapa" :logStatus="logStatusPlurima"
-      @closePlurimaView="dialogPlurima = false, closeDialogPlurimaView()"/>
-     
-    <formAprovacao :show="dialogPlurima" :plurimaProp="plurima"/>
+      @closePlurimaView="dialogPlurima = false, closeDialogPlurimaView()" />
+
+    <formAprovacao :show="dialogAprovacao" :idUsuario="idUsuario"
+      @closeAprovacao="dialogAprovacao = false, closeDialogPlurimaView()" :plurimaProp="plurima" />
 
     <loading ref="loading" />
     <snack ref="snackbar" />
@@ -97,12 +103,12 @@ import snack from "@/components/shared/snackBar.vue";
 import dayjs from "dayjs";
 import axios from "axios";
 import urls from "@/config/urls";
-//import plurimaView from "./plurimaView.vue";
+import plurimaView from "./plurimaView.vue";
 import formAprovacao from "./formAprovacao.vue";
 
 export default {
   name: "cardProduto",
-  components: { loading, snack, formAprovacao },
+  components: { loading, snack, formAprovacao, plurimaView },
   props: {
     plurimas: Array,
     loading: Boolean,
@@ -121,7 +127,7 @@ export default {
       rules2: [(v) => v != null || "É necessário"],
       idUsuario: config.user().ID_USUARIO,
       headers: [
-        { text: "Ações", value: "actions", sortable: false },
+        { text: "Ações", value: "actions", sortable: false, align: "center"  },
         { text: "PROCESSO", value: "NUMERO_PROCESSO" },
         { text: "PRAZO", value: "PRAZO_ENTREGA", align: "center" },
         { text: "CLIENTE", value: "NOME_CLIENTE" },
@@ -136,7 +142,8 @@ export default {
       plurima: [],
       detalheEtapa: [],
       logStatusPlurima: [],
-      dialogPlurima: false
+      dialogPlurima: false,
+      dialogAprovacao: false
     };
   },
   mounted() {
@@ -150,7 +157,16 @@ export default {
     },
   },
   methods: {
-    closeDialogPlurimaView(){      
+    disabeIconAprovavao(item){
+      let disable = true;
+
+      if (item.TIME_PLURIMAS == true && item.DESCRICAO === 'EM ABERTO') {
+        disable = false;
+      }
+
+      return disable;
+    },
+    closeDialogPlurimaView() {
       this.$emit("closeViewPlurima");
     },
     async showPlurima(item) {
@@ -163,11 +179,9 @@ export default {
     },
     async showAprova(item) {
       this.$refs.loading.dialog = true;
-      await this.getAtividadesEtapa(item.ID, item.ID_ETAPA);
       await this.getPlurimaID(item.ID);
-      await this.getLogStatusPlurima(item.ID);
       this.$refs.loading.dialog = false;
-      this.dialogPlurima = true;
+      this.dialogAprovacao = true;
     },
     async getLogStatusPlurima(idPlurima) {
       await axios.get(
