@@ -179,7 +179,7 @@ export default {
 
       await axios({
         method: "post",
-        url: "http://192.168.4.45:3005/api.usuarios/v1/user/list",
+        url: `${process.env.API_CONTROL_USERS_URL}user/list`,
         data: {
           idSistema: this.idSistema,
         },
@@ -191,14 +191,14 @@ export default {
         .catch((err) => {
           console.log(err.response.data);
           if (err.response.data.msg == "Token expirado!") {
-            window.location.href = `${urls.urlNetwork}logout`;
+            window.location.href = `${process.env.API_NETWORK_URL}logout`;
           }
         });
     },
     async filterSkill() {
       await axios({
         method: "get",
-        url: "http://192.168.4.45:3005/api.usuarios/v1/skill",
+        url: `${process.env.API_CONTROL_USERS_URL}skill`,
       })
         .then((result) => {
           let skillFilter = result.data.listSkills.filter(
@@ -215,7 +215,7 @@ export default {
     async criarUsuario() {
       await axios({
         method: "post",
-        url: "http://192.168.4.45:3005/api.usuarios/v1/user",
+        url: `${process.env.API_CONTROL_USERS_URL}user`,
         data: {
           nome: this.editedItem.NOME,
           email: this.editedItem.EMAIL,
@@ -240,7 +240,7 @@ export default {
             status: err.response.data.status,
           });
           if (err.response.data.msg == "Token expirado!") {
-            window.location.href = `${urls.urlNetwork}logout`;
+            window.location.href = `${process.env.API_NETWORK_URL}logout`;
           }
         });
     },
@@ -265,7 +265,7 @@ export default {
     async editarUsuario() {
       await axios({
         method: "put",
-        url: "http://192.168.4.45:3005/api.usuarios/v1/user",
+        url: `${process.env.API_CONTROL_USERS_URL}user`,
         data: {
           idSistema: this.idSistema[0],
           id: this.editedItem.ID_USUARIO,
@@ -291,7 +291,7 @@ export default {
             status: err.response.datas.tatus,
           });
           if (err.response.data.msg == "Token expirado!") {
-            window.location.href = `${urls.urlNetwork}logout`;
+            window.location.href = `${process.env.API_NETWORK_URL}logout`;
           }
         });
     },

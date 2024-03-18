@@ -185,7 +185,7 @@ export default {
     },
     async getLogStatusPlurima(idPlurima) {
       await axios.get(
-        `${urls.urlLocal}log/status/plurima/${idPlurima}`
+        `${process.env.API_BASE_URL}log/status/plurima/${idPlurima}`
       ).then((response) => {
         this.logStatusPlurima = response.data.log;
       }).catch((err) => {
@@ -194,7 +194,7 @@ export default {
     },
     async getAtividadesEtapa(idPlurima, idEtapa) {
       await axios.get(
-        `${urls.urlLocal}atividades/etapas/plurima/${idPlurima}/${idEtapa}`
+        `${process.env.API_BASE_URL}atividades/etapas/plurima/${idPlurima}/${idEtapa}`
       ).then((response) => {
         this.detalheEtapa = response.data.result;
       }).catch((err) => {
@@ -203,7 +203,7 @@ export default {
     },
     async getPlurimaID(idPlurima) {
       await axios.get(
-        `${urls.urlLocal}plurimas/${idPlurima}`
+        `${process.env.API_BASE_URL}plurimas/${idPlurima}`
       ).then((response) => {
         this.plurima = response.data.result[0];
       }).catch((err) => {

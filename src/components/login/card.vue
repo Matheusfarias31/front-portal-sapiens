@@ -105,7 +105,7 @@
   
         await axios({
           method: "post",
-          url: "http://192.168.4.45:3005/api.usuarios/v1/login",
+          url: `${process.env.API_CONTROL_USERS_URL}login`,
           data: {
             email: this.usuario,
             senha: this.senha,

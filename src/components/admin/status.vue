@@ -363,7 +363,7 @@ export default {
 
             axios({
                 method: "get",
-                url: `${urls.urlLocal}status`,
+                url: `${process.env.API_BASE_URL}status`,
             })
                 .then((result) => {
                     this.status = result.data.result;
@@ -378,7 +378,7 @@ export default {
 
             axios({
                 method: "get",
-                url: `${urls.urlLocal}cores`,
+                url: `${process.env.API_BASE_URL}cores`,
             })
                 .then((result) => {
                     this.cores = result.data.result;
@@ -393,7 +393,7 @@ export default {
             console.log(this.editedStatus.ATIVO);
             await axios({
                 method: 'patch',
-                url: `${urls.urlLocal}status`,
+                url: `${process.env.API_BASE_URL}status`,
                 data: {
                     ID_STATUS: this.editedStatus.ID,
                     ATIVO: this.editedStatus.ATIVO.Nome === "NÃO" ? 0 : 1,
@@ -441,7 +441,7 @@ export default {
                     });
                 }
 
-                await axios.patch(`${urls.urlLocal}minidash`, {
+                await axios.patch(`${process.env.API_BASE_URL}minidash`, {
                     STATUS: statusArray
                 }).then((result) => {
                     console.log(result);
@@ -486,7 +486,7 @@ export default {
                     status: false,
                 });
             } else {
-                await axios.post(`${urls.urlLocal}status`, this.statusCreate).then((result) => {
+                await axios.post(`${process.env.API_BASE_URL}status`, this.statusCreate).then((result) => {
                     console.log(result);
                     this.$refs.loading.dialog = false;
                     this.$refs.snackbar.show({

@@ -97,7 +97,7 @@ export default {
     async getMiniDash() {
       await axios
         .get(
-          `${urls.urlLocal}minidash`,
+          `${process.env.API_BASE_URL}minidash`,
           {
             headers: {
               Authorization: this.Authorization,
@@ -116,7 +116,7 @@ export default {
 
       await axios
         .get(
-          `${urls.urlLocal}plurimas`,
+          `${process.env.API_BASE_URL}plurimas`,
           {
             headers: {
               Authorization: this.Authorization,
@@ -152,7 +152,7 @@ export default {
 
       await axios
         .get(
-          `${urls.urlLocal}plurimas`,
+          `${process.env.API_BASE_URL}plurimas`,
           {
             headers: {
               Authorization: this.Authorization,

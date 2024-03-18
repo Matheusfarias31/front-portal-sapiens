@@ -107,7 +107,7 @@ export default {
     methods: {
         async aprovarPlurima() {
             this.$refs.loading.dialog = true;
-            await axios.post(`${urls.urlLocal}log/status/plurima`, {
+            await axios.post(`${process.env.API_BASE_URL}log/status/plurima`, {
                 ID_STATUS: 2,
                 OBSERVACAO: "PLÚRIMA APROVADA",
                 ID_PLURIMA: this.vPlurima.ID,
@@ -126,7 +126,7 @@ export default {
         },
         async reprovarPlurima(){
             this.$refs.loading.dialog = true;
-            await axios.post(`${urls.urlLocal}log/status/plurima`, {
+            await axios.post(`${process.env.API_BASE_URL}log/status/plurima`, {
                 ID_STATUS: 8,
                 OBSERVACAO: "PLÚRIMA REPROVADA",
                 ID_PLURIMA: this.vPlurima.ID,

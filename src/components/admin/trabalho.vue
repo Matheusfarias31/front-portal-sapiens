@@ -112,7 +112,7 @@ export default {
 
       axios({
         method: "get",
-        url: `${urls.urlLocal}trabalhos`,
+        url: `${process.env.API_BASE_URL}trabalhos`,
       })
         .then((result) => {
           this.loadingTable = false;
@@ -125,7 +125,7 @@ export default {
     async criarTrabalho() {
       await axios({
         method: "post",
-        url: `${urls.urlLocal}trabalhos`,
+        url: `${process.env.API_BASE_URL}trabalhos`,
         data: {
           trabalho: this.editedItem.NomeTrabalho,
           idSistema: this.idSistema
@@ -141,7 +141,7 @@ export default {
         .catch((err) => {
           console.log(err.response.data);
           if (err.response.data.msg == "Token expirado!") {
-            window.location.href = `${urls.urlNetwork}logout`
+            window.location.href = `${process.env.API_NETWORK_URL}logout`
           }
         });
     },

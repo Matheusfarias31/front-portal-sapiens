@@ -78,7 +78,7 @@
   
         axios({
           method: "post",
-          url: "http://192.168.4.45:3005/api.usuarios/v1/recoverpassword",
+          url: `${process.env.API_CONTROL_USERS_URL}recoverpassword`,
           data: {
             email: this.usuario,
           },
