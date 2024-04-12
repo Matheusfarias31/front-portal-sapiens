@@ -56,7 +56,6 @@
 <script>
 
 import config from "@/config/store";
-import urls from "@/config/urls";
 import axios from "axios";
 import tabelaPlurimas from "@/components/plurimas/tabelaplurimas";
 import cardStatus from "@/components/plurimas/cardStatus.vue";
@@ -97,7 +96,7 @@ export default {
     async getMiniDash() {
       await axios
         .get(
-          `${process.env.API_BASE_URL}minidash`,
+          `${process.env.VUE_APP_ROOT_API_BASE_URL}minidash`,
           {
             headers: {
               Authorization: this.Authorization,
@@ -116,7 +115,7 @@ export default {
 
       await axios
         .get(
-          `${process.env.API_BASE_URL}plurimas`,
+          `${process.env.VUE_APP_ROOT_API_BASE_URL}plurimas`,
           {
             headers: {
               Authorization: this.Authorization,
@@ -152,7 +151,7 @@ export default {
 
       await axios
         .get(
-          `${process.env.API_BASE_URL}plurimas`,
+          `${process.env.VUE_APP_ROOT_API_BASE_URL}plurimas`,
           {
             headers: {
               Authorization: this.Authorization,

@@ -162,7 +162,7 @@
                                         </v-tooltip>
                                         <v-tooltip bottom>
                                             <template v-slot:activator="{ on, attrs }">
-                                                <v-btn icon dark>
+                                                <v-btn icon dark @click="showDialogExtratorDocs()">
                                                     <v-icon v-bind="attrs" v-on="on">mdi-database-cog</v-icon>
                                                 </v-btn>
                                             </template>
@@ -302,11 +302,11 @@
                 <v-dialog v-model="dialogArquivosLidos" persistent width="900px">
                     <v-card>
                         <v-toolbar color="deep-purple lighten-2" title="MotorOrgDocs" dark>
-                            <v-toolbar-title>Arquivos Lidos</v-toolbar-title>                                                        
+                            <v-toolbar-title>Arquivos Lidos</v-toolbar-title>
                         </v-toolbar>
                         <v-data-table :headers="headersArquivosLidos" :items="arquivoLidos" item-key="ID"
                             :search="search" class="mb-0 text-no-wrap" fixed-header
-                            :footer-props="{ 'items-per-page-options': [-1] }">                            
+                            :footer-props="{ 'items-per-page-options': [-1] }">
                         </v-data-table>
                         <v-card-actions>
                             <v-spacer></v-spacer>
@@ -320,11 +320,11 @@
                 <v-dialog v-model="dialogArquivosGeradosEditaveis" persistent width="900px">
                     <v-card>
                         <v-toolbar color="deep-purple lighten-2" title="MotorOrgDocs" dark>
-                            <v-toolbar-title>Arquivos Gerados - Editáveis</v-toolbar-title>                                                        
+                            <v-toolbar-title>Arquivos Gerados - Editáveis</v-toolbar-title>
                         </v-toolbar>
-                        <v-data-table :headers="headersArquivosGeradosEditaveis" :items="arquivosGeradosEditaveis" item-key="ID"
-                            :search="search" class="mb-0 text-no-wrap" fixed-header
-                            :footer-props="{ 'items-per-page-options': [-1] }">                            
+                        <v-data-table :headers="headersArquivosGeradosEditaveis" :items="arquivosGeradosEditaveis"
+                            item-key="ID" :search="search" class="mb-0 text-no-wrap" fixed-header
+                            :footer-props="{ 'items-per-page-options': [-1] }">
                         </v-data-table>
                         <v-card-actions>
                             <v-spacer></v-spacer>
@@ -338,11 +338,11 @@
                 <v-dialog v-model="dialogArquivosGeradosNEditaveis" persistent width="900px">
                     <v-card>
                         <v-toolbar color="deep-purple lighten-2" title="MotorOrgDocs" dark>
-                            <v-toolbar-title>Arquivos Gerados - Não Editáveis</v-toolbar-title>                                                        
+                            <v-toolbar-title>Arquivos Gerados - Não Editáveis</v-toolbar-title>
                         </v-toolbar>
-                        <v-data-table :headers="headersArquivosGeradosNEditaveis" :items="arquivosGeradosNEditaveis" item-key="ID"
-                            :search="search" class="mb-0 text-no-wrap" fixed-header
-                            :footer-props="{ 'items-per-page-options': [-1] }">                            
+                        <v-data-table :headers="headersArquivosGeradosNEditaveis" :items="arquivosGeradosNEditaveis"
+                            item-key="ID" :search="search" class="mb-0 text-no-wrap" fixed-header
+                            :footer-props="{ 'items-per-page-options': [-1] }">
                         </v-data-table>
                         <v-card-actions>
                             <v-spacer></v-spacer>
@@ -500,10 +500,60 @@
                         </v-card>
                     </v-form>
                 </v-dialog>
+
+                <v-dialog v-model="dialogExtratorDocs" persistent width="600px">
+                    <v-form @submit.prevent="solicitarExecExtratorDocs">
+                        <v-card>
+                            <v-toolbar color="deep-purple lighten-2" title="EditarStatus" dark>
+                                <v-toolbar-title>Executar Extrator de Documentos</v-toolbar-title>
+                            </v-toolbar>
+                            <v-card-text>
+                                <v-container>
+                                    <v-row justify="center">
+                                        <v-col cols="12" sm="6">
+                                            <v-switch color="deep-purple lighten-2"
+                                                v-model="extracao.CONFIGS.NOTIFICAR_USUARIO"
+                                                label="Notificar Usuário"></v-switch>
+                                        </v-col>
+                                        <v-col cols="12" sm="6">
+                                            <v-switch color="deep-purple lighten-2"
+                                                v-model="extracao.CONFIGS.NOVOS_ARQUIVOS"
+                                                label="Novos Arquivos"></v-switch>
+                                        </v-col>
+                                        <v-col cols="12" sm="6">
+                                            <v-switch color="deep-purple lighten-2"
+                                                v-model="extracao.CONFIGS.PRIORIDADE" label="Prioridade"></v-switch>
+                                        </v-col>
+                                        <v-col cols="12" sm="6">
+                                            <v-switch color="deep-purple lighten-2"
+                                                v-model="extracao.CONFIGS.MULTIPLOS_DOCS"
+                                                label="Múltiplos Documentos"></v-switch>
+                                        </v-col>
+                                    </v-row>
+                                    <v-textarea required class="mt-2 mb-0 text-left align-start"
+                                        label="Caminho dos Documentos"
+                                        placeholder="Caminho dos arquivos (Máx. 300 caracteres)" outlined
+                                        maxlength="300" v-model="extracao.CAMINHO_DOC"></v-textarea>
+                                </v-container>
+                            </v-card-text>
+                            <v-card-actions>
+                                <v-spacer></v-spacer>
+                                <v-btn type="submit" color="deep-purple darken-1" text>
+                                    Salvar
+                                </v-btn>
+                                <v-btn color="red darken-1" text @click="closeDialogExtratorDocs">
+                                    Cancelar
+                                </v-btn>
+                            </v-card-actions>
+                        </v-card>
+                    </v-form>
+                </v-dialog>
+
             </v-dialog>
         </v-row>
         <loading ref="loading" />
         <snack ref="snackbar" />
+        <loadingextrator ref="loadingextrator" />
     </div>
 </template>
 
@@ -532,16 +582,16 @@
 
 <script>
 import loading from "@/components/shared/loading.vue";
+import loadingextrator from "@/components/shared/loadingextrator.vue"
 import snack from "@/components/shared/snackBar.vue";
 import axios from "axios";
 import dayjs from "dayjs";
-import urls from "@/config/urls";
 import config from "@/config/store";
 
 export default {
     name: 'plurimaview',
     components: {
-        snack, loading
+        snack, loading, loadingextrator
     },
     data() {
         return {
@@ -587,13 +637,14 @@ export default {
                 { text: "MODELO", value: "REF_MODELO", align: "center" },
                 { text: "PAGINAS", value: "PAGINAS", align: "center" }
             ],
+            extracao: { CAMINHO: null, CONFIGS: { NOTIFICAR_USUARIO: true, NOVOS_ARQUIVOS: false, PRIORIDADE: false, MULTIPLOS_DOCS: true } },
             arquivosGeradosNEditaveis: [],
             dialogArquivosGeradosNEditaveis: false,
             headersArquivosGeradosNEditaveis: [
                 { text: "ID", value: "ID" },
                 { text: "ID ARQUIVO LIDO", value: "ID_ARQUIVO_LIDO", align: "center" },
                 { text: "ARQUIVO", value: "ARQUIVO", align: "center" },
-                { text: "PAGINAS", value: "PAGINAS", align: "center" },                
+                { text: "PAGINAS", value: "PAGINAS", align: "center" },
             ],
             headersAtividadesEtapas: [
                 { text: "Atividade", value: "ATIVIDADE" },
@@ -601,7 +652,10 @@ export default {
                 { text: "Início", value: "DATA_CRIACAO", align: "center" },
                 { text: "Ativo", value: "ATIVO", align: "center" },
             ],
+            dialogExtratorDocs: false,
             idUsuario: config.user().ID_USUARIO,
+            nomeUsuario: config.user().NOME,
+            emailUsuario: config.user().EMAIL,
             Authorization: "Bearer " + localStorage.getItem("tokenSistema_1017"),
         }
     },
@@ -650,7 +704,7 @@ export default {
     methods: {
         async saveStatus() {
             this.$refs.loading.dialog = true;
-            await axios.post(`${process.env.API_BASE_URL}log/status/plurima`, {
+            await axios.post(`${process.env.VUE_APP_ROOT_API_BASE_URL}log/status/plurima`, {
                 ID_STATUS: this.selectedStatus.ID,
                 OBSERVACAO: this.observacaoStatus,
                 ID_PLURIMA: this.vPlurima.ID,
@@ -673,7 +727,7 @@ export default {
         },
         async getLogStatusPlurima() {
             await axios.get(
-                `${process.env.API_BASE_URL}log/status/plurima/${this.vPlurima.ID}`
+                `${process.env.VUE_APP_ROOT_API_BASE_URL}log/status/plurima/${this.vPlurima.ID}`
             ).then((response) => {
                 this.vLogStatusPlurima = response.data.log;
             }).catch((err) => {
@@ -712,7 +766,7 @@ export default {
             this.$refs.loading.dialog = true;
             this.loadingExecOrgDocs = true;
             await axios.get(
-                `${process.env.API_MOTOR_ORG_DOCS_URL}solicitacoes/plurimas/${this.vPlurima.ID}`
+                `${process.env.VUE_APP_ROOT_API_MOTOR_ORG_DOCS_URL}solicitacoes/plurimas/${this.vPlurima.ID}`
             ).then((response) => {
                 this.execucoesOrgDocs = response.data.result;
                 this.$refs.loading.dialog = false;
@@ -722,59 +776,59 @@ export default {
             });
 
         },
-        showDialogArquivosLidos(idSolicitacao){
+        showDialogArquivosLidos(idSolicitacao) {
             this.getArquivosLidosMotorOrg(idSolicitacao);
             this.dialogArquivosLidos = true;
         },
-        closeDialogArquivosLidos(){
+        closeDialogArquivosLidos() {
             this.dialogArquivosLidos = false;
         },
         async getArquivosLidosMotorOrg(idSolicitacao) {
             this.$refs.loading.dialog = true;
 
             await axios.get(
-                `${process.env.API_MOTOR_ORG_DOCS_URL}arquivos/lidos/${idSolicitacao}`
+                `${process.env.VUE_APP_ROOT_API_MOTOR_ORG_DOCS_URL}arquivos/lidos/${idSolicitacao}`
             ).then((response) => {
                 this.arquivoLidos = response.data.result;
-                this.$refs.loading.dialog = false;                
+                this.$refs.loading.dialog = false;
             }).catch((err) => {
                 console.log(err.response.data);
             });
         },
-        showDialogArquivosGeradosEditaveis(idSolicitacao){
+        showDialogArquivosGeradosEditaveis(idSolicitacao) {
             this.getArquivosGeradosEditaveis(idSolicitacao);
             this.dialogArquivosGeradosEditaveis = true;
         },
-        closeDialogArquivosGeradosEditaveis(){
+        closeDialogArquivosGeradosEditaveis() {
             this.dialogArquivosGeradosEditaveis = false;
         },
         async getArquivosGeradosEditaveis(idSolicitacao) {
             this.$refs.loading.dialog = true;
 
             await axios.get(
-                `${process.env.API_MOTOR_ORG_DOCS_URL}arquivos/gerados/editaveis/${idSolicitacao}`
+                `${process.env.VUE_APP_ROOT_API_MOTOR_ORG_DOCS_URL}arquivos/gerados/editaveis/${idSolicitacao}`
             ).then((response) => {
                 this.arquivosGeradosEditaveis = response.data.result;
-                this.$refs.loading.dialog = false;                
+                this.$refs.loading.dialog = false;
             }).catch((err) => {
                 console.log(err.response.data);
             });
         },
-        showDialogArquivosGeradosNEditaveis(idSolicitacao){
+        showDialogArquivosGeradosNEditaveis(idSolicitacao) {
             this.getArquivosGeradosNEditaveis(idSolicitacao);
             this.dialogArquivosGeradosNEditaveis = true;
         },
-        closeDialogArquivosGeradosNEditaveis(){
+        closeDialogArquivosGeradosNEditaveis() {
             this.dialogArquivosGeradosNEditaveis = false;
         },
         async getArquivosGeradosNEditaveis(idSolicitacao) {
             this.$refs.loading.dialog = true;
 
             await axios.get(
-                `${process.env.API_MOTOR_ORG_DOCS_URL}arquivos/gerados/neditaveis/${idSolicitacao}`
+                `${process.env.VUE_APP_ROOT_API_MOTOR_ORG_DOCS_URL}arquivos/gerados/neditaveis/${idSolicitacao}`
             ).then((response) => {
                 this.arquivosGeradosNEditaveis = response.data.result;
-                this.$refs.loading.dialog = false;                
+                this.$refs.loading.dialog = false;
             }).catch((err) => {
                 console.log(err.response.data);
             });
@@ -791,7 +845,7 @@ export default {
                 return;
             }
 
-            await axios.post(`${process.env.API_MOTOR_ORG_DOCS_URL}solicitacoes`, {
+            await axios.post(`${process.env.VUE_APP_ROOT_API_MOTOR_ORG_DOCS_URL}solicitacoes`, {
                 ID_PLURIMA: this.vPlurima.ID,
                 ID_USUARIO: this.idUsuario,
                 ID_FILIAL: this.selectedFilialOrgDocs.ID,
@@ -818,7 +872,7 @@ export default {
         },
         async getFiliaisOrgDocs() {
             await axios.get(
-                `${process.env.API_MOTOR_ORG_DOCS_URL}filiais`
+                `${process.env.VUE_APP_ROOT_API_MOTOR_ORG_DOCS_URL}filiais`
             ).then((response) => {
                 this.filiaisOrgDocs = response.data.result;
             }).catch((err) => {
@@ -830,7 +884,7 @@ export default {
 
             await axios({
                 method: "get",
-                url: `${process.env.API_BASE_URL}status/ativos`,
+                url: `${process.env.VUE_APP_ROOT_API_BASE_URL}status/ativos`,
             })
                 .then((response) => {
                     this.statusAtivos = response.data.result;
@@ -889,6 +943,58 @@ export default {
         },
         reset() {
             this.$refs.pluriDialog.reset();
+        },
+        showDialogExtratorDocs() {
+            this.dialogExtratorDocs = true;
+        },
+        closeDialogExtratorDocs() {
+            this.dialogExtratorDocs = false;
+            this.extracao = { CAMINHO: null, CONFIGS: { NOTIFICAR_USUARIO: true, NOVOS_ARQUIVOS: false, PRIORIDADE: false, MULTIPLOS_DOCS: true } };
+            this.caminhoOrgDOcs = '';
+        },
+        async solicitarExecExtratorDocs() {
+            this.$refs.loading.dialog = true;
+
+            if (this.extracao.CAMINHO_DOC == "") {
+                this.$refs.snackbar.show({
+                    message: "Por favor, informe um caminho.",
+                    status: false,
+                });
+                this.$refs.loading.dialog = false;
+                return;
+            }
+
+            await axios.post(`${process.env.VUE_APP_ROOT_API_EXTRATOR_DOCS_URL}extracoes`, {
+                ORIGEM: "PLURIFY",
+                ID_REF_ORIGEM: this.vPlurima.ID,
+                ID_USUARIO: this.idUsuario,
+                EMAIL_USUARIO: this.emailUsuario,
+                NOME_USUARIO: this.nomeUsuario,
+                CAMINHO_DOC: this.extracao.CAMINHO_DOC,
+                CONFIGS: {
+                    NOTIFICAR_USUARIO: this.extracao.CONFIGS.NOTIFICAR_USUARIO,
+                    NOVOS_ARQUIVOS: this.extracao.CONFIGS.NOVOS_ARQUIVOS,
+                    PRIORIDADE: this.extracao.CONFIGS.PRIORIDADE,
+                    MULTIPLOS_DOCS: this.extracao.CONFIGS.MULTIPLOS_DOCS
+                }
+            }).then((response) => {
+                this.selectedStatus.ID = '1017';
+                this.observacaoStatus = `Motor de Extrair Dados Solicitado. ID da Extração: ${response.data.idextracao}`;
+                this.selectedStatus.DESCRICAO = 'AGUARD. MOTOR'
+                this.selectedStatus.COLOR = 'blue lighten-1';
+                this.$refs.loading.dialog = false;
+                
+                this.$refs.snackbar.show({
+                    message: `${response.data.result} ID: ${response.data.idextracao}`,
+                    status: response.data.status,
+                });
+
+                this.saveStatus();
+                this.closeDialogExtratorDocs();
+                this.closeDialogProximaEtapa();                
+            }).catch((err) => {
+                console.log(err);
+            });
         }
     }
 }

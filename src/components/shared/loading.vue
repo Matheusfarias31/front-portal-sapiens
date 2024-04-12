@@ -1,47 +1,29 @@
 <template>
-    <div class="text-center">
-      <v-dialog
-        v-model="dialog"
-      
-        persistent
-        width="300"
-      >
-        <v-card
-          color="deep-purple lighten-2"
-          dark
-        >
-          <v-card-text>
-            Aguarde o processamento
-            <v-progress-linear
-              indeterminate
-              color="white"
-              class="mb-0"
-            ></v-progress-linear>
-          </v-card-text>
-        </v-card>
-      </v-dialog>
-    </div>
-  </template>
-  <script>
-  export default {
-    name: "carregamento",
-    data: () => ({
-      dialog: false,
-    }),
-  };
-  </script>
-  
-  <style >
-  .v-progress-circular {
-    margin: 15rem;
-  }
-  
-  .moverlogo {
-    margin-right: 30%;
-  }
-  
-  .offset {
-    top: -24px;
-    position: relative;
-  }
-  </style>
+  <div class="text-center">
+
+    <v-overlay  z-index="6" :value="dialog" persistent  color="grey lighten-5">
+      <div>
+        <v-progress-circular size="120" indeterminate color="deep-purple lighten-2">
+          <template v-slot:default>
+            <v-img
+              lazy-src="../../assets/Plurify2_Menu_500x500.png"
+              max-height="80"
+              max-width="80"
+              src="../../assets/Plurify2_Menu_500x500.png"
+            ></v-img>
+          </template>
+        </v-progress-circular>
+      </div>
+    </v-overlay> 
+   
+  </div>
+</template>
+
+<script>
+export default {
+  name: "carregamento",
+  data: () => ({
+    dialog: false,
+  }),
+};
+</script>

@@ -67,7 +67,6 @@
 
 <script>
 import axios from "axios";
-import urls from "@/config/urls";
 import loading from "@/components/shared/loading.vue";
 import snack from "@/components/shared/snackBar.vue";
 
@@ -107,7 +106,7 @@ export default {
     methods: {
         async aprovarPlurima() {
             this.$refs.loading.dialog = true;
-            await axios.post(`${process.env.API_BASE_URL}log/status/plurima`, {
+            await axios.post(`${process.env.VUE_APP_ROOT_API_BASE_URL}log/status/plurima`, {
                 ID_STATUS: 2,
                 OBSERVACAO: "PLÚRIMA APROVADA",
                 ID_PLURIMA: this.vPlurima.ID,
@@ -126,7 +125,7 @@ export default {
         },
         async reprovarPlurima(){
             this.$refs.loading.dialog = true;
-            await axios.post(`${process.env.API_BASE_URL}log/status/plurima`, {
+            await axios.post(`${process.env.VUE_APP_ROOT_API_BASE_URL}log/status/plurima`, {
                 ID_STATUS: 8,
                 OBSERVACAO: "PLÚRIMA REPROVADA",
                 ID_PLURIMA: this.vPlurima.ID,

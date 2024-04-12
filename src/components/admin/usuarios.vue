@@ -103,7 +103,6 @@
 import axios from "axios";
 import JsonExcel from "vue-json-excel";
 import snack from "../shared/snackBar.vue";
-import urls from "@/config/urls";
 
 export default {
   name: "usuarios",
@@ -179,7 +178,7 @@ export default {
 
       await axios({
         method: "post",
-        url: `${process.env.API_CONTROL_USERS_URL}user/list`,
+        url: `${process.env.VUE_APP_ROOT_API_CONTROL_USERS_URL}user/list`,
         data: {
           idSistema: this.idSistema,
         },
@@ -191,14 +190,14 @@ export default {
         .catch((err) => {
           console.log(err.response.data);
           if (err.response.data.msg == "Token expirado!") {
-            window.location.href = `${process.env.API_NETWORK_URL}logout`;
+            window.location.href = `${process.env.VUE_APP_ROOT_API_NETWORK_URL}logout`;
           }
         });
     },
     async filterSkill() {
       await axios({
         method: "get",
-        url: `${process.env.API_CONTROL_USERS_URL}skill`,
+        url: `${process.env.VUE_APP_ROOT_API_CONTROL_USERS_URL}skill`,
       })
         .then((result) => {
           let skillFilter = result.data.listSkills.filter(
@@ -215,7 +214,7 @@ export default {
     async criarUsuario() {
       await axios({
         method: "post",
-        url: `${process.env.API_CONTROL_USERS_URL}user`,
+        url: `${process.env.VUE_APP_ROOT_API_CONTROL_USERS_URL}user`,
         data: {
           nome: this.editedItem.NOME,
           email: this.editedItem.EMAIL,
@@ -240,7 +239,7 @@ export default {
             status: err.response.data.status,
           });
           if (err.response.data.msg == "Token expirado!") {
-            window.location.href = `${process.env.API_NETWORK_URL}logout`;
+            window.location.href = `${process.env.VUE_APP_ROOT_API_NETWORK_URL}logout`;
           }
         });
     },
@@ -265,7 +264,7 @@ export default {
     async editarUsuario() {
       await axios({
         method: "put",
-        url: `${process.env.API_CONTROL_USERS_URL}user`,
+        url: `${process.env.VUE_APP_ROOT_API_CONTROL_USERS_URL}user`,
         data: {
           idSistema: this.idSistema[0],
           id: this.editedItem.ID_USUARIO,
@@ -291,7 +290,7 @@ export default {
             status: err.response.datas.tatus,
           });
           if (err.response.data.msg == "Token expirado!") {
-            window.location.href = `${process.env.API_NETWORK_URL}logout`;
+            window.location.href = `${process.env.VUE_APP_ROOT_API_NETWORK_URL}logout`;
           }
         });
     },

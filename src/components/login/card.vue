@@ -17,7 +17,7 @@
                   shaped
                 >
                   <v-toolbar-title class="mx-auto">
-                    Bem-vindo ao Bern Plúrimas!
+                    Bem-vindo ao Plurify!
                   </v-toolbar-title>
                   <v-spacer></v-spacer>
   
@@ -102,10 +102,12 @@
       },
       async login() {
         this.$refs.loading.dialog = true;
-  
+        
+        console.log(process.env.VUE_APP_ROOT_API_CONTROL_USERS_URL);
+
         await axios({
           method: "post",
-          url: `${process.env.API_CONTROL_USERS_URL}login`,
+          url: `${process.env.VUE_APP_ROOT_API_CONTROL_USERS_URL}login`,
           data: {
             email: this.usuario,
             senha: this.senha,

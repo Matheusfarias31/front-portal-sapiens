@@ -102,7 +102,6 @@ import loading from "@/components/shared/loading.vue";
 import snack from "@/components/shared/snackBar.vue";
 import dayjs from "dayjs";
 import axios from "axios";
-import urls from "@/config/urls";
 import plurimaView from "./plurimaView.vue";
 import formAprovacao from "./formAprovacao.vue";
 
@@ -185,7 +184,7 @@ export default {
     },
     async getLogStatusPlurima(idPlurima) {
       await axios.get(
-        `${process.env.API_BASE_URL}log/status/plurima/${idPlurima}`
+        `${process.env.VUE_APP_ROOT_API_BASE_URL}log/status/plurima/${idPlurima}`
       ).then((response) => {
         this.logStatusPlurima = response.data.log;
       }).catch((err) => {
@@ -194,7 +193,7 @@ export default {
     },
     async getAtividadesEtapa(idPlurima, idEtapa) {
       await axios.get(
-        `${process.env.API_BASE_URL}atividades/etapas/plurima/${idPlurima}/${idEtapa}`
+        `${process.env.VUE_APP_ROOT_API_BASE_URL}atividades/etapas/plurima/${idPlurima}/${idEtapa}`
       ).then((response) => {
         this.detalheEtapa = response.data.result;
       }).catch((err) => {
@@ -203,7 +202,7 @@ export default {
     },
     async getPlurimaID(idPlurima) {
       await axios.get(
-        `${process.env.API_BASE_URL}plurimas/${idPlurima}`
+        `${process.env.VUE_APP_ROOT_API_BASE_URL}plurimas/${idPlurima}`
       ).then((response) => {
         this.plurima = response.data.result[0];
       }).catch((err) => {

@@ -78,7 +78,7 @@
   
         axios({
           method: "post",
-          url: `${process.env.API_CONTROL_USERS_URL}recoverpassword`,
+          url: `${process.env.VUE_APP_ROOT_API_CONTROL_USERS_URL}recoverpassword`,
           data: {
             email: this.usuario,
           },

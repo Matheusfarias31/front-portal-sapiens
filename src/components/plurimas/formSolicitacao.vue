@@ -73,7 +73,6 @@
 <script>
 import axios from "axios";
 import config from "@/config/store";
-import urls from "@/config/urls";
 import snack from "@/components/shared/snackBar.vue";
 import loading from "@/components/shared/loading.vue";
 import dayjs from "dayjs";
@@ -133,7 +132,7 @@ export default {
     methods: {
         async solicitarPlurima() {
             this.$refs.loading.dialog = true;
-            await axios.post(`${process.env.API_BASE_URL}plurimas`, {
+            await axios.post(`${process.env.VUE_APP_ROOT_API_BASE_URL}plurimas`, {
                 NUMERO_PROCESSO: this.numeroProcesso,
                 ID_SOLICITANTE: this.idUsuario,
                 ID_CLIENTE: this.selectedCliente.Id,
@@ -159,7 +158,7 @@ export default {
             this.prazoEntrega = dayjs(new Date().setDate(new Date().getDate() + 30)).format("YYYY-MM-DD");
         },
         async getClientes() {
-            await axios.get(`${process.env.API_BASE_URL}clientes`, {
+            await axios.get(`${process.env.VUE_APP_ROOT_API_BASE_URL}clientes`, {
                 headers: {
                     Authorization: this.Authorization,
                 },
@@ -170,7 +169,7 @@ export default {
             });
         },
         async getFases() {
-            await axios.get(`${process.env.API_BASE_URL}fases`, {
+            await axios.get(`${process.env.VUE_APP_ROOT_API_BASE_URL}fases`, {
                 headers: {
                     Authorization: this.Authorization,
                 },
@@ -181,7 +180,7 @@ export default {
             });
         },
         async getTrabalhos() {
-            await axios.get(`${process.env.API_BASE_URL}trabalhos`, {
+            await axios.get(`${process.env.VUE_APP_ROOT_API_BASE_URL}trabalhos`, {
                 headers: {
                     Authorization: this.Authorization,
                 },
