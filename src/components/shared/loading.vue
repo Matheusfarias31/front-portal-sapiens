@@ -1,7 +1,7 @@
 <template>
   <div class="text-center">
 
-    <v-overlay  z-index="6" :value="dialog" persistent  color="grey lighten-5">
+    <v-overlay  z-index="1005" :value="dialog" persistent  color="grey lighten-5">
       <div>
         <v-progress-circular size="120" indeterminate color="deep-purple lighten-2">
           <template v-slot:default>

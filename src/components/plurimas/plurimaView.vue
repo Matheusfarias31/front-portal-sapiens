@@ -1,7 +1,7 @@
 <template>
     <div>
         <v-row justify="center">
-            <v-dialog ref="pluriDialog" v-model="dialog" fullscreen transition="dialog-bottom-transition">
+            <v-dialog z-index="999" ref="pluriDialog" v-model="dialog" fullscreen transition="dialog-bottom-transition">
                 <v-card color="deep-purple lighten-5" light class="mt-0">
                     <v-toolbar color="deep-purple lighten-2" dark><v-icon dark
                             right>mdi-folder-information-outline</v-icon>
@@ -179,7 +179,7 @@
                                         <v-divider class="mr-0 ml-0" inset vertical></v-divider>
                                         <v-tooltip bottom>
                                             <template v-slot:activator="{ on, attrs }">
-                                                <v-btn icon dark @click="showDialogProximaEtapa()">
+                                                <v-btn icon dark @click="exibirDialog('Teste')">
                                                     <v-icon v-bind="attrs" v-on="on">mdi-skip-forward</v-icon>
                                                 </v-btn>
                                             </template>
@@ -225,6 +225,8 @@
                         </v-col>
                     </v-row>
                 </v-card>
+
+                <ProximaEtapaDialog :show="dialogProximaEtapa" />
 
                 <v-dialog v-model="dialogStatusOrgDocs" persistent width="900px">
                     <v-card>
@@ -473,33 +475,7 @@
                     </v-form>
                 </v-dialog>
 
-                <v-dialog v-model="dialogAlterarStatus" persistent width="500px">
-                    <v-form @submit.prevent="saveStatus">
-                        <v-card>
-                            <v-toolbar color="deep-purple lighten-2" title="EditarStatus" dark>
-                                <v-toolbar-title>Alterar Status</v-toolbar-title>
-                            </v-toolbar>
-                            <v-card-text>
-                                <v-container>
-                                    <v-combobox item-text="DESCRICAO" item-value="ID" v-model="selectedStatus"
-                                        :items="statusAtivos" label="Status*" required class="mb-2"></v-combobox>
-                                    <v-textarea class="mt-2 mb-0 text-left align-start" label="Observação"
-                                        placeholder="Observação (Máx. 300 caracteres)" outlined maxlength="300"
-                                        v-model="observacaoStatus"></v-textarea>
-                                </v-container>
-                            </v-card-text>
-                            <v-card-actions>
-                                <v-spacer></v-spacer>
-                                <v-btn color="red darken-1" text @click="closeDialogAlterarStatus">
-                                    Cancelar
-                                </v-btn>
-                                <v-btn type="submit" color="deep-purple darken-1" text>
-                                    Salvar
-                                </v-btn>
-                            </v-card-actions>
-                        </v-card>
-                    </v-form>
-                </v-dialog>
+                <altstatus ref="alert" :zIndex="zIndexForOtherDialog" :show-dialogp="false" :idplurima="this.vPlurima.ID" :idusuario="this.idUsuario" @atualizarstatus="this.getLogStatusPlurima"></altstatus>
 
                 <v-dialog v-model="dialogExtratorDocs" persistent width="600px">
                     <v-form @submit.prevent="solicitarExecExtratorDocs">
@@ -551,9 +527,11 @@
 
             </v-dialog>
         </v-row>
+
         <loading ref="loading" />
         <snack ref="snackbar" />
         <loadingextrator ref="loadingextrator" />
+
     </div>
 </template>
 
@@ -587,23 +565,21 @@ import snack from "@/components/shared/snackBar.vue";
 import axios from "axios";
 import dayjs from "dayjs";
 import config from "@/config/store";
+import altstatus from '@/components/plurimas/dialogAltStatus.vue';
 
 export default {
     name: 'plurimaview',
     components: {
-        snack, loading, loadingextrator
+        snack, loading, loadingextrator, altstatus
     },
     data() {
         return {
             dialogAlterarStatus: false,
             dialogProximaEtapa: false,
-            dialogOrgDocs: false,
-            selectedStatus: { ID: null, DESCRICAO: null },
-            observacaoStatus: '',
+            dialogOrgDocs: false,            
             filiaisOrgDocs: [],
             selectedFilialOrgDocs: { ID: null, FILIAL: null },
-            caminhoOrgDOcs: '',
-            statusAtivos: [],
+            caminhoOrgDOcs: '',            
             vPlurima: this.plurimaProp,
             vDetalheEtapa: this.detalheEtapa,
             vLogStatusPlurima: this.logStatus,
@@ -652,11 +628,13 @@ export default {
                 { text: "Início", value: "DATA_CRIACAO", align: "center" },
                 { text: "Ativo", value: "ATIVO", align: "center" },
             ],
+            zIndexForOtherDialog: 1000,
             dialogExtratorDocs: false,
             idUsuario: config.user().ID_USUARIO,
             nomeUsuario: config.user().NOME,
             emailUsuario: config.user().EMAIL,
             Authorization: "Bearer " + localStorage.getItem("tokenSistema_1017"),
+            message: ""
         }
     },
     props: {
@@ -687,6 +665,11 @@ export default {
                 this.vPlurima = newValue;
             }
         },
+        dialogProximaEtapa(newValue) {
+            if (newValue) {
+                this.dialogProximaEtapa = newValue;
+            }
+        },
         detalheEtapa(newValue) {
             if (newValue) {
                 this.vDetalheEtapa = newValue;
@@ -702,34 +685,24 @@ export default {
         await this.getStatusAtivos();
     },
     methods: {
-        async saveStatus() {
-            this.$refs.loading.dialog = true;
-            await axios.post(`${process.env.VUE_APP_ROOT_API_BASE_URL}log/status/plurima`, {
-                ID_STATUS: this.selectedStatus.ID,
-                OBSERVACAO: this.observacaoStatus,
-                ID_PLURIMA: this.vPlurima.ID,
-                ID_USUARIO: this.idUsuario
-            }).then((response) => {
-                this.dialogAlterarStatus = false;
-                this.$refs.loading.dialog = false;
-                this.vPlurima.ID_STATUS = this.selectedStatus.ID;
-                this.vPlurima.DESCRICAO = this.selectedStatus.DESCRICAO;
-                this.vPlurima.COLOR_STATUS = this.selectedStatus.COLOR;
-                this.observacaoStatus = '';
-                this.getLogStatusPlurima();
-                this.$refs.snackbar.show({
-                    message: response.data.result,
-                    status: response.data.status,
-                });
-            }).catch((err) => {
-                console.log(err);
-            });
+        increaseZIndex() {
+            this.zIndexForOtherDialog += 1;
         },
+        exibirDialog(message) {
+            this.$refs.alert.$emit('show-dialog', true);
+            this.message = message;
+        },
+        hideDialog() {
+            this.showDialog = false;
+        },        
         async getLogStatusPlurima() {
             await axios.get(
                 `${process.env.VUE_APP_ROOT_API_BASE_URL}log/status/plurima/${this.vPlurima.ID}`
             ).then((response) => {
                 this.vLogStatusPlurima = response.data.log;
+                this.vPlurima.ID_STATUS = this.vLogStatusPlurima[0].ID;
+                this.vPlurima.DESCRICAO = this.vLogStatusPlurima[0].STATUS;
+                this.vPlurima.COLOR_STATUS = this.vLogStatusPlurima[0].COLOR;
             }).catch((err) => {
                 console.log(err.response.data);
             });
@@ -743,12 +716,10 @@ export default {
         },
         showDialogAlterarStatus() {
             this.dialogAlterarStatus = true;
-        },
-        closeDialogAlterarStatus() {
-            this.dialogAlterarStatus = false;
-        },
+        },        
         showDialogProximaEtapa() {
-            this.dialogProximaEtapa = true;
+            this.$refs.alertComponent.exibirAlerta('Mensagem de exemplo');
+
         },
         closeDialogProximaEtapa() {
             this.dialogProximaEtapa = false;
@@ -878,21 +849,7 @@ export default {
             }).catch((err) => {
                 console.log(err.response.data);
             });
-        },
-        async getStatusAtivos() {
-            this.statusAtivos = [];
-
-            await axios({
-                method: "get",
-                url: `${process.env.VUE_APP_ROOT_API_BASE_URL}status/ativos`,
-            })
-                .then((response) => {
-                    this.statusAtivos = response.data.result;
-                })
-                .catch((err) => {
-                    console.log(err);
-                });
-        },
+        },       
         convertData(item) {
             if (item && typeof item === 'string') {
                 if (dayjs(item).format("YYYY-MM-DD") != "Invalid Date") {
@@ -983,7 +940,7 @@ export default {
                 this.selectedStatus.DESCRICAO = 'AGUARD. MOTOR'
                 this.selectedStatus.COLOR = 'blue lighten-1';
                 this.$refs.loading.dialog = false;
-                
+
                 this.$refs.snackbar.show({
                     message: `${response.data.result} ID: ${response.data.idextracao}`,
                     status: response.data.status,
@@ -991,7 +948,7 @@ export default {
 
                 this.saveStatus();
                 this.closeDialogExtratorDocs();
-                this.closeDialogProximaEtapa();                
+                this.closeDialogProximaEtapa();
             }).catch((err) => {
                 console.log(err);
             });

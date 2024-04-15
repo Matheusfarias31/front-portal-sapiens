@@ -113,6 +113,8 @@ export default {
     async listarPlurimas() {
       this.loadingTable = true;
 
+      console.log(process.env.VUE_APP_ROOT_API_BASE_URL);
+
       await axios
         .get(
           `${process.env.VUE_APP_ROOT_API_BASE_URL}plurimas`,
