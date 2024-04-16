@@ -62,7 +62,7 @@
         </v-chip>
       </template>
     </v-data-table>
-    <plurimaView :show="dialogPlurima" :plurimaProp="plurima" :detalheEtapa="detalheEtapa" :logStatus="logStatusPlurima"
+    <plurimaView ref="plurimaview" :show="dialogPlurima" :plurimaProp="plurima" :detalheEtapa="detalheEtapa" :logStatus="logStatusPlurima"
       @closePlurimaView="dialogPlurima = false, closeDialogPlurimaView()" />
 
     <formAprovacao :show="dialogAprovacao" :idUsuario="idUsuario"

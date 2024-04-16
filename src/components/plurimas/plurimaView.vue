@@ -108,7 +108,7 @@
                                         <v-toolbar-title>Status da Atividade</v-toolbar-title>
                                         <v-spacer></v-spacer>
                                         <v-toolbar-items>
-                                            <v-btn icon dark @click="showDialogAlterarStatus()">
+                                            <v-btn icon dark @click="dialogAlterarStatus()">
                                                 <v-icon>mdi-tag-edit-outline</v-icon>
                                             </v-btn>
                                         </v-toolbar-items>
@@ -154,7 +154,7 @@
                                     <v-toolbar-items>
                                         <v-tooltip bottom>
                                             <template v-slot:activator="{ on, attrs }">
-                                                <v-btn icon dark @click="showDialogStatusMotorOrg()">
+                                                <v-btn icon dark @click="dialogExecOrgDocs()">
                                                     <v-icon v-bind="attrs" v-on="on">mdi-tray-full</v-icon>
                                                 </v-btn>
                                             </template>
@@ -179,7 +179,7 @@
                                         <v-divider class="mr-0 ml-0" inset vertical></v-divider>
                                         <v-tooltip bottom>
                                             <template v-slot:activator="{ on, attrs }">
-                                                <v-btn icon dark @click="exibirDialog('Teste')">
+                                                <v-btn icon dark>
                                                     <v-icon v-bind="attrs" v-on="on">mdi-skip-forward</v-icon>
                                                 </v-btn>
                                             </template>
@@ -225,8 +225,6 @@
                         </v-col>
                     </v-row>
                 </v-card>
-
-                <ProximaEtapaDialog :show="dialogProximaEtapa" />
 
                 <v-dialog v-model="dialogStatusOrgDocs" persistent width="900px">
                     <v-card>
@@ -447,35 +445,12 @@
                     </v-form>
                 </v-dialog>
 
-                <v-dialog v-model="dialogOrgDocs" persistent width="700px">
-                    <v-form @submit.prevent="solicitarExecOrgDocs">
-                        <v-card>
-                            <v-toolbar color="deep-purple lighten-2" title="EditarStatus" dark>
-                                <v-toolbar-title>Executar Motor de Organizar Documentos</v-toolbar-title>
-                            </v-toolbar>
-                            <v-card-text>
-                                <v-container>
-                                    <v-combobox item-text="FILIAL" item-value="ID" v-model="selectedFilialOrgDocs"
-                                        :items="filiaisOrgDocs" label="Filial*" required class="mb-2"></v-combobox>
-                                    <v-textarea required class="mt-2 mb-0 text-left align-start" label="Caminho"
-                                        placeholder="Caminho dos arquivos (Máx. 300 caracteres)" outlined
-                                        maxlength="300" v-model="caminhoOrgDOcs"></v-textarea>
-                                </v-container>
-                            </v-card-text>
-                            <v-card-actions>
-                                <v-spacer></v-spacer>
-                                <v-btn type="submit" color="deep-purple darken-1" text>
-                                    Salvar
-                                </v-btn>
-                                <v-btn color="red darken-1" text @click="closeDialogOrgDocs">
-                                    Cancelar
-                                </v-btn>
-                            </v-card-actions>
-                        </v-card>
-                    </v-form>
-                </v-dialog>
-
-                <altstatus ref="alert" :zIndex="zIndexForOtherDialog" :show-dialogp="false" :idplurima="this.vPlurima.ID" :idusuario="this.idUsuario" @atualizarstatus="this.getLogStatusPlurima"></altstatus>
+                <altstatus ref="alterarstatus" :zIndex="zIndexForOtherDialog" :show-dialogp="false"
+                    :idplurima="this.vPlurima.ID" :idusuario="this.idUsuario"
+                    @atualizarstatus="this.getLogStatusPlurima"></altstatus>
+                <execorgdocs ref="execorgdocs" :zIndex="zIndexForOtherDialog" :show-dialogp="false"
+                    :idplurima="this.vPlurima.ID" :idusuario="this.idUsuario"
+                    @atualizarexecorgdocs="this.getExecucoesMotorOrgDocs"></execorgdocs>
 
                 <v-dialog v-model="dialogExtratorDocs" persistent width="600px">
                     <v-form @submit.prevent="solicitarExecExtratorDocs">
@@ -565,21 +540,21 @@ import snack from "@/components/shared/snackBar.vue";
 import axios from "axios";
 import dayjs from "dayjs";
 import config from "@/config/store";
-import altstatus from '@/components/plurimas/dialogAltStatus.vue';
+import altstatus from '@/components/plurimas/dialogsvplurima/dialogAltStatus.vue';
+import execorgdocs from '@/components/plurimas/dialogsvplurima/dialogOrgDocs.vue';
 
 export default {
     name: 'plurimaview',
     components: {
-        snack, loading, loadingextrator, altstatus
+        snack, loading, loadingextrator, altstatus, execorgdocs
     },
     data() {
         return {
-            dialogAlterarStatus: false,
             dialogProximaEtapa: false,
-            dialogOrgDocs: false,            
+            dialogOrgDocs: false,
             filiaisOrgDocs: [],
             selectedFilialOrgDocs: { ID: null, FILIAL: null },
-            caminhoOrgDOcs: '',            
+            caminhoOrgDOcs: '',
             vPlurima: this.plurimaProp,
             vDetalheEtapa: this.detalheEtapa,
             vLogStatusPlurima: this.logStatus,
@@ -633,8 +608,7 @@ export default {
             idUsuario: config.user().ID_USUARIO,
             nomeUsuario: config.user().NOME,
             emailUsuario: config.user().EMAIL,
-            Authorization: "Bearer " + localStorage.getItem("tokenSistema_1017"),
-            message: ""
+            Authorization: "Bearer " + localStorage.getItem("tokenSistema_1017")
         }
     },
     props: {
@@ -684,17 +658,19 @@ export default {
     async mounted() {
         await this.getStatusAtivos();
     },
-    methods: {
+    methods: {        
         increaseZIndex() {
             this.zIndexForOtherDialog += 1;
         },
-        exibirDialog(message) {
-            this.$refs.alert.$emit('show-dialog', true);
-            this.message = message;
+        dialogAlterarStatus() {
+            this.$refs.alterarstatus.$emit('show-dialog', true);
+        },
+        dialogExecOrgDocs() {
+            this.$refs.execorgdocs.$emit('show-dialog', true);
         },
         hideDialog() {
             this.showDialog = false;
-        },        
+        },
         async getLogStatusPlurima() {
             await axios.get(
                 `${process.env.VUE_APP_ROOT_API_BASE_URL}log/status/plurima/${this.vPlurima.ID}`
@@ -706,7 +682,7 @@ export default {
             }).catch((err) => {
                 console.log(err.response.data);
             });
-        },
+        },               
         showDialogStatusMotorOrg() {
             this.getExecucoesMotorOrgDocs();
             this.dialogStatusOrgDocs = true;
@@ -716,7 +692,7 @@ export default {
         },
         showDialogAlterarStatus() {
             this.dialogAlterarStatus = true;
-        },        
+        },
         showDialogProximaEtapa() {
             this.$refs.alertComponent.exibirAlerta('Mensagem de exemplo');
 
@@ -849,7 +825,7 @@ export default {
             }).catch((err) => {
                 console.log(err.response.data);
             });
-        },       
+        },
         convertData(item) {
             if (item && typeof item === 'string') {
                 if (dayjs(item).format("YYYY-MM-DD") != "Invalid Date") {

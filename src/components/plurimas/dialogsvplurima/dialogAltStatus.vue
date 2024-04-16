@@ -6,7 +6,7 @@
           <v-toolbar color="deep-purple lighten-2" title="EditarStatus" dark>
             <v-toolbar-title>Alterar Status</v-toolbar-title>
           </v-toolbar>
-          <v-form @submit.prevent="saveStatus"> <!-- Movendo o evento submit para fora do v-form -->
+          <v-form @submit.prevent="saveStatus">
             <v-card-text>
               <v-container>
                 <v-combobox item-text="DESCRICAO" item-value="ID" v-model="selectedStatus" :items="statusAtivos"
