@@ -154,7 +154,7 @@
                                     <v-toolbar-items>
                                         <v-tooltip bottom>
                                             <template v-slot:activator="{ on, attrs }">
-                                                <v-btn icon dark @click="dialogExecOrgDocs()">
+                                                <v-btn icon dark @click="mostrarDialogOrgDocs()">
                                                     <v-icon v-bind="attrs" v-on="on">mdi-tray-full</v-icon>
                                                 </v-btn>
                                             </template>
@@ -225,6 +225,8 @@
                         </v-col>
                     </v-row>
                 </v-card>
+
+                <statusorgdocs ref="statusorgdocs" :zIndex="zIndexForOtherDialog" :show-dialogp="false" :idplurima="this.vPlurima.ID" :idusuario="this.idUsuario"></statusorgdocs>
 
                 <v-dialog v-model="dialogStatusOrgDocs" persistent width="900px">
                     <v-card>
@@ -447,10 +449,7 @@
 
                 <altstatus ref="alterarstatus" :zIndex="zIndexForOtherDialog" :show-dialogp="false"
                     :idplurima="this.vPlurima.ID" :idusuario="this.idUsuario"
-                    @atualizarstatus="this.getLogStatusPlurima"></altstatus>
-                <execorgdocs ref="execorgdocs" :zIndex="zIndexForOtherDialog" :show-dialogp="false"
-                    :idplurima="this.vPlurima.ID" :idusuario="this.idUsuario"
-                    @atualizarexecorgdocs="this.getExecucoesMotorOrgDocs"></execorgdocs>
+                    @atualizarstatus="this.getLogStatusPlurima"></altstatus>                
 
                 <v-dialog v-model="dialogExtratorDocs" persistent width="600px">
                     <v-form @submit.prevent="solicitarExecExtratorDocs">
@@ -541,12 +540,12 @@ import axios from "axios";
 import dayjs from "dayjs";
 import config from "@/config/store";
 import altstatus from '@/components/plurimas/dialogsvplurima/dialogAltStatus.vue';
-import execorgdocs from '@/components/plurimas/dialogsvplurima/dialogOrgDocs.vue';
+import statusorgdocs from '@/components/plurimas/dialogsvplurima/motor-organizar-docs/dialogStatusOrgDocs.vue';
 
 export default {
     name: 'plurimaview',
     components: {
-        snack, loading, loadingextrator, altstatus, execorgdocs
+        snack, loading, loadingextrator, altstatus, statusorgdocs
     },
     data() {
         return {
@@ -667,6 +666,9 @@ export default {
         },
         dialogExecOrgDocs() {
             this.$refs.execorgdocs.$emit('show-dialog', true);
+        },
+        mostrarDialogOrgDocs(){
+            this.$refs.statusorgdocs.$emit('show-dialog', true);
         },
         hideDialog() {
             this.showDialog = false;
