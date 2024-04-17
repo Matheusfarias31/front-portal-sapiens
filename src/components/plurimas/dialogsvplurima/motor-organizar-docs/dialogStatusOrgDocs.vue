@@ -40,10 +40,10 @@
                                 </template>
                                 <span>Arquivos Lidos</span>
                             </v-tooltip>
-                            <!-- <v-tooltip bottom>
+                            <v-tooltip bottom>
                                 <template v-slot:activator="{ on, attrs }">
                                     <v-icon v-bind="attrs" v-on="on" color="green lighten-1" :size="26"
-                                        @click="showDialogArquivosGeradosEditaveis(item.ID)" class="mr-2">
+                                        @click="dialogArquivosEditaveis(item.ID)" class="mr-2">
                                         mdi-file-document-check
                                     </v-icon>
                                 </template>
@@ -52,12 +52,12 @@
                             <v-tooltip bottom>
                                 <template v-slot:activator="{ on, attrs }">
                                     <v-icon v-bind="attrs" v-on="on" color="red lighten-1" :size="26"
-                                        @click="showDialogArquivosGeradosNEditaveis(item.ID)" class="mr-2">
+                                        @click="dialogArquivosNEditaveis(item.ID)" class="mr-2">
                                         mdi-file-document-alert
                                     </v-icon>
                                 </template>
                                 <span>Arquivos Gerados - Não Editáveis</span>
-                            </v-tooltip> -->
+                            </v-tooltip>
                         </template>
                         <template v-slot:[`item.CREATED_AT`]="{ item }">
                             {{ convertData(item.CREATED_AT) }}
@@ -74,7 +74,12 @@
                 </v-card>
             </div>
         </div>
-        <arquivoslidos ref="arquivoslidos" :idsolicitacao="this.idarquivoslidos" :zIndex="zIndexForOtherDialog"
+
+        <arquivosneditaveis ref="arquivosneditaveis" :idsolicitacao="this.idsolicitacao" :zIndex="zIndexForOtherDialog"
+            :show-dialogp="false" :idplurima="this.idplurima" :idusuario="this.idUsuario"></arquivosneditaveis>
+        <arquivoseditaveis ref="arquivoseditaveis" :idsolicitacao="this.idsolicitacao" :zIndex="zIndexForOtherDialog"
+            :show-dialogp="false" :idplurima="this.idplurima" :idusuario="this.idUsuario"></arquivoseditaveis>
+        <arquivoslidos ref="arquivoslidos" :idsolicitacao="this.idsolicitacao" :zIndex="zIndexForOtherDialog"
             :show-dialogp="false" :idplurima="this.idplurima" :idusuario="this.idUsuario"></arquivoslidos>
         <execorgdocs ref="execorgdocs" :zIndex="zIndexForOtherDialog" :show-dialogp="false" :idplurima="this.idplurima"
             :idusuario="this.idUsuario" @atualizarexecorgdocs="this.getExecucoesMotorOrgDocs"></execorgdocs>
@@ -88,10 +93,12 @@ import loading from "@/components/shared/loading.vue";
 import dayjs from "dayjs";
 import execorgdocs from '@/components/plurimas/dialogsvplurima/motor-organizar-docs/dialogOrgDocs.vue';
 import arquivoslidos from '@/components/plurimas/dialogsvplurima/motor-organizar-docs/dialogArquivosLidos.vue';
+import arquivoseditaveis from '@/components/plurimas/dialogsvplurima/motor-organizar-docs/dialogArquivosEditaveis.vue';
+import arquivosneditaveis from '@/components/plurimas/dialogsvplurima/motor-organizar-docs/dialogArquivosNEditaveis.vue';
 
 export default {
     components: {
-        loading, execorgdocs, arquivoslidos
+        loading, execorgdocs, arquivoslidos, arquivoseditaveis,arquivosneditaveis
     },
     props: {
         zIndex: {
@@ -118,7 +125,7 @@ export default {
             loadingExecOrgDocs: false,
             execucoesOrgDocs: [],
             zIndexForOtherDialog: 1000,
-            idarquivoslidos: null
+            idsolicitacao: null
         };
     },
     mounted() {
@@ -141,7 +148,14 @@ export default {
             this.$refs.arquivoslidos.idsolicitacao = idsolicitacao;
             this.$refs.arquivoslidos.$emit('show-dialog', true);
         },
-
+        dialogArquivosEditaveis(idsolicitacao) {
+            this.$refs.arquivoseditaveis.idsolicitacao = idsolicitacao;
+            this.$refs.arquivoseditaveis.$emit('show-dialog', true);
+        },
+        dialogArquivosNEditaveis(idsolicitacao) {
+            this.$refs.arquivosneditaveis.idsolicitacao = idsolicitacao;
+            this.$refs.arquivosneditaveis.$emit('show-dialog', true);
+        },
         async getExecucoesMotorOrgDocs(idplurima) {
             this.loadingExecOrgDocs = true;
             await axios.get(

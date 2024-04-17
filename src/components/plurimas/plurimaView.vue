@@ -154,7 +154,7 @@
                                     <v-toolbar-items>
                                         <v-tooltip bottom>
                                             <template v-slot:activator="{ on, attrs }">
-                                                <v-btn icon dark @click="mostrarDialogOrgDocs()">
+                                                <v-btn icon dark @click="showDialogOrgDocs()">
                                                     <v-icon v-bind="attrs" v-on="on">mdi-tray-full</v-icon>
                                                 </v-btn>
                                             </template>
@@ -227,133 +227,6 @@
                 </v-card>
 
                 <statusorgdocs ref="statusorgdocs" :zIndex="zIndexForOtherDialog" :show-dialogp="false" :idplurima="this.vPlurima.ID" :idusuario="this.idUsuario"></statusorgdocs>
-
-                <v-dialog v-model="dialogStatusOrgDocs" persistent width="900px">
-                    <v-card>
-                        <v-toolbar color="deep-purple lighten-2" title="MotorOrgDocs" dark>
-                            <v-toolbar-title>Motor - Organizar Documentos</v-toolbar-title>
-                            <v-spacer></v-spacer>
-                            <v-divider class="mr-0 ml-0" inset vertical></v-divider>
-                            <v-toolbar-items>
-                                <v-tooltip bottom>
-                                    <template v-slot:activator="{ on, attrs }">
-                                        <v-btn icon dark @click="showDialogOrgDocs">
-                                            <v-icon v-bind="attrs" v-on="on">mdi-plus-box</v-icon>
-                                        </v-btn>
-                                    </template>
-                                    <span>Solicitar Execução</span>
-                                </v-tooltip>
-                                <v-tooltip bottom>
-                                    <template v-slot:activator="{ on, attrs }">
-                                        <v-btn icon dark @click="getExecucoesMotorOrgDocs">
-                                            <v-icon v-bind="attrs" v-on="on">mdi-update</v-icon>
-                                        </v-btn>
-                                    </template>
-                                    <span>Atualizar Solicitações</span>
-                                </v-tooltip>
-                            </v-toolbar-items>
-                        </v-toolbar>
-                        <v-data-table :headers="headersExecucoesOrgDocs" :items="execucoesOrgDocs" item-key="ID"
-                            :search="search" :loading="loadingExecOrgDocs" class="mb-0 text-no-wrap" fixed-header
-                            :footer-props="{ 'items-per-page-options': [-1] }">
-
-                            <template v-slot:[`item.actions`]="{ item }">
-                                <v-tooltip bottom>
-                                    <template v-slot:activator="{ on, attrs }">
-                                        <v-icon v-bind="attrs" v-on="on" color="deep-purple lighten-2" :size="26"
-                                            @click="showDialogArquivosLidos(item.ID)" class="mr-2">
-                                            mdi-file-eye
-                                        </v-icon>
-                                    </template>
-                                    <span>Arquivos Lidos</span>
-                                </v-tooltip>
-                                <v-tooltip bottom>
-                                    <template v-slot:activator="{ on, attrs }">
-                                        <v-icon v-bind="attrs" v-on="on" color="green lighten-1" :size="26"
-                                            @click="showDialogArquivosGeradosEditaveis(item.ID)" class="mr-2">
-                                            mdi-file-document-check
-                                        </v-icon>
-                                    </template>
-                                    <span>Arquivos Gerados - Editáveis</span>
-                                </v-tooltip>
-                                <v-tooltip bottom>
-                                    <template v-slot:activator="{ on, attrs }">
-                                        <v-icon v-bind="attrs" v-on="on" color="red lighten-1" :size="26"
-                                            @click="showDialogArquivosGeradosNEditaveis(item.ID)" class="mr-2">
-                                            mdi-file-document-alert
-                                        </v-icon>
-                                    </template>
-                                    <span>Arquivos Gerados - Não Editáveis</span>
-                                </v-tooltip>
-                            </template>
-                            <template v-slot:[`item.CREATED_AT`]="{ item }">
-
-                                {{ convertData2(item.CREATED_AT) }}
-
-                            </template>
-                        </v-data-table>
-                        <v-card-actions>
-                            <v-spacer></v-spacer>
-                            <v-btn color="red darken-1" text @click="closeDialogStatusMotorOrg">
-                                Fechar
-                            </v-btn>
-                        </v-card-actions>
-                    </v-card>
-                </v-dialog>
-
-                <v-dialog v-model="dialogArquivosLidos" persistent width="900px">
-                    <v-card>
-                        <v-toolbar color="deep-purple lighten-2" title="MotorOrgDocs" dark>
-                            <v-toolbar-title>Arquivos Lidos</v-toolbar-title>
-                        </v-toolbar>
-                        <v-data-table :headers="headersArquivosLidos" :items="arquivoLidos" item-key="ID"
-                            :search="search" class="mb-0 text-no-wrap" fixed-header
-                            :footer-props="{ 'items-per-page-options': [-1] }">
-                        </v-data-table>
-                        <v-card-actions>
-                            <v-spacer></v-spacer>
-                            <v-btn color="red darken-1" text @click="closeDialogArquivosLidos">
-                                Fechar
-                            </v-btn>
-                        </v-card-actions>
-                    </v-card>
-                </v-dialog>
-
-                <v-dialog v-model="dialogArquivosGeradosEditaveis" persistent width="900px">
-                    <v-card>
-                        <v-toolbar color="deep-purple lighten-2" title="MotorOrgDocs" dark>
-                            <v-toolbar-title>Arquivos Gerados - Editáveis</v-toolbar-title>
-                        </v-toolbar>
-                        <v-data-table :headers="headersArquivosGeradosEditaveis" :items="arquivosGeradosEditaveis"
-                            item-key="ID" :search="search" class="mb-0 text-no-wrap" fixed-header
-                            :footer-props="{ 'items-per-page-options': [-1] }">
-                        </v-data-table>
-                        <v-card-actions>
-                            <v-spacer></v-spacer>
-                            <v-btn color="red darken-1" text @click="closeDialogArquivosGeradosEditaveis">
-                                Fechar
-                            </v-btn>
-                        </v-card-actions>
-                    </v-card>
-                </v-dialog>
-
-                <v-dialog v-model="dialogArquivosGeradosNEditaveis" persistent width="900px">
-                    <v-card>
-                        <v-toolbar color="deep-purple lighten-2" title="MotorOrgDocs" dark>
-                            <v-toolbar-title>Arquivos Gerados - Não Editáveis</v-toolbar-title>
-                        </v-toolbar>
-                        <v-data-table :headers="headersArquivosGeradosNEditaveis" :items="arquivosGeradosNEditaveis"
-                            item-key="ID" :search="search" class="mb-0 text-no-wrap" fixed-header
-                            :footer-props="{ 'items-per-page-options': [-1] }">
-                        </v-data-table>
-                        <v-card-actions>
-                            <v-spacer></v-spacer>
-                            <v-btn color="red darken-1" text @click="closeDialogArquivosGeradosNEditaveis">
-                                Fechar
-                            </v-btn>
-                        </v-card-actions>
-                    </v-card>
-                </v-dialog>
 
                 <v-dialog v-model="dialogProximaEtapa" persistent width="800px">
                     <v-form>
@@ -549,53 +422,11 @@ export default {
     },
     data() {
         return {
-            dialogProximaEtapa: false,
-            dialogOrgDocs: false,
-            filiaisOrgDocs: [],
-            selectedFilialOrgDocs: { ID: null, FILIAL: null },
-            caminhoOrgDOcs: '',
+            dialogProximaEtapa: false,            
             vPlurima: this.plurimaProp,
             vDetalheEtapa: this.detalheEtapa,
-            vLogStatusPlurima: this.logStatus,
-            dialogStatusOrgDocs: false,
-            loadingExecOrgDocs: false,
-            execucoesOrgDocs: [],
-            headersExecucoesOrgDocs: [
-                { text: "ID", value: "ID" },
-                { text: "SOLICITANTE", value: "NOME", align: "center" },
-                { text: "STATUS", value: "STATUS_MOTOR", align: "center" },
-                { text: "DATA", value: "CREATED_AT", align: "center" },
-                { text: "AÇÕES", value: "actions", sortable: false, align: "center" },
-
-            ],
-            arquivoLidos: [],
-            dialogArquivosLidos: false,
-            headersArquivosLidos: [
-                { text: "ID", value: "ID" },
-                { text: "ARQUIVO", value: "ARQUIVO", align: "center" },
-                { text: "ERRO", value: "ERRO", align: "center" },
-                { text: "PAGINAS EDITÁVEIS", value: "PAG_EDITAVEIS", align: "center" },
-                { text: "PAGINAS NÃO EDITÁVEIS", value: "PAG_NEDITAVEIS", align: "center" }
-            ],
-            arquivosGeradosEditaveis: [],
-            dialogArquivosGeradosEditaveis: false,
-            headersArquivosGeradosEditaveis: [
-                { text: "ID", value: "ID" },
-                { text: "ID ARQUIVO LIDO", value: "ID_ARQUIVO_LIDO", align: "center" },
-                { text: "ARQUIVO", value: "ARQUIVO", align: "center" },
-                { text: "TIPO", value: "TIPO", align: "center" },
-                { text: "MODELO", value: "REF_MODELO", align: "center" },
-                { text: "PAGINAS", value: "PAGINAS", align: "center" }
-            ],
-            extracao: { CAMINHO: null, CONFIGS: { NOTIFICAR_USUARIO: true, NOVOS_ARQUIVOS: false, PRIORIDADE: false, MULTIPLOS_DOCS: true } },
-            arquivosGeradosNEditaveis: [],
-            dialogArquivosGeradosNEditaveis: false,
-            headersArquivosGeradosNEditaveis: [
-                { text: "ID", value: "ID" },
-                { text: "ID ARQUIVO LIDO", value: "ID_ARQUIVO_LIDO", align: "center" },
-                { text: "ARQUIVO", value: "ARQUIVO", align: "center" },
-                { text: "PAGINAS", value: "PAGINAS", align: "center" },
-            ],
+            vLogStatusPlurima: this.logStatus,                                
+            extracao: { CAMINHO: null, CONFIGS: { NOTIFICAR_USUARIO: true, NOVOS_ARQUIVOS: false, PRIORIDADE: false, MULTIPLOS_DOCS: true } },            
             headersAtividadesEtapas: [
                 { text: "Atividade", value: "ATIVIDADE" },
                 { text: "Responsável", value: "NOME", align: "center" },
@@ -667,7 +498,7 @@ export default {
         dialogExecOrgDocs() {
             this.$refs.execorgdocs.$emit('show-dialog', true);
         },
-        mostrarDialogOrgDocs(){
+        showDialogOrgDocs(){
             this.$refs.statusorgdocs.$emit('show-dialog', true);
         },
         hideDialog() {
@@ -684,11 +515,7 @@ export default {
             }).catch((err) => {
                 console.log(err.response.data);
             });
-        },               
-        showDialogStatusMotorOrg() {
-            this.getExecucoesMotorOrgDocs();
-            this.dialogStatusOrgDocs = true;
-        },
+        },                       
         closeDialogStatusMotorOrg() {
             this.dialogStatusOrgDocs = false;
         },
@@ -697,137 +524,10 @@ export default {
         },
         showDialogProximaEtapa() {
             this.$refs.alertComponent.exibirAlerta('Mensagem de exemplo');
-
         },
         closeDialogProximaEtapa() {
             this.dialogProximaEtapa = false;
-        },
-        showDialogOrgDocs() {
-            this.getFiliaisOrgDocs();
-            this.dialogOrgDocs = true;
-        },
-        closeDialogOrgDocs() {
-            this.dialogOrgDocs = false;
-            this.selectedFilialOrgDocs = { ID: null, FILIAL: null };
-            this.caminhoOrgDOcs = '';
-        },
-        async getExecucoesMotorOrgDocs() {
-            this.$refs.loading.dialog = true;
-            this.loadingExecOrgDocs = true;
-            await axios.get(
-                `${process.env.VUE_APP_ROOT_API_MOTOR_ORG_DOCS_URL}solicitacoes/plurimas/${this.vPlurima.ID}`
-            ).then((response) => {
-                this.execucoesOrgDocs = response.data.result;
-                this.$refs.loading.dialog = false;
-                this.loadingExecOrgDocs = false;
-            }).catch((err) => {
-                console.log(err.response.data);
-            });
-
-        },
-        showDialogArquivosLidos(idSolicitacao) {
-            this.getArquivosLidosMotorOrg(idSolicitacao);
-            this.dialogArquivosLidos = true;
-        },
-        closeDialogArquivosLidos() {
-            this.dialogArquivosLidos = false;
-        },
-        async getArquivosLidosMotorOrg(idSolicitacao) {
-            this.$refs.loading.dialog = true;
-
-            await axios.get(
-                `${process.env.VUE_APP_ROOT_API_MOTOR_ORG_DOCS_URL}arquivos/lidos/${idSolicitacao}`
-            ).then((response) => {
-                this.arquivoLidos = response.data.result;
-                this.$refs.loading.dialog = false;
-            }).catch((err) => {
-                console.log(err.response.data);
-            });
-        },
-        showDialogArquivosGeradosEditaveis(idSolicitacao) {
-            this.getArquivosGeradosEditaveis(idSolicitacao);
-            this.dialogArquivosGeradosEditaveis = true;
-        },
-        closeDialogArquivosGeradosEditaveis() {
-            this.dialogArquivosGeradosEditaveis = false;
-        },
-        async getArquivosGeradosEditaveis(idSolicitacao) {
-            this.$refs.loading.dialog = true;
-
-            await axios.get(
-                `${process.env.VUE_APP_ROOT_API_MOTOR_ORG_DOCS_URL}arquivos/gerados/editaveis/${idSolicitacao}`
-            ).then((response) => {
-                this.arquivosGeradosEditaveis = response.data.result;
-                this.$refs.loading.dialog = false;
-            }).catch((err) => {
-                console.log(err.response.data);
-            });
-        },
-        showDialogArquivosGeradosNEditaveis(idSolicitacao) {
-            this.getArquivosGeradosNEditaveis(idSolicitacao);
-            this.dialogArquivosGeradosNEditaveis = true;
-        },
-        closeDialogArquivosGeradosNEditaveis() {
-            this.dialogArquivosGeradosNEditaveis = false;
-        },
-        async getArquivosGeradosNEditaveis(idSolicitacao) {
-            this.$refs.loading.dialog = true;
-
-            await axios.get(
-                `${process.env.VUE_APP_ROOT_API_MOTOR_ORG_DOCS_URL}arquivos/gerados/neditaveis/${idSolicitacao}`
-            ).then((response) => {
-                this.arquivosGeradosNEditaveis = response.data.result;
-                this.$refs.loading.dialog = false;
-            }).catch((err) => {
-                console.log(err.response.data);
-            });
-        },
-        async solicitarExecOrgDocs() {
-            this.$refs.loading.dialog = true;
-
-            if (this.caminhoOrgDOcs == "") {
-                this.$refs.snackbar.show({
-                    message: "Por favor, informe um caminho.",
-                    status: false,
-                });
-                this.$refs.loading.dialog = false;
-                return;
-            }
-
-            await axios.post(`${process.env.VUE_APP_ROOT_API_MOTOR_ORG_DOCS_URL}solicitacoes`, {
-                ID_PLURIMA: this.vPlurima.ID,
-                ID_USUARIO: this.idUsuario,
-                ID_FILIAL: this.selectedFilialOrgDocs.ID,
-                PRIORIDADE: false,
-                CAMINHO: this.caminhoOrgDOcs,
-                ORIGEM: 'PLURIFY'
-            }).then((response) => {
-                this.selectedStatus.ID = '1017';
-                this.observacaoStatus = 'Motor de Organizar Documentos solicitado.'
-                this.selectedStatus.DESCRICAO = 'AGUARD. MOTOR'
-                this.selectedStatus.COLOR = 'blue lighten-1';
-                this.saveStatus();
-                this.closeDialogOrgDocs();
-                this.closeDialogProximaEtapa();
-                this.getExecucoesMotorOrgDocs();
-                this.$refs.loading.dialog = false;
-                this.$refs.snackbar.show({
-                    message: response.data.result,
-                    status: response.data.status,
-                });
-            }).catch((err) => {
-                console.log(err);
-            });
-        },
-        async getFiliaisOrgDocs() {
-            await axios.get(
-                `${process.env.VUE_APP_ROOT_API_MOTOR_ORG_DOCS_URL}filiais`
-            ).then((response) => {
-                this.filiaisOrgDocs = response.data.result;
-            }).catch((err) => {
-                console.log(err.response.data);
-            });
-        },
+        },                                          
         convertData(item) {
             if (item && typeof item === 'string') {
                 if (dayjs(item).format("YYYY-MM-DD") != "Invalid Date") {

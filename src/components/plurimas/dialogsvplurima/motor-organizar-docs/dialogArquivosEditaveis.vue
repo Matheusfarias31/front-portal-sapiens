@@ -4,9 +4,9 @@
             <div class="dialog-content">
                 <v-card width="900px">
                     <v-toolbar color="deep-purple lighten-2" title="arquivoslidos" dark>
-                        <v-toolbar-title>Arquivos Lidos | Solicitação ID: {{ this.idsolicitacao }}</v-toolbar-title>
+                        <v-toolbar-title>Arquivos Gerados Editáveis | Solicitação ID: {{ this.idsolicitacao }}</v-toolbar-title>
                     </v-toolbar>
-                    <v-data-table :loading="loadingarquivoslidos" :headers="headersArquivosLidos" :items="arquivoLidos"
+                    <v-data-table :loading="loadingtabela" :headers="headersArquivosGeradosEditaveis" :items="arquivosGeradosEditaveis"
                         item-key="ID" :search="search" class="mb-0 text-no-wrap" fixed-header
                         :footer-props="{ 'items-per-page-options': [-1] }">
                     </v-data-table>
@@ -51,27 +51,28 @@ export default {
     data() {
         return {
             showDialog: false,
-            arquivoLidos: [],            
-            headersArquivosLidos: [
+            arquivosGeradosEditaveis: [],            
+            headersArquivosGeradosEditaveis: [
                 { text: "ID", value: "ID" },
+                { text: "ID ARQUIVO LIDO", value: "ID_ARQUIVO_LIDO", align: "center" },
                 { text: "ARQUIVO", value: "ARQUIVO", align: "center" },
-                { text: "ERRO", value: "ERRO", align: "center" },
-                { text: "PAGINAS EDITÁVEIS", value: "PAG_EDITAVEIS", align: "center" },
-                { text: "PAGINAS NÃO EDITÁVEIS", value: "PAG_NEDITAVEIS", align: "center" }
+                { text: "TIPO", value: "TIPO", align: "center" },
+                { text: "MODELO", value: "REF_MODELO", align: "center" },
+                { text: "PAGINAS", value: "PAGINAS", align: "center" }
             ],
-            loadingarquivoslidos: true
+            loadingtabela: true
         };
     },
     mounted() {
         this.$on('show-dialog', async (show) => {
             this.$refs.loading.dialog = true;
             try {
-                await this.getArquivosLidos(this.idsolicitacao);
+                await this.getArquivosGeradosEditaveis(this.idsolicitacao);
                 this.showDialog = show;
             } catch (error) {
-                console.error("Erro ao obter arquivos lidos:", error);
+                console.error("Erro ao obter arquivos editáveis:", error);
             } finally {
-                this.$refs.loading.dialog = false;
+                this.$refs.loading.dialog = false;                
             }
         });
     },
@@ -80,13 +81,13 @@ export default {
             this.arquivoLidos = [];
             this.showDialog = false;
         },
-        async getArquivosLidos() {
-            this.loadingarquivoslidos = true;
+        async getArquivosGeradosEditaveis(idSolicitacao) {            
+            this.loadingtabela = true;
             await axios.get(
-                `${process.env.VUE_APP_ROOT_API_MOTOR_ORG_DOCS_URL}arquivos/lidos/${this.idsolicitacao}`
+                `${process.env.VUE_APP_ROOT_API_MOTOR_ORG_DOCS_URL}arquivos/gerados/editaveis/${idSolicitacao}`
             ).then((response) => {
-                this.arquivoLidos = response.data.result;
-                this.loadingarquivoslidos = false;
+                this.arquivosGeradosEditaveis = response.data.result;                
+                this.loadingtabela = false;
             }).catch((err) => {
                 console.log(err.response.data);
             });
