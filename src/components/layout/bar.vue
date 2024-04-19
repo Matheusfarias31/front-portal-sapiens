@@ -44,6 +44,13 @@
             </v-list-item-icon>
             <v-list-item-title>Status</v-list-item-title>
           </v-list-item>
+
+          <v-list-item to="/portalplurimas/admin/modelosregex">
+            <v-list-item-icon>
+              <v-icon>mdi-regex</v-icon>
+            </v-list-item-icon>
+            <v-list-item-title>Modelos Regex</v-list-item-title>
+          </v-list-item>
         </v-list>
       </v-menu>
 

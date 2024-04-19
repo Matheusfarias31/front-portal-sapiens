@@ -8,6 +8,7 @@ import trabalho from '../components/admin/trabalho.vue'
 import usuarios from '../views/usuarios.vue'
 import fase from '../views/fase.vue';
 import statusview from '../views/status.vue';
+import configregex from '../views/configregex.vue'
 
 Vue.use(VueRouter)
 
@@ -44,6 +45,12 @@ const routes = [
     path: '/portalplurimas/admin/trabalho',
     name: 'tarefas',
     component: trabalho,
+    beforeEnter: config.auth
+  },
+  {
+    path: '/portalplurimas/admin/modelosregex',
+    name: 'modelosregex',
+    component: configregex,
     beforeEnter: config.auth
   },
   {

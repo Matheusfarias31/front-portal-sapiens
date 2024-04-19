@@ -289,7 +289,7 @@ export default {
         headersMiniDash: [
             { text: "STATUS", value: "DESCRICAO" },
             { text: "ATIVO", value: "ATIVO", align: "center" },
-            { text: "MNIDASH", value: "MINIDASH", align: "center" }
+            { text: "MINIDASH", value: "MINIDASH", align: "center" }
         ],
         status: [],
         headerStatus: [
