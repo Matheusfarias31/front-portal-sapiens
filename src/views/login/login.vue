@@ -3,8 +3,8 @@
       <v-col cols="7">
         <div class="espacoLogo" style="position: relative; z-index: 2;">
         <v-img
-          max-width="700"
-          max-height="700"
+          max-width="800"
+          max-height="800"
           src="../../assets/Plurify2.png"
           class="mx-auto"
         ></v-img>

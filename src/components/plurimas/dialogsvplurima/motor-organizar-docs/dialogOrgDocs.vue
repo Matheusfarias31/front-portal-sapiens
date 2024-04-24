@@ -103,13 +103,13 @@ export default {
         CAMINHO: this.caminhoOrgDOcs,
         ORIGEM: 'PLURIFY'
       }).then((response) => {
-        this.hideDialog();        
         this.$refs.loading.dialog = false;
+        this.hideDialog();                        
         this.$emit('atualizarexecorgdocs');
         this.$refs.snackbar.show({
           message: response.data.result,
           status: response.data.status,
-        });
+        });        
       }).catch((err) => {
         console.log(err);
       });

@@ -612,21 +612,14 @@ export default {
                     PRIORIDADE: this.extracao.CONFIGS.PRIORIDADE,
                     MULTIPLOS_DOCS: this.extracao.CONFIGS.MULTIPLOS_DOCS
                 }
-            }).then((response) => {
-                this.selectedStatus.ID = '1017';
-                this.observacaoStatus = `Motor de Extrair Dados Solicitado. ID da Extração: ${response.data.idextracao}`;
-                this.selectedStatus.DESCRICAO = 'AGUARD. MOTOR'
-                this.selectedStatus.COLOR = 'blue lighten-1';
-                this.$refs.loading.dialog = false;
-
+            }).then((response) => {                             
                 this.$refs.snackbar.show({
                     message: `${response.data.result} ID: ${response.data.idextracao}`,
                     status: response.data.status,
                 });
 
-                this.saveStatus();
-                this.closeDialogExtratorDocs();
-                this.closeDialogProximaEtapa();
+                this.$refs.loading.dialog = false;                
+                this.closeDialogExtratorDocs();                
             }).catch((err) => {
                 console.log(err);
             });

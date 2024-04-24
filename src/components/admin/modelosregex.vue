@@ -47,7 +47,7 @@
                             <template>
                                 <v-tooltip bottom>
                                     <template v-slot:activator="{ on, attrs }">
-                                        <v-btn v-bind="attrs" v-on="on" icon dark>
+                                        <v-btn v-bind="attrs" v-on="on" icon dark @click="salvarConfigsModelo">
                                             <v-icon>mdi-content-save-outline</v-icon>
                                         </v-btn>
                                     </template>
@@ -155,10 +155,10 @@
                                     </v-row>
                                 </template>
                             </template>
-                            <template v-slot:[`item.IDENTIDADE`]="{ item }">
+                            <template v-slot:[`item.CAMPO_IDENTIDADE`]="{ item }">
                                 <template>
                                     <v-row justify="center">
-                                        <v-switch color="deep-purple lighten-2" v-model="item.IDENTIDADE"
+                                        <v-switch color="deep-purple lighten-2" v-model="item.CAMPO_IDENTIDADE"
                                             @change="onSwitchChange(item)" v-bind="attrs" v-on="on"></v-switch>
                                     </v-row>
                                 </template>
@@ -206,6 +206,7 @@ import axios from "axios";
 import dayjs from "dayjs";
 import loading from "@/components/shared/loading.vue";
 import snack from "@/components/shared/snackBar.vue";
+import config from "@/config/store";
 
 export default {
     name: 'modelosregex',
@@ -228,11 +229,14 @@ export default {
             { text: "VERBA", value: "VERBA", align: "center" },
             { text: "REGISTRO CP", value: "REGISTRO_CP", align: "center" },
             { text: "ATIVO", value: "ATIVO", align: "center" },
-            { text: "IDENTIDADE", value: "IDENTIDADE", align: "center" },
+            { text: "IDENTIDADE", value: "CAMPO_IDENTIDADE", align: "center" },
         ],
         camposmodelo: [],
+        configsmodelo: [],
         search: '',
-        dialogmodelo: false
+        dialogmodelo: false,
+        dataSalvarConfigs: [],
+        idUsuario: config.user().ID_USUARIO,
     }),
     created() {
         this.listarModelos();
@@ -242,9 +246,9 @@ export default {
             this.loadingtable = true;
             this.modelos = [];
 
-            axios({
+            await axios({
                 method: "get",
-                url: `${process.env.VUE_APP_ROOT_API_BASE_URL}config/modelos/ativos`,
+                url: `${process.env.VUE_APP_ROOT_API_BASE_URL}regex/modelos/ativos`,
             })
                 .then((res) => {
                     this.modelos = res.data.result;
@@ -258,21 +262,101 @@ export default {
             this.$refs.loading.dialog = true;
             this.modelodetalhado = [];
 
-            axios({
+            await axios({
                 method: "get",
-                url: `${process.env.VUE_APP_ROOT_API_BASE_URL}config/modelos/${idmodelo}/detalhes`,
+                url: `${process.env.VUE_APP_ROOT_API_BASE_URL}regex/modelos/${idmodelo}/detalhes`,
             }).then((res) => {
                 this.modelodetalhado = res.data.result[0];
                 this.camposmodelo = this.modelodetalhado.REGEXES;
-                console.log(this.camposmodelo);
-                this.$refs.loading.dialog = false;
-                this.dialogmodelo = true;
             }).catch((err) => {
                 console.log(err);
             });
 
+            await this.buscarConfigsModelo(idmodelo);
+
+            this.completarConfigs()
+            this.$refs.loading.dialog = false;
+            this.dialogmodelo = true;
+        },
+        completarConfigs() {
+            for (const campo of this.camposmodelo) {
+                if (this.configsmodelo.length > 0) {
+                    const correspondencia = this.configsmodelo.find(config => config.ID_CAMPO === campo.ID && config.ID_MODELO === this.modelodetalhado.ID);
+
+                    if (correspondencia) {
+                        campo.ATIVO = correspondencia.ATIVO;
+                        campo.CAMPO_IDENTIDADE = correspondencia.CAMPO_IDENTIDADE;
+                    } else {
+                        campo.ATIVO = false;
+                        campo.CAMPO_IDENTIDADE = false;
+                    }
+                } else {
+                    campo.ATIVO = false;
+                    campo.CAMPO_IDENTIDADE = false;
+                }
+            }
+        },
+        async buscarConfigsModelo(idmodelo) {
+            this.configsmodelo = []
+
+            await axios({
+                method: "get",
+                url: `${process.env.VUE_APP_ROOT_API_BASE_URL}regex/modelos/${idmodelo}/configs`,
+            }).then((res) => {
+                this.configsmodelo = res.data.result;
+
+                if (this.configsmodelo.length == 0) {
+                    this.$refs.snackbar.show({
+                        message: 'Modelo ainda não foi configurado',
+                        status: 'alert',
+                    });
+                }
+            }).catch((err) => {
+                console.log(err);
+            });
+        },
+        async salvarConfigsModelo() {
+            this.$refs.loading.dialog = true;
+            this.criarDataSalvarConfig()
+            await axios.post(`${process.env.VUE_APP_ROOT_API_BASE_URL}regex/modelos/${this.modelodetalhado.ID}/configs`, {
+                CONFIGS: this.dataSalvarConfigs
+            }).then((res) => {
+                this.$refs.loading.dialog = false;
+                this.$refs.snackbar.show({
+                    message: res.data.result,
+                    status: res.data.status,
+                });
+
+                this.closeDetalhamento()
+            }).catch((err) => {
+                console.log(err);
+            });
+        },
+        criarDataSalvarConfig() {
+            if (this.camposmodelo.length > 0) {
+                this.dataSalvarConfigs = []
+
+                for (const campo of this.camposmodelo) {
+                    this.dataSalvarConfigs.push({
+                        ID_USUARIO: this.idUsuario,
+                        ID_MODELO: this.modelodetalhado.ID,
+                        ID_CAMPO: campo.ID,
+                        DESCRICAO_CAMPO: campo.CAMPO,
+                        CAMPO_IDENTIDADE: campo.CAMPO_IDENTIDADE ? true : false,
+                        ATIVO: campo.ATIVO ? true : false
+                    })
+                }
+            } else {
+                this.$refs.snackbar.show({
+                    message: 'Nenhuma informação para salvar.',
+                    status: 'alert',
+                });
+            }
         },
         closeDetalhamento() {
+            this.camposmodelo = [];
+            this.configsmodelo = [];
+            this.dataSalvarConfigs = [];
             this.dialogmodelo = false;
             this.modelodetalhado = [];
         },

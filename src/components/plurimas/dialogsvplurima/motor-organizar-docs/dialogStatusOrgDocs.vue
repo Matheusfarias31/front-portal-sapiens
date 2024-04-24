@@ -76,13 +76,13 @@
         </div>
 
         <arquivosneditaveis ref="arquivosneditaveis" :idsolicitacao="this.idsolicitacao" :zIndex="zIndexForOtherDialog"
-            :show-dialogp="false" :idplurima="this.idplurima" :idusuario="this.idUsuario"></arquivosneditaveis>
+            :show-dialogp="false" :idplurima="this.idplurima" :idusuario="this.idusuario"></arquivosneditaveis>
         <arquivoseditaveis ref="arquivoseditaveis" :idsolicitacao="this.idsolicitacao" :zIndex="zIndexForOtherDialog"
-            :show-dialogp="false" :idplurima="this.idplurima" :idusuario="this.idUsuario"></arquivoseditaveis>
+            :show-dialogp="false" :idplurima="this.idplurima" :idusuario="this.idusuario"></arquivoseditaveis>
         <arquivoslidos ref="arquivoslidos" :idsolicitacao="this.idsolicitacao" :zIndex="zIndexForOtherDialog"
-            :show-dialogp="false" :idplurima="this.idplurima" :idusuario="this.idUsuario"></arquivoslidos>
+            :show-dialogp="false" :idplurima="this.idplurima" :idusuario="this.idusuario"></arquivoslidos>
         <execorgdocs ref="execorgdocs" :zIndex="zIndexForOtherDialog" :show-dialogp="false" :idplurima="this.idplurima"
-            :idusuario="this.idUsuario" @atualizarexecorgdocs="this.getExecucoesMotorOrgDocs"></execorgdocs>
+            :idusuario="this.idusuario" @atualizarexecorgdocs="this.getExecucoesMotorOrgDocs"></execorgdocs>
         <loading ref="loading" />
     </div>
 </template>
@@ -156,14 +156,15 @@ export default {
             this.$refs.arquivosneditaveis.idsolicitacao = idsolicitacao;
             this.$refs.arquivosneditaveis.$emit('show-dialog', true);
         },
-        async getExecucoesMotorOrgDocs(idplurima) {
+        async getExecucoesMotorOrgDocs() {
             this.loadingExecOrgDocs = true;
             await axios.get(
-                `${process.env.VUE_APP_ROOT_API_MOTOR_ORG_DOCS_URL}solicitacoes/plurimas/${idplurima}`
+                `${process.env.VUE_APP_ROOT_API_MOTOR_ORG_DOCS_URL}solicitacoes/plurimas/${this.idplurima}`
             ).then((response) => {
                 console.log(response.data.result);
                 this.execucoesOrgDocs = response.data.result;
                 this.loadingExecOrgDocs = false;
+                this.$refs.loading.dialog = false;
             }).catch((err) => {
                 console.log(err.response.data);
             });

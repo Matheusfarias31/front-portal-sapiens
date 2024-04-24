@@ -33,10 +33,28 @@
     methods:{
       show(data) {
         this.message = data.message || 'faltando Mensagem'
-        this.color =  data.status ? 'success' : 'red'
+        this.color =  this.returnColor(data.status)
         this.timer = data.timer || 3000
-        this.icon = data.status ? 'mdi-check' :'mdi-alert-circle-outline' 
+        this.icon = this.returnIcon(data.status)
         this.showSnackbar = true
+      },
+      returnColor(status){
+        if(status == 'alert'){
+          return 'yellow darken-4'          
+        }else if(status){
+          return 'teal darken-4'
+        }else{
+          return 'red darken-4'
+        }
+      },
+      returnIcon(status){
+        if(status == 'alert'){
+          return 'mdi-alert-circle-outline'          
+        }else if(status){
+          return 'mdi-check-circle-outline'
+        }else{
+          return 'mdi-alert'
+        }
       }
     }
   }
