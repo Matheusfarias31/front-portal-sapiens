@@ -1,0 +1,216 @@
+<template>
+    <div>
+        <div v-if="showDialog" class="dialog-overlay" :style="{ zIndex: zIndex }">
+            <div class="dialog-content">
+                <v-card max-width="900px">
+                    <v-toolbar color="deep-purple lighten-2" title="paginasextraidas" dark>
+                        <v-toolbar-title>Páginas Extraídas - Arquivo: {{ this.arquivo.ARQUIVO }}</v-toolbar-title>
+                        <v-spacer></v-spacer>
+                        <v-divider class="mr-0 ml-0" inset vertical></v-divider>
+                        <v-toolbar-items class="d-flex align-center my-2">
+                            <v-tooltip bottom>
+                                <template v-slot:activator="{ on, attrs }">
+                                    <v-btn class="mb-2" icon dark>
+                                        <v-icon v-bind="attrs" v-on="on">mdi-clipboard-text-search</v-icon>
+                                    </v-btn>
+                                </template>
+                                <span>Buscar Texto Específico</span>
+                            </v-tooltip>
+                            <v-tooltip bottom>
+                                <template v-slot:activator="{ on, attrs }">
+                                    <v-btn class="mb-2" icon dark>
+                                        <v-icon v-bind="attrs" v-on="on">mdi-script-text-outline</v-icon>
+                                    </v-btn>
+                                </template>
+                                <span>Baixar Texto Original</span>
+                            </v-tooltip>
+                            <v-tooltip bottom>
+                                <template v-slot:activator="{ on, attrs }">
+                                    <v-btn class="mb-2" icon dark>
+                                        <v-icon v-bind="attrs" v-on="on">mdi-microsoft-excel</v-icon>
+                                    </v-btn>
+                                </template>
+                                <span>Baixar Excel</span>
+                            </v-tooltip>
+                        </v-toolbar-items>
+                        <v-divider class="mr-0 ml-0" inset vertical></v-divider>
+                        <v-toolbar-items class="d-flex align-center my-2">
+                            <v-tooltip bottom>
+                                <template v-slot:activator="{ on, attrs }">
+                                    <v-btn class="mb-2" icon dark @click="getPaginasArquivo()">
+                                        <v-icon v-bind="attrs" v-on="on">mdi-update</v-icon>
+                                    </v-btn>
+                                </template>
+                                <span>Atualizar Solicitações</span>
+                            </v-tooltip>
+                        </v-toolbar-items>
+                    </v-toolbar>
+                    <v-data-table :headers="headersPaginas" :items="paginas" item-key="ID" :search="search"
+                        :loading="loadingtable" class="text-no-wrap" fixed-header>
+                        <template v-slot:[`item.EDITAVEL`]="{ item }">
+                            <v-tooltip bottom>
+                                <template v-slot:activator="{ on, attrs }">
+                                    <v-icon v-if="!item.EDITAVEL" v-bind="attrs" v-on="on" color="red darken-3"
+                                        :size="26" class="mr-2">
+                                        mdi-file-document-remove-outline
+                                    </v-icon>
+                                    <v-icon v-if="item.EDITAVEL" v-bind="attrs" v-on="on" color="green darken-2"
+                                        :size="26" class="mr-2">
+                                        mdi-file-document-check-outline
+                                    </v-icon>
+                                </template>
+                                <span v-if="!item.EDITAVEL">Não editável</span>
+                                <span v-if="item.EDITAVEL">Editável</span>
+                            </v-tooltip>
+                        </template>
+                        <template v-slot:[`item.actions`]="{ item }">                            
+                            <v-tooltip bottom>
+                                <template v-slot:activator="{ on, attrs }">
+                                    <v-icon v-bind="attrs" v-on="on" color="teal darken-1" :size="26" @click="showDadosPagina(item)"
+                                        class="mr-2">
+                                        mdi-table-eye
+                                    </v-icon>
+                                </template>
+                                <span>Visualizar Dados</span>
+                            </v-tooltip>
+                        </template>
+                    </v-data-table>
+                    <v-form>
+                        <v-card-actions>
+                            <v-spacer></v-spacer>
+                            <v-btn color="red darken-1" text @click="hideDialog">
+                                Fechar
+                            </v-btn>
+                        </v-card-actions>
+                    </v-form>
+                </v-card>
+            </div>
+        </div>
+        <dadospagina ref="dadospagina" :zIndex="this.zIndexForOtherDialog"></dadospagina>
+        <loading ref="loading" />
+    </div>
+</template>
+
+<script>
+import axios from "axios";
+import loading from "@/components/shared/loading.vue";
+import dayjs from "dayjs";
+import dadospagina from "@/components/plurimas/dialogsvplurima/motor-extrator-docs/dialogDadosPagina.vue"
+
+export default {
+    components: {
+        loading, dadospagina
+    },
+    props: {
+        zIndex: {
+            type: Number,
+            default: 1000
+        },
+        idarquivo: {
+            type: Number
+        },
+        arquivo: {
+            type: Array
+        }
+    },
+    data() {
+        return {
+            showDialog: false,
+            paginas: [],
+            search: '',
+            headersPaginas: [
+                { text: "ID", value: "ID", align: "center" },
+                { text: "NÚMERO", value: "NUM_PAGINA", align: "center" },
+                { text: "EDITÁVEL", value: "EDITAVEL", align: "center" },
+                { text: "TIPO", value: "TIPO_MODELO", align: "center" },
+                { text: "MODELO", value: "REF_MODELO", align: "center" },
+                { text: "COMPATIBILIDADE(%)", value: "COMPATIBILIDADE", align: "center" },
+                { text: "Ações", value: "actions", sortable: false, align: "center" },
+            ],
+            loadingtable: false
+        };
+    },
+    mounted() {
+        this.$on('show-dialog', async (show) => {
+            this.$refs.loading.dialog = true;
+            await this.getPaginasArquivo();
+            this.$refs.loading.dialog = false;
+            this.showDialog = show;
+        });
+    },
+    methods: {
+        hideDialog() {
+            this.paginas = []
+            this.showDialog = false;
+        },
+        async showDadosPagina(item){
+            this.$refs.dadospagina.pagina = item;            
+            this.$refs.dadospagina.numpaginas = this.paginas.length;            
+            this.$refs.dadospagina.$emit('show-dialog', true);
+        },
+        async getPaginasArquivo() {
+            this.loadingtable = true;
+            await axios.get(
+                `${process.env.VUE_APP_ROOT_API_EXTRATOR_DOCS_URL}arquivos/${this.idarquivo}/paginas`
+            ).then((response) => {
+                this.paginas = response.data.result;
+                this.loadingtable = false;
+            }).catch((err) => {
+                console.log(err.response.data);
+            });
+        },
+        convertData(item) {
+            if (dayjs(item).format("DD/MM/YYYY") != "Invalid Date") {
+                return dayjs(item.replace("T", " ").replace("Z", "")).format(
+                    "DD/MM/YYYY"
+                );
+            }
+        },
+        calcularTempoDecorrido(datainicio, datafim) {
+            const dataInicio = new Date(datainicio);
+            const dataFim = new Date(datafim);
+            let diferenca = Math.abs(dataFim - dataInicio) / 1000; // diferença em segundos
+            let tempoDecorrido;
+
+            if (diferenca < 60) {
+                tempoDecorrido = `${Math.floor(diferenca)} segundos`;
+            } else if (diferenca < 3600) {
+                tempoDecorrido = `${Math.floor(diferenca / 60)} minutos`;
+            } else {
+                tempoDecorrido = `${Math.floor(diferenca / 3600)} horas`;
+            }
+
+            return tempoDecorrido;
+        }
+    }
+};
+</script>
+
+<style scoped>
+.dialog-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(234, 0, 255, 0.020);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.dialog-content {
+    background-color: rgba(255, 255, 255, 0);
+    /* Totalmente transparente */
+    padding: 0px;
+    border-radius: 2px;
+    margin-top: 0;
+    margin-bottom: 0;
+    margin-left: 0;
+    margin-right: 0;
+}
+
+.dialog-content button {
+    margin-top: 10px;
+}
+</style>

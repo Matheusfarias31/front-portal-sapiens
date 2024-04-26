@@ -10,7 +10,7 @@
                         <v-toolbar-items class="d-flex align-center my-2">
                             <v-tooltip bottom>
                                 <template v-slot:activator="{ on, attrs }">
-                                    <v-btn icon dark @click="dialogExecOrgDocs">
+                                    <v-btn class="mb-2" icon dark @click="dialogExecOrgDocs">
                                         <v-icon v-bind="attrs" v-on="on">mdi-plus-box</v-icon>
                                     </v-btn>
                                 </template>
@@ -18,7 +18,7 @@
                             </v-tooltip>
                             <v-tooltip bottom>
                                 <template v-slot:activator="{ on, attrs }">
-                                    <v-btn icon dark @click="getExecucoesMotorOrgDocs(idplurima)">
+                                    <v-btn class="mb-2" icon dark @click="getExecucoesMotorOrgDocs(idplurima)">
                                         <v-icon v-bind="attrs" v-on="on">mdi-update</v-icon>
                                     </v-btn>
                                 </template>
@@ -187,7 +187,7 @@ export default {
     left: 0;
     width: 100%;
     height: 100%;
-    background-color: rgba(0, 0, 0, 0.5);
+    background-color: rgba(234, 0, 255, 0.020);
     display: flex;
     justify-content: center;
     align-items: center;

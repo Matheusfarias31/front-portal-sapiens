@@ -162,7 +162,7 @@
                                         </v-tooltip>
                                         <v-tooltip bottom>
                                             <template v-slot:activator="{ on, attrs }">
-                                                <v-btn icon dark @click="showDialogExtratorDocs()">
+                                                <v-btn icon dark @click="showDialogExtDocs()">
                                                     <v-icon v-bind="attrs" v-on="on">mdi-database-cog</v-icon>
                                                 </v-btn>
                                             </template>
@@ -226,7 +226,10 @@
                     </v-row>
                 </v-card>
 
-                <statusorgdocs ref="statusorgdocs" :zIndex="zIndexForOtherDialog" :show-dialogp="false" :idplurima="this.vPlurima.ID" :idusuario="this.idUsuario"></statusorgdocs>
+                <statusorgdocs ref="statusorgdocs" :zIndex="zIndexForOtherDialog" :show-dialogp="false"
+                    :idplurima="this.vPlurima.ID" :idusuario="this.idUsuario"></statusorgdocs>
+                <statusextdocs ref="statusextdocs" :zIndex="zIndexForOtherDialog" :show-dialogp="false"
+                    :idplurima="this.vPlurima.ID" :idusuario="this.idUsuario"></statusextdocs>
 
                 <v-dialog v-model="dialogProximaEtapa" persistent width="800px">
                     <v-form>
@@ -322,55 +325,7 @@
 
                 <altstatus ref="alterarstatus" :zIndex="zIndexForOtherDialog" :show-dialogp="false"
                     :idplurima="this.vPlurima.ID" :idusuario="this.idUsuario"
-                    @atualizarstatus="this.getLogStatusPlurima"></altstatus>                
-
-                <v-dialog v-model="dialogExtratorDocs" persistent width="600px">
-                    <v-form @submit.prevent="solicitarExecExtratorDocs">
-                        <v-card>
-                            <v-toolbar color="deep-purple lighten-2" title="EditarStatus" dark>
-                                <v-toolbar-title>Executar Extrator de Documentos</v-toolbar-title>
-                            </v-toolbar>
-                            <v-card-text>
-                                <v-container>
-                                    <v-row justify="center">
-                                        <v-col cols="12" sm="6">
-                                            <v-switch color="deep-purple lighten-2"
-                                                v-model="extracao.CONFIGS.NOTIFICAR_USUARIO"
-                                                label="Notificar Usuário"></v-switch>
-                                        </v-col>
-                                        <v-col cols="12" sm="6">
-                                            <v-switch color="deep-purple lighten-2"
-                                                v-model="extracao.CONFIGS.NOVOS_ARQUIVOS"
-                                                label="Novos Arquivos"></v-switch>
-                                        </v-col>
-                                        <v-col cols="12" sm="6">
-                                            <v-switch color="deep-purple lighten-2"
-                                                v-model="extracao.CONFIGS.PRIORIDADE" label="Prioridade"></v-switch>
-                                        </v-col>
-                                        <v-col cols="12" sm="6">
-                                            <v-switch color="deep-purple lighten-2"
-                                                v-model="extracao.CONFIGS.MULTIPLOS_DOCS"
-                                                label="Múltiplos Documentos"></v-switch>
-                                        </v-col>
-                                    </v-row>
-                                    <v-textarea required class="mt-2 mb-0 text-left align-start"
-                                        label="Caminho dos Documentos"
-                                        placeholder="Caminho dos arquivos (Máx. 300 caracteres)" outlined
-                                        maxlength="300" v-model="extracao.CAMINHO_DOC"></v-textarea>
-                                </v-container>
-                            </v-card-text>
-                            <v-card-actions>
-                                <v-spacer></v-spacer>
-                                <v-btn type="submit" color="deep-purple darken-1" text>
-                                    Salvar
-                                </v-btn>
-                                <v-btn color="red darken-1" text @click="closeDialogExtratorDocs">
-                                    Cancelar
-                                </v-btn>
-                            </v-card-actions>
-                        </v-card>
-                    </v-form>
-                </v-dialog>
+                    @atualizarstatus="this.getLogStatusPlurima"></altstatus>
 
             </v-dialog>
         </v-row>
@@ -414,19 +369,20 @@ import dayjs from "dayjs";
 import config from "@/config/store";
 import altstatus from '@/components/plurimas/dialogsvplurima/dialogAltStatus.vue';
 import statusorgdocs from '@/components/plurimas/dialogsvplurima/motor-organizar-docs/dialogStatusOrgDocs.vue';
+import statusextdocs from '@/components/plurimas/dialogsvplurima/motor-extrator-docs/dialogStatusExtDados.vue'
 
 export default {
     name: 'plurimaview',
     components: {
-        snack, loading, loadingextrator, altstatus, statusorgdocs
+        snack, loading, loadingextrator, altstatus, statusorgdocs, statusextdocs
     },
     data() {
         return {
-            dialogProximaEtapa: false,            
+            dialogProximaEtapa: false,
             vPlurima: this.plurimaProp,
             vDetalheEtapa: this.detalheEtapa,
-            vLogStatusPlurima: this.logStatus,                                
-            extracao: { CAMINHO: null, CONFIGS: { NOTIFICAR_USUARIO: true, NOVOS_ARQUIVOS: false, PRIORIDADE: false, MULTIPLOS_DOCS: true } },            
+            vLogStatusPlurima: this.logStatus,
+            extracao: { CAMINHO: null, CONFIGS: { NOTIFICAR_USUARIO: true, NOVOS_ARQUIVOS: false, PRIORIDADE: false, MULTIPLOS_DOCS: true } },
             headersAtividadesEtapas: [
                 { text: "Atividade", value: "ATIVIDADE" },
                 { text: "Responsável", value: "NOME", align: "center" },
@@ -488,7 +444,7 @@ export default {
     async mounted() {
         await this.getStatusAtivos();
     },
-    methods: {        
+    methods: {
         increaseZIndex() {
             this.zIndexForOtherDialog += 1;
         },
@@ -498,8 +454,11 @@ export default {
         dialogExecOrgDocs() {
             this.$refs.execorgdocs.$emit('show-dialog', true);
         },
-        showDialogOrgDocs(){
+        showDialogOrgDocs() {
             this.$refs.statusorgdocs.$emit('show-dialog', true);
+        },
+        showDialogExtDocs() {
+            this.$refs.statusextdocs.$emit('show-dialog', true);
         },
         hideDialog() {
             this.showDialog = false;
@@ -515,7 +474,7 @@ export default {
             }).catch((err) => {
                 console.log(err.response.data);
             });
-        },                       
+        },
         closeDialogStatusMotorOrg() {
             this.dialogStatusOrgDocs = false;
         },
@@ -527,7 +486,7 @@ export default {
         },
         closeDialogProximaEtapa() {
             this.dialogProximaEtapa = false;
-        },                                          
+        },
         convertData(item) {
             if (item && typeof item === 'string') {
                 if (dayjs(item).format("YYYY-MM-DD") != "Invalid Date") {
@@ -586,44 +545,7 @@ export default {
             this.dialogExtratorDocs = false;
             this.extracao = { CAMINHO: null, CONFIGS: { NOTIFICAR_USUARIO: true, NOVOS_ARQUIVOS: false, PRIORIDADE: false, MULTIPLOS_DOCS: true } };
             this.caminhoOrgDOcs = '';
-        },
-        async solicitarExecExtratorDocs() {
-            this.$refs.loading.dialog = true;
-
-            if (this.extracao.CAMINHO_DOC == "") {
-                this.$refs.snackbar.show({
-                    message: "Por favor, informe um caminho.",
-                    status: false,
-                });
-                this.$refs.loading.dialog = false;
-                return;
-            }
-
-            await axios.post(`${process.env.VUE_APP_ROOT_API_EXTRATOR_DOCS_URL}extracoes`, {
-                ORIGEM: "PLURIFY",
-                ID_REF_ORIGEM: this.vPlurima.ID,
-                ID_USUARIO: this.idUsuario,
-                EMAIL_USUARIO: this.emailUsuario,
-                NOME_USUARIO: this.nomeUsuario,
-                CAMINHO_DOC: this.extracao.CAMINHO_DOC,
-                CONFIGS: {
-                    NOTIFICAR_USUARIO: this.extracao.CONFIGS.NOTIFICAR_USUARIO,
-                    NOVOS_ARQUIVOS: this.extracao.CONFIGS.NOVOS_ARQUIVOS,
-                    PRIORIDADE: this.extracao.CONFIGS.PRIORIDADE,
-                    MULTIPLOS_DOCS: this.extracao.CONFIGS.MULTIPLOS_DOCS
-                }
-            }).then((response) => {                             
-                this.$refs.snackbar.show({
-                    message: `${response.data.result} ID: ${response.data.idextracao}`,
-                    status: response.data.status,
-                });
-
-                this.$refs.loading.dialog = false;                
-                this.closeDialogExtratorDocs();                
-            }).catch((err) => {
-                console.log(err);
-            });
-        }
+        }        
     }
 }
 

@@ -1,7 +1,7 @@
 <template>
   <div>
     <v-data-table :headers="headers" :items="PlurimasV" item-key="ID" :search="search" :loading="loadingTable"
-      class="mb-16 text-no-wrap" height="400" fixed-header :footer-props="{ 'items-per-page-options': [-1] }">
+      class="mb-16 text-no-wrap" height="400" fixed-header>
       <template v-slot:top>
         <v-toolbar flat class="mb-8 rounded" dark color="deep-purple lighten-2">
           <v-toolbar-title>Plúrimas</v-toolbar-title>
