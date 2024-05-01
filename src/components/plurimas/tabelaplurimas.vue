@@ -63,7 +63,7 @@
       </template>
     </v-data-table>
     <plurimaView ref="plurimaview" :show="dialogPlurima" :plurimaProp="plurima" :detalheEtapa="detalheEtapa" :logStatus="logStatusPlurima"
-      @closePlurimaView="dialogPlurima = false, closeDialogPlurimaView()" />
+      @closePlurimaView="dialogPlurima = false, closeDialogPlurimaView()" @atualizarDados="showPlurima()"/>
 
     <formAprovacao :show="dialogAprovacao" :idUsuario="idUsuario"
       @closeAprovacao="dialogAprovacao = false, closeDialogPlurimaView()" :plurimaProp="plurima" />
@@ -142,7 +142,8 @@ export default {
       detalheEtapa: [],
       logStatusPlurima: [],
       dialogPlurima: false,
-      dialogAprovacao: false
+      dialogAprovacao: false,
+      plurimav: null
     };
   },
   mounted() {
@@ -169,6 +170,7 @@ export default {
       this.$emit("closeViewPlurima");
     },
     async showPlurima(item) {
+      
       this.$refs.loading.dialog = true;
       await this.getAtividadesEtapa(item.ID, item.ID_ETAPA);
       await this.getPlurimaID(item.ID);

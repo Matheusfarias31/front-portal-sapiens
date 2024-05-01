@@ -179,15 +179,15 @@
                                         <v-divider class="mr-0 ml-0" inset vertical></v-divider>
                                         <v-tooltip bottom>
                                             <template v-slot:activator="{ on, attrs }">
-                                                <v-btn icon dark>
-                                                    <v-icon v-bind="attrs" v-on="on">mdi-skip-forward</v-icon>
+                                                <v-btn icon dark @click="showDialogAlterarEtapa()">
+                                                    <v-icon v-bind="attrs" v-on="on">mdi-swap-horizontal</v-icon>
                                                 </v-btn>
                                             </template>
-                                            <span>Avançar Etapa</span>
+                                            <span>Alterar Etapa</span>
                                         </v-tooltip>
                                         <v-tooltip bottom>
                                             <template v-slot:activator="{ on, attrs }">
-                                                <v-btn icon dark>
+                                                <v-btn icon dark @click="showDialogAtividadesEtapa()">
                                                     <v-icon v-bind="attrs" v-on="on">mdi-note-edit-outline</v-icon>
                                                 </v-btn>
                                             </template>
@@ -230,102 +230,17 @@
                     :idplurima="this.vPlurima.ID" :idusuario="this.idUsuario"></statusorgdocs>
                 <statusextdocs ref="statusextdocs" :zIndex="zIndexForOtherDialog" :show-dialogp="false"
                     :idplurima="this.vPlurima.ID" :idusuario="this.idUsuario"></statusextdocs>
-
-                <v-dialog v-model="dialogProximaEtapa" persistent width="800px">
-                    <v-form>
-                        <v-card>
-                            <v-toolbar color="deep-purple lighten-2" title="EditarEtapa" dark>
-                                <v-toolbar-title>Próxima Etapa</v-toolbar-title>
-                            </v-toolbar>
-                            <v-card-text>
-                                <v-row justify="center">
-                                    <v-col>
-                                        <v-container class="d-flex justify-center align-center">
-                                            <v-tooltip bottom>
-                                                <template v-slot:activator="{ on }">
-                                                    <v-btn class="mr-2 ml-2" v-on="on" size="large"
-                                                        color="lime lighten-1" dark><v-icon
-                                                            left>mdi-check-decagram</v-icon>VALIDAÇÃO</v-btn>
-                                                </template>
-                                                <span>Validação da Demanda</span>
-                                            </v-tooltip>
-                                            <v-icon color="deep-purple lighten-2">mdi-skip-forward</v-icon>
-                                            <v-tooltip bottom>
-                                                <template v-slot:activator="{ on }">
-                                                    <v-btn class="mr-2 ml-2" v-on="on" size="large"
-                                                        color="light-green lighten-1" dark><v-icon
-                                                            left>mdi-account-group</v-icon>PRIMEIRA</v-btn>
-                                                </template>
-                                                <span>Listagem de Envolvidos</span>
-                                            </v-tooltip>
-                                            <v-icon color="deep-purple lighten-2">mdi-skip-forward</v-icon>
-                                            <v-tooltip bottom>
-                                                <template v-slot:activator="{ on }">
-                                                    <v-btn class="mr-2 ml-2" v-on="on" size="large"
-                                                        color="green lighten-1" dark><v-icon
-                                                            left>mdi-database-eye</v-icon>SEGUNDA</v-btn>
-                                                </template>
-                                                <span>Validação de Dados</span>
-                                            </v-tooltip>
-                                            <v-icon color="deep-purple lighten-2">mdi-skip-forward</v-icon>
-                                            <v-tooltip bottom>
-                                                <template v-slot:activator="{ on }">
-                                                    <v-btn class="mr-2 ml-2" v-on="on" size="large"
-                                                        color="teal lighten-1" dark><v-icon
-                                                            left>mdi-file-document-multiple</v-icon>TERCEIRA</v-btn>
-                                                </template>
-                                                <span>Cálculos Individuais</span>
-                                            </v-tooltip>
-                                        </v-container>
-                                    </v-col>
-                                </v-row>
-                                <v-divider></v-divider>
-                                <v-row justify="center" class="mt-3">
-                                    <p>Deseja executar um motor antes? Selecione um motor abaixo:</p>
-                                    <v-container class=" mt-0 d-flex justify-center align-center">
-                                        <v-tooltip bottom>
-                                            <template v-slot:activator="{ on }">
-                                                <v-btn class="mr-2 ml-2" v-on="on" size="small" color="cyan darken-3"
-                                                    dark @click="showDialogOrgDocs()">
-                                                    <v-icon left>mdi-tray-full</v-icon>Organizar Docs
-                                                </v-btn>
-                                            </template>
-                                            <span>Organizar Documentos da Plúrima</span>
-                                        </v-tooltip>
-                                        <v-tooltip bottom>
-                                            <template v-slot:activator="{ on }">
-                                                <v-btn class="mr-2 ml-2" v-on="on" size="small" color="teal darken-3"
-                                                    dark>
-                                                    <v-icon left>mdi-database-cog</v-icon>Extração de Dados
-                                                </v-btn>
-                                            </template>
-                                            <span>Realizar Extração dos Dados</span>
-                                        </v-tooltip>
-                                        <v-tooltip bottom>
-                                            <template v-slot:activator="{ on }">
-                                                <v-btn class="mr-2 ml-2" v-on="on" size="small" color="brown darken-3"
-                                                    dark>
-                                                    <v-icon left>mdi-timer-cog</v-icon>Calcular Pontos
-                                                </v-btn>
-                                            </template>
-                                            <span>Calcular Cartôes de Ponto</span>
-                                        </v-tooltip>
-                                    </v-container>
-                                </v-row>
-                            </v-card-text>
-                            <v-card-actions>
-                                <v-spacer></v-spacer>
-                                <v-btn color="red darken-1" text @click="closeDialogProximaEtapa">
-                                    Cancelar
-                                </v-btn>
-                            </v-card-actions>
-                        </v-card>
-                    </v-form>
-                </v-dialog>
-
+            
                 <altstatus ref="alterarstatus" :zIndex="zIndexForOtherDialog" :show-dialogp="false"
                     :idplurima="this.vPlurima.ID" :idusuario="this.idUsuario"
                     @atualizarstatus="this.getLogStatusPlurima"></altstatus>
+
+                <atividadesetapa ref="atividadesetapa" :zIndex="zIndexForOtherDialog" :show-dialogp="false"
+                    :idplurima="this.vPlurima.ID" :idusuario="this.idUsuario" :idetapa="this.vPlurima.ID_ETAPA"
+                    :etapa="this.vPlurima.ETAPA" @atualizaratividades="this.getAtividadesEtapa"></atividadesetapa>
+
+                <alteraretapa ref="alteraretapa" :zIndex="zIndexForOtherDialog" :show-dialogp="false"
+                    :idplurima="this.vPlurima.ID" :idusuario="this.idUsuario" :etapaatual="this.vPlurima.ETAPA"  @close="this.closeDialog"></alteraretapa>
 
             </v-dialog>
         </v-row>
@@ -369,12 +284,15 @@ import dayjs from "dayjs";
 import config from "@/config/store";
 import altstatus from '@/components/plurimas/dialogsvplurima/dialogAltStatus.vue';
 import statusorgdocs from '@/components/plurimas/dialogsvplurima/motor-organizar-docs/dialogStatusOrgDocs.vue';
-import statusextdocs from '@/components/plurimas/dialogsvplurima/motor-extrator-docs/dialogStatusExtDados.vue'
+import statusextdocs from '@/components/plurimas/dialogsvplurima/motor-extrator-docs/dialogStatusExtDados.vue';
+import atividadesetapa from '@/components/plurimas/dialogsvplurima/atividade-etapa/dialogAtividadeEtapa.vue';
+import alteraretapa from '@/components/plurimas/dialogsvplurima/atividade-etapa/dialogProximaEtapa.vue';
+
 
 export default {
     name: 'plurimaview',
     components: {
-        snack, loading, loadingextrator, altstatus, statusorgdocs, statusextdocs
+        snack, loading, loadingextrator, altstatus, statusorgdocs, statusextdocs, atividadesetapa, alteraretapa
     },
     data() {
         return {
@@ -460,6 +378,9 @@ export default {
         showDialogExtDocs() {
             this.$refs.statusextdocs.$emit('show-dialog', true);
         },
+        showDialogAtividadesEtapa() {
+            this.$refs.atividadesetapa.$emit('show-dialog', true);
+        },
         hideDialog() {
             this.showDialog = false;
         },
@@ -475,18 +396,27 @@ export default {
                 console.log(err.response.data);
             });
         },
+        async getAtividadesEtapa() {
+            await axios.get(
+                `${process.env.VUE_APP_ROOT_API_BASE_URL}atividades/etapas/plurima/${this.vPlurima.ID}/${this.vPlurima.ID_ETAPA}`
+            ).then((response) => {
+                this.vDetalheEtapa = response.data.result;
+            }).catch((err) => {
+                console.log(err.response.data);
+            });
+        },
+        async atualizarDados(){
+            this.$emit('atualizardados');  
+        },
         closeDialogStatusMotorOrg() {
             this.dialogStatusOrgDocs = false;
         },
         showDialogAlterarStatus() {
             this.dialogAlterarStatus = true;
         },
-        showDialogProximaEtapa() {
-            this.$refs.alertComponent.exibirAlerta('Mensagem de exemplo');
-        },
-        closeDialogProximaEtapa() {
-            this.dialogProximaEtapa = false;
-        },
+        showDialogAlterarEtapa() {
+            this.$refs.alteraretapa.$emit('show-dialog', true);
+        },        
         convertData(item) {
             if (item && typeof item === 'string') {
                 if (dayjs(item).format("YYYY-MM-DD") != "Invalid Date") {
@@ -537,14 +467,6 @@ export default {
         },
         reset() {
             this.$refs.pluriDialog.reset();
-        },
-        showDialogExtratorDocs() {
-            this.dialogExtratorDocs = true;
-        },
-        closeDialogExtratorDocs() {
-            this.dialogExtratorDocs = false;
-            this.extracao = { CAMINHO: null, CONFIGS: { NOTIFICAR_USUARIO: true, NOVOS_ARQUIVOS: false, PRIORIDADE: false, MULTIPLOS_DOCS: true } };
-            this.caminhoOrgDOcs = '';
         }        
     }
 }
