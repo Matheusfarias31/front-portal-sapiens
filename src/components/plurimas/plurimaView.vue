@@ -369,6 +369,7 @@ export default {
             this.$refs.atividadesetapa.$emit('show-dialog', true);
         },
         hideDialog() {
+            this.$emit('closePlurimaView');  
             this.dialog = false;
         },
         async getLogStatusPlurima() {
