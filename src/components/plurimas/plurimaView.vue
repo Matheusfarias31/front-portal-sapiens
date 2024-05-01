@@ -5,11 +5,10 @@
                 <v-card color="deep-purple lighten-5" light class="mt-0">
                     <v-toolbar color="deep-purple lighten-2" dark><v-icon dark
                             right>mdi-folder-information-outline</v-icon>
-                        <v-divider class="mx-4" inset vertical></v-divider><v-toolbar-title>{{ toolbarTittle
-                            }}</v-toolbar-title>
+                        <v-divider class="mx-4" inset vertical></v-divider><v-toolbar-title>Plurima</v-toolbar-title>
                         <v-spacer></v-spacer>
                         <v-toolbar-items>
-                            <v-btn icon dark @click="closeDialog">
+                            <v-btn icon dark @click="hideDialog">
                                 <v-icon>mdi-close</v-icon>
                             </v-btn>
                         </v-toolbar-items>
@@ -203,12 +202,12 @@
                                                         right>mdi-timer-play-outline</v-icon><v-divider class="mx-2"
                                                         inset vertical></v-divider>Início da etapa atual: {{
                 convertData(
-                    this.detalheEtapa.length > 0 ? this.detalheEtapa[0].DATA_CRIACAO :
+                    this.vDetalheEtapa.length > 0 ? this.vDetalheEtapa[0].DATA_CRIACAO :
                         this.vPlurima.DATA_CRIACAO) }}</v-card-text></v-card>
                                         </v-col>
                                     </v-row>
 
-                                    <v-data-table :headers="headersAtividadesEtapas" :items="vDetalheEtapa"
+                                    <v-data-table :headers="headersAtividadesEtapas" :items="atividadesEtapaD"
                                         item-key="ID" class="mt-3 mr-2 mb-16 text-no-wrap" height="200" fixed-header
                                         :footer-props="{ 'items-per-page-options': [-1] }">
                                         <template v-slot:[`item.DATA_CRIACAO`]="{ item }">
@@ -230,7 +229,7 @@
                     :idplurima="this.vPlurima.ID" :idusuario="this.idUsuario"></statusorgdocs>
                 <statusextdocs ref="statusextdocs" :zIndex="zIndexForOtherDialog" :show-dialogp="false"
                     :idplurima="this.vPlurima.ID" :idusuario="this.idUsuario"></statusextdocs>
-            
+
                 <altstatus ref="alterarstatus" :zIndex="zIndexForOtherDialog" :show-dialogp="false"
                     :idplurima="this.vPlurima.ID" :idusuario="this.idUsuario"
                     @atualizarstatus="this.getLogStatusPlurima"></altstatus>
@@ -240,16 +239,17 @@
                     :etapa="this.vPlurima.ETAPA" @atualizaratividades="this.getAtividadesEtapa"></atividadesetapa>
 
                 <alteraretapa ref="alteraretapa" :zIndex="zIndexForOtherDialog" :show-dialogp="false"
-                    :idplurima="this.vPlurima.ID" :idusuario="this.idUsuario" :etapaatual="this.vPlurima.ETAPA"  @close="this.closeDialog"></alteraretapa>
+                    :idplurima="this.vPlurima.ID" :idusuario="this.idUsuario" :etapaatual="this.vPlurima.ETAPA"
+                    @inicializar="this.inicializar"></alteraretapa>
 
             </v-dialog>
         </v-row>
 
-        <loading ref="loading" />
-        <snack ref="snackbar" />
-        <loadingextrator ref="loadingextrator" />
+        <loading ref="loading" />    
+        <snack ref="snackbar" />        
 
     </div>
+    
 </template>
 
 <style scoped>
@@ -277,7 +277,6 @@
 
 <script>
 import loading from "@/components/shared/loading.vue";
-import loadingextrator from "@/components/shared/loadingextrator.vue"
 import snack from "@/components/shared/snackBar.vue";
 import axios from "axios";
 import dayjs from "dayjs";
@@ -292,14 +291,15 @@ import alteraretapa from '@/components/plurimas/dialogsvplurima/atividade-etapa/
 export default {
     name: 'plurimaview',
     components: {
-        snack, loading, loadingextrator, altstatus, statusorgdocs, statusextdocs, atividadesetapa, alteraretapa
+        snack, loading, altstatus, statusorgdocs, statusextdocs, atividadesetapa, alteraretapa
     },
     data() {
         return {
-            dialogProximaEtapa: false,
-            vPlurima: this.plurimaProp,
-            vDetalheEtapa: this.detalheEtapa,
-            vLogStatusPlurima: this.logStatus,
+            dialogProximaEtapa: false,            
+            vPlurima: null,
+            vDetalheEtapa: [],
+            atividadesEtapaD: [],
+            vLogStatusPlurima: null,
             extracao: { CAMINHO: null, CONFIGS: { NOTIFICAR_USUARIO: true, NOVOS_ARQUIVOS: false, PRIORIDADE: false, MULTIPLOS_DOCS: true } },
             headersAtividadesEtapas: [
                 { text: "Atividade", value: "ATIVIDADE" },
@@ -312,57 +312,44 @@ export default {
             idUsuario: config.user().ID_USUARIO,
             nomeUsuario: config.user().NOME,
             emailUsuario: config.user().EMAIL,
-            Authorization: "Bearer " + localStorage.getItem("tokenSistema_1017")
+            Authorization: "Bearer " + localStorage.getItem("tokenSistema_1017"),
+            dialog: false
         }
     },
     props: {
-        show: Boolean,
-        plurimaProp: Array,
-        detalheEtapa: Array,
-        logStatus: Array
+        idplurima: { type: Number},         
+    },        
+    async mounted() {        
+        this.$on('show-dialog', async (show) => {               
+            await this.inicializar();               
+            this.dialog = show;            
+        });
+        
     },
-    computed: {
-        dialog: {
-            get() {
-                return this.$props["show"];
-            },
-            set(value) {
-                this.$emit("update:show", value);
-            },
+    methods: {        
+        async inicializar() {                     
+            await this.getPlurimaID(this.idplurima);            
+            await this.getAtividadesEtapa();
+            await this.getLogStatusPlurima();                        
         },
-        toolbarTittle() {
-            return `Plúrima: ${this.vPlurima.NUMERO_PROCESSO} | ID: ${this.vPlurima.ID}`;
-        }
-    },
-    watch: {
-        show(newValue) {
-            this.dialog = newValue;
+        async getPlurimaID(idPlurima) {
+            await axios.get(
+                `${process.env.VUE_APP_ROOT_API_BASE_URL}plurimas/${idPlurima}`
+            ).then((response) => {
+                this.vPlurima = response.data.result[0];
+            }).catch((err) => {
+                console.log(err.response.data);
+            });
         },
-        plurimaProp(newValue) {
-            if (newValue) {
-                this.vPlurima = newValue;
-            }
+        async getAtividadesEtapa() {
+            await axios.get(
+                `${process.env.VUE_APP_ROOT_API_BASE_URL}atividades/etapas/plurima/${this.idplurima}/${this.vPlurima.ID_ETAPA}`
+            ).then((response) => {
+                this.atividadesEtapaD = response.data.result;
+            }).catch((err) => {
+                console.log(err.response.data);
+            });
         },
-        dialogProximaEtapa(newValue) {
-            if (newValue) {
-                this.dialogProximaEtapa = newValue;
-            }
-        },
-        detalheEtapa(newValue) {
-            if (newValue) {
-                this.vDetalheEtapa = newValue;
-            }
-        },
-        logStatus(newValue) {
-            if (newValue) {
-                this.vLogStatusPlurima = newValue;
-            }
-        }
-    },
-    async mounted() {
-        await this.getStatusAtivos();
-    },
-    methods: {
         increaseZIndex() {
             this.zIndexForOtherDialog += 1;
         },
@@ -382,11 +369,11 @@ export default {
             this.$refs.atividadesetapa.$emit('show-dialog', true);
         },
         hideDialog() {
-            this.showDialog = false;
+            this.dialog = false;
         },
         async getLogStatusPlurima() {
             await axios.get(
-                `${process.env.VUE_APP_ROOT_API_BASE_URL}log/status/plurima/${this.vPlurima.ID}`
+                `${process.env.VUE_APP_ROOT_API_BASE_URL}log/status/plurima/${this.idplurima}`
             ).then((response) => {
                 this.vLogStatusPlurima = response.data.log;
                 this.vPlurima.ID_STATUS = this.vLogStatusPlurima[0].ID;
@@ -395,18 +382,9 @@ export default {
             }).catch((err) => {
                 console.log(err.response.data);
             });
-        },
-        async getAtividadesEtapa() {
-            await axios.get(
-                `${process.env.VUE_APP_ROOT_API_BASE_URL}atividades/etapas/plurima/${this.vPlurima.ID}/${this.vPlurima.ID_ETAPA}`
-            ).then((response) => {
-                this.vDetalheEtapa = response.data.result;
-            }).catch((err) => {
-                console.log(err.response.data);
-            });
-        },
-        async atualizarDados(){
-            this.$emit('atualizardados');  
+        },        
+        async atualizarDados() {
+            this.$emit('atualizardados');
         },
         closeDialogStatusMotorOrg() {
             this.dialogStatusOrgDocs = false;
@@ -416,7 +394,7 @@ export default {
         },
         showDialogAlterarEtapa() {
             this.$refs.alteraretapa.$emit('show-dialog', true);
-        },        
+        },
         convertData(item) {
             if (item && typeof item === 'string') {
                 if (dayjs(item).format("YYYY-MM-DD") != "Invalid Date") {
@@ -467,7 +445,7 @@ export default {
         },
         reset() {
             this.$refs.pluriDialog.reset();
-        }        
+        }
     }
 }
 

@@ -60,8 +60,7 @@
                     </v-form>
                 </v-card>
             </div>
-        </div>
-        <paginasarquivo ref="paginasextraidas" :zIndex="this.zIndexForOtherDialog"></paginasarquivo>
+        </div>        
         <loading ref="loading" />
         <snack ref="snackbar" />
     </div>
@@ -122,7 +121,7 @@ export default {
                     message: res.data.result,
                     status: res.data.status,
                 });
-                this.$emit('close');                
+                this.$emit('inicializar');                
                 this.hideDialog();
                 this.$refs.loading.dialog = false;
             }).catch((err) => {
@@ -143,7 +142,7 @@ export default {
                     message: res.data.result,
                     status: res.data.status,
                 });
-                this.$emit('close');                
+                this.$emit('inicializar');                
                 this.hideDialog();
                 this.$refs.loading.dialog = false;
             }).catch((err) => {
@@ -164,7 +163,7 @@ export default {
                     message: res.data.result,
                     status: res.data.status,
                 });
-                this.$emit('close');                
+                this.$emit('inicializar');                
                 this.hideDialog();
                 this.$refs.loading.dialog = false;
             }).catch((err) => {
@@ -185,7 +184,7 @@ export default {
                     message: res.data.result,
                     status: res.data.status,
                 });
-                this.$emit('close');                
+                this.$emit('inicializar');                
                 this.hideDialog();
                 this.$refs.loading.dialog = false;
             }).catch((err) => {

@@ -62,13 +62,12 @@
         </v-chip>
       </template>
     </v-data-table>
-    <plurimaView ref="plurimaview" :show="dialogPlurima" :plurimaProp="plurima" :detalheEtapa="detalheEtapa" :logStatus="logStatusPlurima"
-      @closePlurimaView="dialogPlurima = false, closeDialogPlurimaView()" @atualizarDados="showPlurima()"/>
+    <plurimaView ref="plurimaview" @closePlurimaView="closeDialogPlurimaView()"/>
 
     <formAprovacao :show="dialogAprovacao" :idUsuario="idUsuario"
       @closeAprovacao="dialogAprovacao = false, closeDialogPlurimaView()" :plurimaProp="plurima" />
 
-    <loading ref="loading" />
+    <loading ref="loadingl" />
     <snack ref="snackbar" />
   </div>
 </template>
@@ -142,8 +141,7 @@ export default {
       detalheEtapa: [],
       logStatusPlurima: [],
       dialogPlurima: false,
-      dialogAprovacao: false,
-      plurimav: null
+      dialogAprovacao: false,      
     };
   },
   mounted() {
@@ -170,18 +168,16 @@ export default {
       this.$emit("closeViewPlurima");
     },
     async showPlurima(item) {
+      this.$refs.loadingl.dialog = true;
+      this.$refs.plurimaview.idplurima = item.ID;      
+      this.$refs.plurimaview.$emit('show-dialog', true);      
+      this.$refs.loadingl.dialog = false;
       
-      this.$refs.loading.dialog = true;
-      await this.getAtividadesEtapa(item.ID, item.ID_ETAPA);
-      await this.getPlurimaID(item.ID);
-      await this.getLogStatusPlurima(item.ID);
-      this.$refs.loading.dialog = false;
-      this.dialogPlurima = true;
     },
     async showAprova(item) {
-      this.$refs.loading.dialog = true;
+      this.$refs.loadingl.dialog = true;
       await this.getPlurimaID(item.ID);
-      this.$refs.loading.dialog = false;
+      this.$refs.loadingl.dialog = false;
       this.dialogAprovacao = true;
     },
     async getLogStatusPlurima(idPlurima) {
