@@ -1,14 +1,15 @@
-import Vue from 'vue'
-import VueRouter from 'vue-router'
-import login from '../views/login/login.vue'
-import plurimas from '../views/plurimas/plurimas.vue'
+import Vue from 'vue';
+import VueRouter from 'vue-router';
+import login from '../views/login/login.vue';
+import plurimas from '../views/plurimas/plurimas.vue';
 import logout from '../views/logout.vue';
 import config from '@/config/store';
-import trabalho from '../components/admin/trabalho.vue'
-import usuarios from '../views/usuarios.vue'
+import trabalho from '../components/admin/trabalho.vue';
+import usuarios from '../views/usuarios.vue';
 import fase from '../views/fase.vue';
 import statusview from '../views/status.vue';
-import configregex from '../views/configregex.vue'
+import configregex from '../views/configregex.vue';
+import atividades from '../views/atividades.vue';
 
 Vue.use(VueRouter)
 
@@ -57,6 +58,12 @@ const routes = [
     path: '/portalplurimas/admin/status',
     name: 'status',
     component: statusview,
+    beforeEnter: config.auth
+  },
+  {
+    path: '/portalplurimas/admin/atividades',
+    name: 'atividades',
+    component: atividades,
     beforeEnter: config.auth
   },
   { path: "*", redirect: '/portalplurimas/logout' }

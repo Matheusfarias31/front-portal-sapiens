@@ -343,7 +343,7 @@ export default {
         },
         async getAtividadesEtapa() {
             await axios.get(
-                `${process.env.VUE_APP_ROOT_API_BASE_URL}atividades/etapas/plurima/${this.idplurima}/${this.vPlurima.ID_ETAPA}`
+                `${process.env.VUE_APP_ROOT_API_BASE_URL}atividades/plurima/${this.idplurima}/etapas/${this.vPlurima.ID_ETAPA}`
             ).then((response) => {
                 this.atividadesEtapaD = response.data.result;
             }).catch((err) => {

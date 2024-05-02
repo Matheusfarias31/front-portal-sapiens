@@ -51,6 +51,13 @@
             </v-list-item-icon>
             <v-list-item-title>Modelos Regex</v-list-item-title>
           </v-list-item>
+
+          <v-list-item to="/portalplurimas/admin/atividades">
+            <v-list-item-icon>
+              <v-icon>mdi-notebook-outline</v-icon>
+            </v-list-item-icon>
+            <v-list-item-title>Atividades</v-list-item-title>
+          </v-list-item>
         </v-list>
       </v-menu>
 
