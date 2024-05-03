@@ -18,16 +18,18 @@
                             </v-tooltip>
                             <v-tooltip bottom>
                                 <template v-slot:activator="{ on, attrs }">
-                                    <v-btn class="mb-2" icon dark>
-                                        <v-icon v-bind="attrs" v-on="on">mdi-script-text-outline</v-icon>
+                                    <v-btn class="mb-4" icon dark>
+                                        <v-icon v-bind="attrs" v-on="on"
+                                            @click="baixarTextoOriginal()">mdi-script-text-outline</v-icon>
                                     </v-btn>
                                 </template>
                                 <span>Baixar Texto Original</span>
                             </v-tooltip>
                             <v-tooltip bottom>
                                 <template v-slot:activator="{ on, attrs }">
-                                    <v-btn class="mb-2" icon dark>
-                                        <v-icon v-bind="attrs" v-on="on">mdi-microsoft-excel</v-icon>
+                                    <v-btn class="mb-4" icon dark>
+                                        <v-icon v-bind="attrs" v-on="on"
+                                            @click="downloadExcel()">mdi-microsoft-excel</v-icon>
                                     </v-btn>
                                 </template>
                                 <span>Baixar Excel</span>
@@ -63,11 +65,11 @@
                                 <span v-if="item.EDITAVEL">Editável</span>
                             </v-tooltip>
                         </template>
-                        <template v-slot:[`item.actions`]="{ item }">                            
+                        <template v-slot:[`item.actions`]="{ item }">
                             <v-tooltip bottom>
                                 <template v-slot:activator="{ on, attrs }">
-                                    <v-icon v-bind="attrs" v-on="on" color="teal darken-1" :size="26" @click="showDadosPagina(item)"
-                                        class="mr-2">
+                                    <v-icon v-bind="attrs" v-on="on" color="teal darken-1" :size="26"
+                                        @click="showDadosPagina(item)" class="mr-2">
                                         mdi-table-eye
                                     </v-icon>
                                 </template>
@@ -96,6 +98,7 @@ import axios from "axios";
 import loading from "@/components/shared/loading.vue";
 import dayjs from "dayjs";
 import dadospagina from "@/components/plurimas/dialogsvplurima/motor-extrator-docs/dialogDadosPagina.vue"
+import * as XLSX from 'xlsx';
 
 export default {
     components: {
@@ -143,9 +146,99 @@ export default {
             this.paginas = []
             this.showDialog = false;
         },
-        async showDadosPagina(item){
-            this.$refs.dadospagina.pagina = item;            
-            this.$refs.dadospagina.numpaginas = this.paginas.length;            
+        baixarTextoOriginal() {
+            this.$refs.loading.dialog = true;
+            let txt = "";
+            this.paginas.forEach(pag => {
+                txt += `=============================================\n`;
+                txt += `ARQUIVO: ${pag.ID_ARQUIVO} | PÁGINA: ${pag.NUM_PAGINA} | MODELO: ${pag.REF_MODELO}\n\n`;
+                txt += `${pag.TEXTO_PAGINA}\n\n`
+            });
+
+            const blob = new Blob([txt], { type: "text/plain" });
+            const link = document.createElement("a");
+            link.href = window.URL.createObjectURL(blob);
+            link.download = `arquivo_${this.idarquivo}.txt`;
+            link.click();
+            this.$refs.loading.dialog = false;
+        },
+        downloadExcel() {
+            this.$refs.loading.dialog = true;
+            const rows = [];
+
+            this.paginas.forEach(item => {
+                const resultModeloJson = JSON.parse(item.RESULTADO_MODELO);
+                const resultadoModelo = resultModeloJson?.Results || [];
+                const verbaResults = resultadoModelo.filter(r => r.VERBA);
+                const registroCP = resultadoModelo.filter(r => r.REGISTRO_CP);
+                const outrasInfos = resultadoModelo.filter(r => !r.REGISTRO_CP && !r.VERBA);
+
+
+                if (verbaResults.length > 0) {
+                    verbaResults.forEach(verba => {
+                        let row = {};
+                        row["PAGINA"] = item.NUM_PAGINA
+                        const itensV = verba.VERBA;
+
+                        outrasInfos.forEach(info => {
+                            Object.keys(info).forEach(key => {
+                                row[key] = info[key];
+                            });
+                        })
+
+                        Object.keys(itensV).forEach(verbaKey => {
+                            row[`VERBA.${verbaKey}`] = itensV[verbaKey];
+                        });
+
+                        rows.push(row);
+                    });
+                }
+
+                if (registroCP.length > 0) {                    
+                    registroCP.forEach(registro => {
+                        let row = {};
+                        row["PAGINA"] = item.NUM_PAGINA
+                        const itensCP = registro.REGISTRO_CP;
+
+                        outrasInfos.forEach(info => {
+                            Object.keys(info).forEach(key => {
+                                row[key] = info[key];
+                            });
+                        })
+
+                        Object.keys(itensCP).forEach(verbaKey => {
+                            row[`VERBA.${verbaKey}`] = itensCP[verbaKey];
+                        });
+
+                        rows.push(row);
+                    });
+                }
+
+                if (registroCP.length == 0 && verbaResults.length == 0) {
+                    let row = {};
+                    row["PAGINA"] = item.NUM_PAGINA
+                    outrasInfos.forEach(info => {
+                        Object.keys(info).forEach(key => {
+                            row[key] = info[key];
+                        });
+                    })
+
+                    rows.push(row);
+                }
+            });
+
+
+            const worksheet = XLSX.utils.json_to_sheet(rows);
+            const workbook = XLSX.utils.book_new();
+            XLSX.utils.book_append_sheet(workbook, worksheet, 'Planilha1');
+
+            // Salvar o arquivo
+            XLSX.writeFile(workbook, `arquivo${this.idarquivo}.xlsx`);
+            this.$refs.loading.dialog = false;
+        },
+        async showDadosPagina(item) {
+            this.$refs.dadospagina.pagina = item;
+            this.$refs.dadospagina.numpaginas = this.paginas.length;
             this.$refs.dadospagina.$emit('show-dialog', true);
         },
         async getPaginasArquivo() {
@@ -193,7 +286,7 @@ export default {
     left: 0;
     width: 100%;
     height: 100%;
-    background-color: rgba(234, 0, 255, 0.020);
+    background-color: rgba(234, 0, 255, 0.050);
     display: flex;
     justify-content: center;
     align-items: center;

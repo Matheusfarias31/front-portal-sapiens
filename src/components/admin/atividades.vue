@@ -1,7 +1,7 @@
 <template>
     <v-sheet class="py-5 px-10">
         <v-data-table :headers="headersatividades" :items="atividades" :search="search" :loading="loadingTable"
-            loading-text="Carregando... Aguarde por  favor!" class="text-no-wrap">
+            loading-text="Carregando... Aguarde por  favor!" class="mb-3 text-no-wrap" height="600" fixed-header>
             <template v-slot:top>
                 <v-toolbar flat class="mb-8 rounded" dark color="deep-purple lighten-2">
                     <v-toolbar-title>Atividades das Etapas</v-toolbar-title>

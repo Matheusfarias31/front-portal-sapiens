@@ -18,7 +18,8 @@
     "vue-gravatar": "^1.4.1",
     "vue-json-excel": "^0.3.0",
     "vue-router": "^3.5.1",
-    "vuetify": "^2.6.0"
+    "vuetify": "^2.6.0",
+    "xlsx": "^0.18.5"
   },
   "devDependencies": {
     "@babel/core": "^7.12.16",
