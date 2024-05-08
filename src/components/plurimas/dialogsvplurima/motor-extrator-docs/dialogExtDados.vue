@@ -50,7 +50,7 @@
                     </v-form>
                 </v-card>
             </div>
-        </div>
+        </div>        
         <loading ref="loading" />
         <snack ref="snackbar" />
     </div>
@@ -62,9 +62,10 @@ import loading from "@/components/shared/loading.vue";
 import config from "@/config/store";
 import snack from "@/components/shared/snackBar.vue";
 
+
 export default {
     components: {
-        loading, snack
+        loading, snack,
     },
     props: {
         zIndex: {
@@ -97,7 +98,7 @@ export default {
             this.extracao = { CAMINHO: null, CONFIGS: { NOTIFICAR_USUARIO: true, NOVOS_ARQUIVOS: false, PRIORIDADE: false, MULTIPLOS_DOCS: true } },
             this.caminhoOrgDOcs = '';
             this.showDialog = false;
-        },
+        },        
         async solicitarExecExtratorDocs() {
             this.$refs.loading.dialog = true;
 
@@ -147,7 +148,7 @@ export default {
     left: 0;
     width: 100%;
     height: 100%;
-    background-color: rgba(234, 0, 255, 0.050);
+    background-color: rgba(0, 0, 0, 0.050);
     display: flex;
     justify-content: center;
     align-items: center;

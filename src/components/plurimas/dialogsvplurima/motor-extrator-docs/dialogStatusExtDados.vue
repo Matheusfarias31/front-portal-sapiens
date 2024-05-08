@@ -10,6 +10,14 @@
                         <v-toolbar-items class="d-flex align-center my-2">
                             <v-tooltip bottom>
                                 <template v-slot:activator="{ on, attrs }">
+                                    <v-btn class="mb-2" icon dark @click="buscarDados()">
+                                        <v-icon v-bind="attrs" v-on="on">mdi-clipboard-text-search-outline</v-icon>
+                                    </v-btn>
+                                </template>
+                                <span>Buscar Dados</span>
+                            </v-tooltip>
+                            <v-tooltip bottom>
+                                <template v-slot:activator="{ on, attrs }">
                                     <v-btn icon dark class="mb-2" @click="executarExtDocs()">
                                         <v-icon v-bind="attrs" v-on="on">mdi-plus-box</v-icon>
                                     </v-btn>
@@ -75,6 +83,7 @@
             :idusuario="this.idusuario" @atualizarexecextdocs="this.getExecucoesMotorExtDocs">
         </execextdocs>
         <arquivosextraidos ref="arquivosextraidos" :zIndex="this.zIndexForOtherDialog"></arquivosextraidos>
+        <dialogBuscarDados ref="buscadados" :zIndex="this.zIndexForOtherDialog"></dialogBuscarDados>
         <loading ref="loading" />
     </div>
 </template>
@@ -85,10 +94,11 @@ import loading from "@/components/shared/loading.vue";
 import dayjs from "dayjs";
 import execextdocs from "@/components/plurimas/dialogsvplurima/motor-extrator-docs/dialogExtDados.vue"
 import arquivosextraidos from "@/components/plurimas/dialogsvplurima/motor-extrator-docs/dialogArquivosExtraidos.vue"
+import dialogBuscarDados from '@/components/plurimas/dialogsvplurima/motor-extrator-docs/dialogBuscarDados.vue'
 
 export default {
     components: {
-        loading, execextdocs, arquivosextraidos
+        loading, execextdocs, arquivosextraidos, dialogBuscarDados
     },
     props: {
         zIndex: {
@@ -130,6 +140,10 @@ export default {
         hideDialog() {
             this.extracoes = [];
             this.showDialog = false;
+        },
+        buscarDados(){
+            this.$refs.buscadados.idplurima = this.idplurima;
+            this.$refs.buscadados.$emit('show-dialog', true);
         },
         executarExtDocs() {
             this.$refs.solicitarexecucao.$emit('show-dialog', true);
@@ -186,7 +200,7 @@ export default {
     left: 0;
     width: 100%;
     height: 100%;
-    background-color: rgba(234, 0, 255, 0.050);
+    background-color: rgba(0, 0, 0, 0.050);
     display: flex;
     justify-content: center;
     align-items: center;

@@ -4,7 +4,7 @@
             <div class="dialog-content">
                 <v-card max-width="900px">
                     <v-toolbar color="deep-purple lighten-2" title="paginasextraidas" dark>
-                        <v-toolbar-title>Páginas Extraídas - Arquivo: {{ this.arquivo.ARQUIVO }}</v-toolbar-title>
+                        <v-toolbar-title>Páginas Encontradas</v-toolbar-title>
                         <v-spacer></v-spacer>
                         <v-divider class="mr-0 ml-0" inset vertical></v-divider>
                         <v-toolbar-items class="d-flex align-center my-2">                            
@@ -26,18 +26,7 @@
                                 </template>
                                 <span>Baixar Excel</span>
                             </v-tooltip>
-                        </v-toolbar-items>
-                        <v-divider class="mr-0 ml-0" inset vertical></v-divider>
-                        <v-toolbar-items class="d-flex align-center my-2">
-                            <v-tooltip bottom>
-                                <template v-slot:activator="{ on, attrs }">
-                                    <v-btn class="mb-2" icon dark @click="getPaginasArquivo()">
-                                        <v-icon v-bind="attrs" v-on="on">mdi-update</v-icon>
-                                    </v-btn>
-                                </template>
-                                <span>Atualizar Solicitações</span>
-                            </v-tooltip>
-                        </v-toolbar-items>
+                        </v-toolbar-items>                                                
                     </v-toolbar>
                     <v-data-table :headers="headersPaginas" :items="paginas" item-key="ID" :search="search"
                         :loading="loadingtable" class="text-no-wrap" fixed-header>
@@ -86,7 +75,6 @@
 </template>
 
 <script>
-import axios from "axios";
 import loading from "@/components/shared/loading.vue";
 import dayjs from "dayjs";
 import dadospagina from "@/components/plurimas/dialogsvplurima/motor-extrator-docs/dialogDadosPagina.vue"
@@ -106,12 +94,14 @@ export default {
         },
         arquivo: {
             type: Array
+        },
+        paginas: {
+            type: Array
         }
     },
     data() {
         return {
-            showDialog: false,
-            paginas: [],
+            showDialog: false,            
             search: '',
             headersPaginas: [
                 { text: "ID", value: "ID", align: "center" },
@@ -126,16 +116,12 @@ export default {
         };
     },
     mounted() {
-        this.$on('show-dialog', async (show) => {
-            this.$refs.loading.dialog = true;
-            await this.getPaginasArquivo();
-            this.$refs.loading.dialog = false;
+        this.$on('show-dialog', async (show) => {            
             this.showDialog = show;
         });
     },
     methods: {
-        hideDialog() {
-            this.paginas = []
+        hideDialog() {            
             this.showDialog = false;
         },
         baixarTextoOriginal() {
@@ -232,18 +218,7 @@ export default {
             this.$refs.dadospagina.pagina = item;
             this.$refs.dadospagina.numpaginas = this.paginas.length;
             this.$refs.dadospagina.$emit('show-dialog', true);
-        },
-        async getPaginasArquivo() {
-            this.loadingtable = true;
-            await axios.get(
-                `${process.env.VUE_APP_ROOT_API_EXTRATOR_DOCS_URL}arquivos/${this.idarquivo}/paginas`
-            ).then((response) => {
-                this.paginas = response.data.result;
-                this.loadingtable = false;
-            }).catch((err) => {
-                console.log(err.response.data);
-            });
-        },
+        },        
         convertData(item) {
             if (dayjs(item).format("DD/MM/YYYY") != "Invalid Date") {
                 return dayjs(item.replace("T", " ").replace("Z", "")).format(

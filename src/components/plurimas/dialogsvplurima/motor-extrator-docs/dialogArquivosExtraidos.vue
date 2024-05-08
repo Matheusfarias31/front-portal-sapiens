@@ -11,10 +11,10 @@
                             <v-tooltip bottom>
                                 <template v-slot:activator="{ on, attrs }">
                                     <v-btn class="mb-2" icon dark @click="getArquivosExtraidos()">
-                                        <v-icon v-bind="attrs" v-on="on">mdi-file-search</v-icon>
+                                        <v-icon v-bind="attrs" v-on="on">mdi-clipboard-text-search-outline</v-icon>
                                     </v-btn>
                                 </template>
-                                <span>Buscar Arquivo</span>
+                                <span>Buscar Dados</span>
                             </v-tooltip>
                             <v-divider class="mr-0 ml-0" inset vertical></v-divider>
                             <v-tooltip bottom>
@@ -160,7 +160,7 @@ export default {
     left: 0;
     width: 100%;
     height: 100%;
-    background-color: rgba(234, 0, 255, 0.050);
+    background-color: rgba(0, 0, 0, 0.050);
     display: flex;
     justify-content: center;
     align-items: center;

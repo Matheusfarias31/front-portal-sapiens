@@ -202,7 +202,7 @@ export default {
     left: 0;
     width: 100%;
     height: 100%;
-    background-color: rgba(234, 0, 255, 0.050);
+    background-color: rgba(0, 0, 0, 0.050);
     display: flex;
     justify-content: center;
     align-items: center;

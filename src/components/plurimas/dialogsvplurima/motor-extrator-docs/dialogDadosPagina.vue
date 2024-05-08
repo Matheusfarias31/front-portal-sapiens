@@ -7,26 +7,7 @@
                         <v-toolbar-title> Pagina : {{ this.pagina.NUM_PAGINA }} de {{ this.numpaginas
                             }}</v-toolbar-title>
                         <v-spacer></v-spacer>
-                        <v-divider class="mr-0 ml-0" inset vertical></v-divider>
-                        <v-toolbar-items class="d-flex align-center my-2">
-                            <v-tooltip bottom>
-                                <template v-slot:activator="{ on, attrs }">
-                                    <v-btn class="mb-2" icon dark>
-                                        <v-icon v-bind="attrs" v-on="on">mdi-script-text-outline</v-icon>
-                                    </v-btn>
-                                </template>
-                                <span>Baixar Texto Original</span>
-                            </v-tooltip>
-                            <v-tooltip bottom>
-                                <template v-slot:activator="{ on, attrs }">
-                                    <v-btn class="mb-2" icon dark>
-                                        <v-icon v-bind="attrs" v-on="on">mdi-microsoft-excel</v-icon>
-                                    </v-btn>
-                                </template>
-                                <span>Baixar Excel</span>
-                            </v-tooltip>
-                        </v-toolbar-items>
-                        <v-divider class="mr-0 ml-0" inset vertical></v-divider>
+                        <v-divider class="mr-0 ml-0" inset vertical></v-divider>                                                
                         <v-toolbar-items class="d-flex align-center my-2">
                             <v-tooltip bottom>
                                 <template v-slot:activator="{ on, attrs }">
@@ -330,7 +311,7 @@ export default {
     left: 0;
     width: 100%;
     height: 100%;
-    background-color: rgba(234, 0, 255, 0.050);
+    background-color: rgba(0, 0, 0, 0.050);
     display: flex;
     justify-content: center;
     align-items: center;
