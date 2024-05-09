@@ -20,7 +20,9 @@
                         </v-toolbar-items>
                     </v-toolbar>
                     <v-card-subtitle class="mt-0 mb-0">
-                        Importante: Caracteres em caixa alta e em caixa baixa são tratados de modo diferente.
+                        Importante: Caracteres em caixa alta e em caixa baixa são tratados de modo diferente. <br>
+                        PESQUISA COMBINADA: A pesquisa considera páginas que atendam todos os filtros. <br>
+                        PESQUISA FLEXÍVEL: A pesquisa considera páginas que atenda ao menos um dos filtros.
                     </v-card-subtitle>
                     <v-row justify="center">
                         <v-card class="mt-2 mr-2 ml-2 center" color="teal lighten-4" flat width="1150px">
@@ -106,12 +108,21 @@
                         <v-row class="justify-end mr-3">
                             <v-tooltip bottom>
                                 <template v-slot:activator="{ on, attrs }">
-                                    <v-btn height="40" width="300" dark color="deep-purple lighten-3" v-bind="attrs"
-                                        v-on="on" @click="realizarBusca">
-                                        REALIZAR BUSCA<v-icon :size="25" right dark>mdi-card-search-outline</v-icon>
+                                    <v-btn height="40" width="300" dark color="blue-grey lighten-2" v-bind="attrs"
+                                        v-on="on" @click="realizarBusca(false)">
+                                        PESQUISA FLEXÍVEL<v-icon :size="25" right dark>mdi-layers-search-outline</v-icon>
                                     </v-btn>
                                 </template>
-                                <span>Buscar Páginas</span>
+                                <span>Pesquisar páginas que contenham ao menos um dos filtros.</span>
+                            </v-tooltip>
+                            <v-tooltip bottom>
+                                <template v-slot:activator="{ on, attrs }">
+                                    <v-btn class="ml-3"  height="40" width="300" dark color="blue-grey lighten-1" v-bind="attrs"
+                                        v-on="on" @click="realizarBusca(true)">
+                                        PESQUISA COMBINADA<v-icon :size="25" right dark>mdi-card-search-outline</v-icon>
+                                    </v-btn>
+                                </template>
+                                <span>Pesquisar páginas que contenham todos os filtros.</span>
                             </v-tooltip>
                         </v-row>
                     </v-sheet>
@@ -268,7 +279,8 @@ export default {
                 { text: "CAMPO", value: "CAMPO", align: "center" },
                 { text: "FILTRO", value: "FILTRO", align: "center" },
             ],
-            adicionarCampo: false
+            adicionarCampo: false,
+            operadore: false
         };
     },
     mounted() {
@@ -300,11 +312,14 @@ export default {
         removeFilterItem(index) {
             this.filtro.FILTRO_GERAL.splice(index, 1);
         },
-        async realizarBusca() {
+        async realizarBusca(operadore) {
             this.$refs.loading.dialog = true;
+
+            console.log(operadore)
 
             await axios.post(`${process.env.VUE_APP_ROOT_API_EXTRATOR_DOCS_URL}dados/pesquisa`, {
                 ID_ORIGEM: this.idplurima,
+                OPERADOR_E: operadore,
                 FILTRO_MODELOS: this.filtrosmodelo,
                 FILTRO_GERAL: this.filtro.FILTRO_GERAL,
             }).then((response) => {                
