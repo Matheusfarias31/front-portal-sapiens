@@ -20,7 +20,7 @@
                         </v-toolbar-items>
                     </v-toolbar>
                     <v-card-subtitle class="mt-0 mb-0">
-                        Importante: Caracteres em caixa alta e em caixa baixa são tratados de modo diferente. <br>
+                        Importante: Caracteres em caixa alta e em caixa baixa são tratados da mesma forma. <br>
                         PESQUISA COMBINADA: A pesquisa considera páginas que atendam todos os filtros. <br>
                         PESQUISA FLEXÍVEL: A pesquisa considera páginas que atenda ao menos um dos filtros.
                     </v-card-subtitle>
