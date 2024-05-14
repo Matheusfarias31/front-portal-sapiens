@@ -291,14 +291,14 @@ import statusextdocs from '@/components/plurimas/dialogsvplurima/motor-extrator-
 import atividadesetapa from '@/components/plurimas/dialogsvplurima/atividade-etapa/dialogAtividadeEtapa.vue';
 import alteraretapa from '@/components/plurimas/dialogsvplurima/atividade-etapa/dialogProximaEtapa.vue';
 
-
 export default {
     name: 'plurimaview',
     components: {
         snack, loading, altstatus, statusorgdocs, statusextdocs, atividadesetapa, alteraretapa
     },
     data() {
-        return {
+        return {            
+            localIdPlurima: this.idplurima,
             dialogProximaEtapa: false,
             vPlurima: null,
             vDetalheEtapa: [],
@@ -323,16 +323,21 @@ export default {
     props: {
         idplurima: { type: Number },
     },
+    watch:{
+        idplurima(newValue){
+            this.localIdPlurima = newValue;
+        }
+    },
     async mounted() {
-        this.$on('show-dialog', async (show) => {
-            await this.inicializar();
+        this.$on('show-dialog', async (show) => {            
+            await this.inicializar();            
             this.dialog = show;
         });
 
     },
     methods: {
         async inicializar() {
-            await this.getPlurimaID(this.idplurima);
+            await this.getPlurimaID(this.localIdPlurima);
             await this.getAtividadesEtapa();
             await this.getLogStatusPlurima();
         },

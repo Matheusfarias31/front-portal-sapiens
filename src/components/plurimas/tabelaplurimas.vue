@@ -33,8 +33,8 @@
         </v-tooltip>
         <v-tooltip bottom>
           <template v-slot:activator="{ on, attrs }">
-            <v-icon v-bind="attrs" v-on="on" color="indigo lighten-2" :size="26" @click="showAprova(item)"
-              class="mr-2" :disabled="disabeIconAprovavao(item)">
+            <v-icon v-bind="attrs" v-on="on" color="indigo lighten-2" :size="26" @click="showAprova(item)" class="mr-2"
+              :disabled="disabeIconAprovavao(item)">
               mdi-check-decagram-outline
             </v-icon>
           </template>
@@ -71,13 +71,13 @@
         </v-chip>
       </template>
     </v-data-table>
-    <plurimaView ref="plurimaview" @closePlurimaView="closeDialogPlurimaView()"/>
-    <listareclamantes ref="listareclamantes"/>
+    <plurimaView :idplurima="idplurima" ref="plurimaview" @closePlurimaView="closeDialogPlurimaView()" />
+    <listareclamantes ref="listareclamantes" />
 
     <formAprovacao :show="dialogAprovacao" :idUsuario="idUsuario"
       @closeAprovacao="dialogAprovacao = false, closeDialogPlurimaView()" :plurimaProp="plurima" />
 
-    <loading ref="loadingl" />
+    <loading ref="loadingdata" />
     <snack ref="snackbar" />
   </div>
 </template>
@@ -125,18 +125,18 @@ export default {
   data() {
     return {
       search: null,
-      idProcesso: null,
+      loadingTable: this.loading,
+      idplurima: null,
       dialog: false,
       aprove: null,
       tituloDialogAprovcacao: null,
       corpoDialogAprovcacao: null,
-      loadingTable: true,
       dialogSolicitarProcesso: false,
       rules: [(v) => !!v || "É necessário"],
       rules2: [(v) => v != null || "É necessário"],
       idUsuario: config.user().ID_USUARIO,
       headers: [
-        { text: "Ações", value: "actions", sortable: false, align: "center"  },
+        { text: "Ações", value: "actions", sortable: false, align: "center" },
         { text: "PROCESSO", value: "NUMERO_PROCESSO" },
         { text: "PRAZO", value: "PRAZO_ENTREGA", align: "center" },
         { text: "CLIENTE", value: "NOME_CLIENTE" },
@@ -152,7 +152,7 @@ export default {
       detalheEtapa: [],
       logStatusPlurima: [],
       dialogPlurima: false,
-      dialogAprovacao: false,      
+      dialogAprovacao: false,
     };
   },
   mounted() {
@@ -166,7 +166,7 @@ export default {
     },
   },
   methods: {
-    disabeIconAprovavao(item){
+    disabeIconAprovavao(item) {
       let disable = true;
 
       if (item.TIME_PLURIMAS == true && item.DESCRICAO === 'EM ABERTO') {
@@ -178,22 +178,22 @@ export default {
     closeDialogPlurimaView() {
       this.$emit("closeViewPlurima");
     },
-    listaReclamantes(item){      
-      this.$refs.listareclamantes.idplurima = item.ID;      
-      this.$refs.listareclamantes.numeroprocesso = item.NUMERO_PROCESSO;      
+    listaReclamantes(item) {
+      this.$refs.listareclamantes.idplurima = item.ID;
+      this.$refs.listareclamantes.numeroprocesso = item.NUMERO_PROCESSO;
       this.$refs.listareclamantes.$emit('show-dialog', true);
     },
-    async showPlurima(item) {
-      this.$refs.loadingl.dialog = true;
-      this.$refs.plurimaview.idplurima = item.ID;      
+    async showPlurima(item) {      
+      this.$refs.loadingdata.dialog = true;
+      this.idplurima = item.ID;
+      this.$refs.plurimaview.localIdPlurima = item.ID;      
       this.$refs.plurimaview.$emit('show-dialog', true);      
-      this.$refs.loadingl.dialog = false;
-      
+      this.$refs.loadingdata.dialog = false;
     },
     async showAprova(item) {
-      this.$refs.loadingl.dialog = true;
+      this.$refs.loadingdata.dialog = true;
       await this.getPlurimaID(item.ID);
-      this.$refs.loadingl.dialog = false;
+      this.$refs.loadingdata.dialog = false;
       this.dialogAprovacao = true;
     },
     async getLogStatusPlurima(idPlurima) {

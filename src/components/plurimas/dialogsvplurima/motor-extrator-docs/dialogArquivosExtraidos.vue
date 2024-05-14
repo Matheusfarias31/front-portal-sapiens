@@ -94,7 +94,8 @@ export default {
                 { text: "NÃO EDITAVEIS", value: "N_EDITAVEIS", align: "center" },                
                 { text: "Ações", value: "actions", sortable: false, align: "center" },
             ],
-            loadingtable: false            
+            loadingtable: false     ,
+            zIndexForOtherDialog: 1000,       
         };
     },    
     mounted() {

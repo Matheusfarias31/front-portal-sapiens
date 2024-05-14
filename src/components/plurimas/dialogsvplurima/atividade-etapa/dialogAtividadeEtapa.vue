@@ -28,8 +28,7 @@
                     </v-form>
                 </v-card>
             </div>
-        </div>
-        <paginasarquivo ref="paginasextraidas" :zIndex="this.zIndexForOtherDialog"></paginasarquivo>
+        </div>        
         <loading ref="loading" />
         <snack ref="snackbar" />
     </div>
@@ -66,7 +65,8 @@ export default {
         return {
             showDialog: false,
             atividades: [],
-            atividadeselecionada: null
+            atividadeselecionada: null,
+            zIndexForOtherDialog: 1000,       
         };
     },
     mounted() {

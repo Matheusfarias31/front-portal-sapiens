@@ -230,7 +230,7 @@
 
             </div>
         </div>
-        <dialogpaginaspequisa ref="paginasencontradas" :zIndex="this.zIndexForOtherDialog"></dialogpaginaspequisa> -->
+        <dialogpaginaspequisa ref="paginasencontradas" :zIndex="this.zIndexForOtherDialog"></dialogpaginaspequisa>
         <loading ref="loading" />
         <snack ref="snackbar" />
     </div>

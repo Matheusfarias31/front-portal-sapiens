@@ -112,7 +112,8 @@ export default {
                 { text: "COMPATIBILIDADE(%)", value: "COMPATIBILIDADE", align: "center" },
                 { text: "Ações", value: "actions", sortable: false, align: "center" },
             ],
-            loadingtable: false
+            loadingtable: false,
+            zIndexForOtherDialog: 1000,       
         };
     },
     mounted() {

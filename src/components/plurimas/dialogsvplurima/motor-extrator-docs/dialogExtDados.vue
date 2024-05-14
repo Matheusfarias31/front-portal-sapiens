@@ -84,7 +84,7 @@ export default {
             showDialog: false,
             extracao: { CAMINHO: null, CONFIGS: { NOTIFICAR_USUARIO: true, NOVOS_ARQUIVOS: false, PRIORIDADE: false, MULTIPLOS_DOCS: true } },     
             emailusuario: config.user().EMAIL,    
-            nomeusuario: config.user().NOME,   
+            nomeusuario: config.user().NOME,               
         };
     },
     mounted() {
