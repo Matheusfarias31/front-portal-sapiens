@@ -1,5 +1,5 @@
 <template>
-    <div>
+    <div v-if="vPlurima">
         <v-row justify="center">
             <v-dialog z-index="999" ref="pluriDialog" v-model="dialog" fullscreen transition="dialog-bottom-transition">
                 <v-card color="deep-purple lighten-5" light class="mt-0">
@@ -22,19 +22,23 @@
                             <v-row justify="start">
                                 <v-col cols="12" sm="6" md="4">
                                     <v-card color="deep-purple lighten-5" class="mt-0" light elevation="0" flat
-                                        height="60"><v-card-text class="mt-1"><v-icon light
-                                                right>mdi-account-circle</v-icon><v-divider class="mx-2" inset
-                                                vertical></v-divider>Solicitante: {{
-                this.vPlurima.NOME_SOLICITANTE
-            }}</v-card-text></v-card>
+                                        height="60">
+                                        <v-card-text class="mt-1">
+                                            <v-icon light right>mdi-account-circle</v-icon>
+                                            <v-divider class="mx-2" inset vertical></v-divider>
+                                            Solicitante: {{
+                this.vPlurima.NOME_SOLICITANTE ? this.vPlurima.NOME_SOLICITANTE : 'Nome não disponível' }}
+                                        </v-card-text>
+                                    </v-card>
                                 </v-col>
+
                                 <v-col cols="12" sm="6" md="4">
                                     <v-card color="deep-purple lighten-5" class="mt-0" light elevation="0" flat
                                         height="60"><v-card-text class="mt-1"><v-icon light
                                                 right>mdi-domain</v-icon><v-divider class="mx-2" inset
                                                 vertical></v-divider>Cliente: {{
-                    this.vPlurima.NOME_CLIENTE
-                }}</v-card-text></v-card>
+                this.vPlurima.NOME_CLIENTE
+            }}</v-card-text></v-card>
                                 </v-col>
                                 <v-col cols="12" sm="6" md="4">
                                     <v-card color="deep-purple lighten-5" class="mt-0" light elevation="0" flat
@@ -245,11 +249,11 @@
             </v-dialog>
         </v-row>
 
-        <loading ref="loading" />    
-        <snack ref="snackbar" />        
+        <loading ref="loading" />
+        <snack ref="snackbar" />
 
     </div>
-    
+
 </template>
 
 <style scoped>
@@ -295,7 +299,7 @@ export default {
     },
     data() {
         return {
-            dialogProximaEtapa: false,            
+            dialogProximaEtapa: false,
             vPlurima: null,
             vDetalheEtapa: [],
             atividadesEtapaD: [],
@@ -317,20 +321,20 @@ export default {
         }
     },
     props: {
-        idplurima: { type: Number},         
-    },        
-    async mounted() {        
-        this.$on('show-dialog', async (show) => {               
-            await this.inicializar();               
-            this.dialog = show;            
-        });
-        
+        idplurima: { type: Number },
     },
-    methods: {        
-        async inicializar() {                     
-            await this.getPlurimaID(this.idplurima);            
+    async mounted() {
+        this.$on('show-dialog', async (show) => {
+            await this.inicializar();
+            this.dialog = show;
+        });
+
+    },
+    methods: {
+        async inicializar() {
+            await this.getPlurimaID(this.idplurima);
             await this.getAtividadesEtapa();
-            await this.getLogStatusPlurima();                        
+            await this.getLogStatusPlurima();
         },
         async getPlurimaID(idPlurima) {
             await axios.get(
@@ -369,7 +373,7 @@ export default {
             this.$refs.atividadesetapa.$emit('show-dialog', true);
         },
         hideDialog() {
-            this.$emit('closePlurimaView');  
+            this.$emit('closePlurimaView');
             this.dialog = false;
         },
         async getLogStatusPlurima() {
@@ -383,7 +387,7 @@ export default {
             }).catch((err) => {
                 console.log(err.response.data);
             });
-        },        
+        },
         async atualizarDados() {
             this.$emit('atualizardados');
         },

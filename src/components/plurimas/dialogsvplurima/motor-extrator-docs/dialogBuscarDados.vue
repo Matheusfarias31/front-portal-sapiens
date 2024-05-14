@@ -425,7 +425,7 @@ export default {
         },
         async getmodelosutilizados() {
             await axios.get(
-                `${process.env.VUE_APP_ROOT_API_EXTRATOR_DOCS_URL}extracoes/${this.idplurima}/modelos`
+                `${process.env.VUE_APP_ROOT_API_EXTRATOR_DOCS_URL}origem/${this.idplurima}/modelos`
             ).then((response) => {
                 this.modelosutilizados = response.data.result;
                 this.$refs.loading.dialog = false;

@@ -15,7 +15,7 @@
                                 <v-row class="mb-0 mt-0">
                                     <v-col cols="12" sm="6" md="6">
                                         <p class="mb-0">Solicitante:</p>
-                                        <p><strong>{{ this.vPlurima.NOME_SOLICITANTE }}</strong></p>
+                                        <p><strong>{{ this.vPlurima.NOME_SOLICITANTE === null ? '' : this.vPlurima.NOME_SOLICITANTE }}</strong></p>
                                     </v-col>
                                     <v-col cols="12" sm="6" md="6">
                                         <p class="mb-0">Cliente:</p>

@@ -24,7 +24,16 @@
         </v-tooltip>
         <v-tooltip bottom>
           <template v-slot:activator="{ on, attrs }">
-            <v-icon v-bind="attrs" v-on="on" color="deep-purple lighten-2" :size="26" @click="showAprova(item)"
+            <v-icon v-bind="attrs" v-on="on" color="pink lighten-2" :size="26" @click="listaReclamantes(item)"
+              class="mr-2" :disabled="loadingTable">
+              mdi-format-list-numbered
+            </v-icon>
+          </template>
+          <span>Listas de Reclamantes</span>
+        </v-tooltip>
+        <v-tooltip bottom>
+          <template v-slot:activator="{ on, attrs }">
+            <v-icon v-bind="attrs" v-on="on" color="indigo lighten-2" :size="26" @click="showAprova(item)"
               class="mr-2" :disabled="disabeIconAprovavao(item)">
               mdi-check-decagram-outline
             </v-icon>
@@ -63,6 +72,7 @@
       </template>
     </v-data-table>
     <plurimaView ref="plurimaview" @closePlurimaView="closeDialogPlurimaView()"/>
+    <listareclamantes ref="listareclamantes"/>
 
     <formAprovacao :show="dialogAprovacao" :idUsuario="idUsuario"
       @closeAprovacao="dialogAprovacao = false, closeDialogPlurimaView()" :plurimaProp="plurima" />
@@ -103,10 +113,11 @@ import dayjs from "dayjs";
 import axios from "axios";
 import plurimaView from "./plurimaView.vue";
 import formAprovacao from "./formAprovacao.vue";
+import listareclamantes from "./listadereclamantes/dialoglistasreclamantes.vue";
 
 export default {
-  name: "cardProduto",
-  components: { loading, snack, formAprovacao, plurimaView },
+  name: "tabelaplurimas",
+  components: { loading, snack, formAprovacao, plurimaView, listareclamantes },
   props: {
     plurimas: Array,
     loading: Boolean,
@@ -166,6 +177,11 @@ export default {
     },
     closeDialogPlurimaView() {
       this.$emit("closeViewPlurima");
+    },
+    listaReclamantes(item){      
+      this.$refs.listareclamantes.idplurima = item.ID;      
+      this.$refs.listareclamantes.numeroprocesso = item.NUMERO_PROCESSO;      
+      this.$refs.listareclamantes.$emit('show-dialog', true);
     },
     async showPlurima(item) {
       this.$refs.loadingl.dialog = true;
