@@ -1,14 +1,14 @@
 <template>
     <div v-if="this.lista">
         <v-dialog v-model="showDialog" persistent max-width="1000px">
-            <v-card max-width="1000px" style="overflow-x: hidden;">
+            <v-card max-width="1000px" style="overflow-x: hidden; border: none;" outlined>
                 <v-toolbar color="deep-purple lighten-2" title="listareclamantes" dark>
                     <v-icon dark right>mdi-text-box-edit-outline</v-icon>
                     <v-divider class="mx-4" inset vertical></v-divider>
                     <v-toolbar-title>Editar Lista de Reclamantes: {{ this.lista.REF_LISTA }}</v-toolbar-title>
                     <v-spacer></v-spacer>
                 </v-toolbar>
-                <stepperlsita :idplurima="this.idplurima" ref="stepperlista" />
+                <stepperlsita :idplurima="localIdPlurima" :idlista="localLista.ID" ref="stepperlista" />
                 <v-form>
                     <v-card-actions>
                         <v-spacer></v-spacer>
@@ -65,6 +65,16 @@ export default {
     data() {
         return {
             showDialog: false,
+            localLista: this.lista,
+            localIdPlurima: this.idplurima
+        }
+    },
+    watch: {
+        lista(newValue) {
+            this.localLista = newValue;
+        },
+        idplurima(newValue) {
+            this.localIdPlurima = newValue
         }
     },
     mounted() {

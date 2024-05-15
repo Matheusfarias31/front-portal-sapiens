@@ -315,8 +315,6 @@ export default {
         async realizarBusca(operadore) {
             this.$refs.loading.dialog = true;
 
-            console.log(operadore)
-
             await axios.post(`${process.env.VUE_APP_ROOT_API_EXTRATOR_DOCS_URL}dados/pesquisa`, {
                 ID_ORIGEM: this.idplurima,
                 OPERADOR_E: operadore,

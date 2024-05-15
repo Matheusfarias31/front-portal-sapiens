@@ -30,7 +30,7 @@
   
       <v-stepper-items>
         <!-- Usando o componente stepconfigmodelos como conteúdo do passo 1 -->
-        <stepconfigmodelos :idplurima="this.idplurima"></stepconfigmodelos>
+        <stepconfigmodelos :idplurima="this.idplurima" :idlista="localIdLista"></stepconfigmodelos>
   
         <!-- Conteúdo das outras etapas aqui -->
       </v-stepper-items>
@@ -41,9 +41,13 @@
   import stepconfigmodelos from "./stepConfigModelos.vue";
   
   export default {
+    name: "stepper",
     props:{
         idplurima: {
             type: Number
+        },
+        idlista: {
+          type: Number
         }
     },
     components: {
@@ -51,6 +55,7 @@
     },
     data() {
       return {
+        localIdLista: this.idlista,
         e1: 1
       };
     }

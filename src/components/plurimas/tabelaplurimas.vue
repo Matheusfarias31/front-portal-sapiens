@@ -72,7 +72,7 @@
       </template>
     </v-data-table>
     <plurimaView :idplurima="idplurima" ref="plurimaview" @closePlurimaView="closeDialogPlurimaView()" />
-    <listareclamantes ref="listareclamantes" />
+    <listareclamantes :idplurima="idplurima" :numeroprocesso="numeroprocesso" ref="listareclamantes" />
 
     <formAprovacao :show="dialogAprovacao" :idUsuario="idUsuario"
       @closeAprovacao="dialogAprovacao = false, closeDialogPlurimaView()" :plurimaProp="plurima" />
@@ -127,6 +127,7 @@ export default {
       search: null,
       loadingTable: this.loading,
       idplurima: null,
+      numeroprocesso: null,
       dialog: false,
       aprove: null,
       tituloDialogAprovcacao: null,
@@ -178,9 +179,11 @@ export default {
     closeDialogPlurimaView() {
       this.$emit("closeViewPlurima");
     },
-    listaReclamantes(item) {
-      this.$refs.listareclamantes.idplurima = item.ID;
-      this.$refs.listareclamantes.numeroprocesso = item.NUMERO_PROCESSO;
+    async listaReclamantes(item) {
+      this.idplurima = item.ID;
+      this.numeroprocesso = item.NUMERO_PROCESSO;
+      this.$refs.listareclamantes.localIdPlurima = item.ID;
+      this.$refs.listareclamantes.localNumeroProcesso = item.NUMERO_PROCESSO;
       this.$refs.listareclamantes.$emit('show-dialog', true);
     },
     async showPlurima(item) {      

@@ -2,45 +2,39 @@
     <div>
         <v-dialog v-model="showDialog" persistent max-width="450px">
             <v-form>
-                <v-card class="no-scroll-card" flat style="overflow-x: hidden;">
+                <v-card class="no-scroll-card" flat style="overflow-x: hidden; border: none;" outlined>
                     <v-toolbar color="deep-purple lighten-2" title="detalhemodelo" dark>
                         <v-toolbar-title>Campos Disponíveis</v-toolbar-title>
                         <v-spacer></v-spacer>
                         <v-toolbar-items>
-                            <template>
-                                <v-tooltip bottom>
-                                    <template v-slot:activator="{ on, attrs }">
-                                        <v-btn v-bind="attrs" v-on="on" icon dark>
-                                            <v-icon>mdi-content-save-outline</v-icon>
-                                        </v-btn>
-                                    </template>
-                                    <span>Salvar Configuração</span>
-                                </v-tooltip>
-                            </template>
-                            <template>
-                                <v-tooltip bottom>
-                                    <template v-slot:activator="{ on, attrs }">
-                                        <v-btn v-bind="attrs" v-on="on" icon dark @click="hideDialog">
-                                            <v-icon>mdi-close</v-icon>
-                                        </v-btn>
-                                    </template>
-                                    <span>Fechar Sem Salvar</span>
-                                </v-tooltip>
-                            </template>
+                            <v-tooltip bottom>
+                                <template v-slot:activator="{ attrs }">
+                                    <v-btn v-bind="attrs" icon dark @click="salvarLista">
+                                        <v-icon>mdi-content-save-outline</v-icon>
+                                    </v-btn>
+                                </template>
+                                <span>Salvar Configuração</span>
+                            </v-tooltip>
+                            <v-tooltip bottom>
+                                <template v-slot:activator="{ attrs }">
+                                    <v-btn v-bind="attrs" icon dark @click="hideDialog">
+                                        <v-icon>mdi-close</v-icon>
+                                    </v-btn>
+                                </template>
+                                <span>Fechar Sem Salvar</span>
+                            </v-tooltip>
                         </v-toolbar-items>
                     </v-toolbar>
                     <v-card-text class="mt-0 ml-0">
                         <v-data-table :headers="headerscampos" :items="camposModelo" class="text-no-wrap"
                             :items-per-page="30" :loading="loadingTable">
-                        </v-data-table>
-                        <template v-slot:[`item.ATIVO`]="{ item }">
-                            <template>
+                            <template v-slot:[`item.ATIVO`]="{ item }">
                                 <v-row justify="center">
                                     <v-switch color="deep-purple lighten-2" v-model="item.ATIVO"
-                                        @change="onSwitchChange(item)" v-bind="attrs" v-on="on"></v-switch>
+                                        v-if="item.ATIVO !== undefined" @change="onSwitchChange(item)"></v-switch>
                                 </v-row>
                             </template>
-                        </template>
+                        </v-data-table>
                     </v-card-text>
                 </v-card>
             </v-form>
@@ -49,29 +43,6 @@
         <snack ref="snackbar" />
     </div>
 </template>
-
-<style scoped>
-/* Estilizando o scrollbar no WebKit (Chrome, Safari) */
-::-webkit-scrollbar {
-    width: 6px;
-    /* Largura do scrollbar */
-}
-
-::-webkit-scrollbar-track {
-    background: #EDE7F6;
-    /* Cor de fundo da área do scrollbar não preenchida */
-}
-
-::-webkit-scrollbar-thumb {
-    background: #B39DDB;
-    border-radius: 0px;
-}
-
-::-webkit-scrollbar-thumb:hover {
-    background: #B39DDB;
-    /* Cor do botão do scrollbar ao passar o mouse por cima */
-}
-</style>
 
 <script>
 import axios from "axios";
@@ -84,6 +55,7 @@ export default {
     props: {
         show: Boolean,
         idmodelo: { type: Number },
+        camposconfigurados: { type: Array }
     },
     components: {
         loading, snack
@@ -92,44 +64,83 @@ export default {
         return {
             showDialog: false,
             loadingTable: true,
+            localIdModelo: this.idmodelo,
+            localCamposConfigurados: this.camposConfigurados,
             camposModelo: [],
             headerscampos: [
                 { text: "CAMPO", value: "CAMPO" },
                 { text: "ATIVO", value: "ATIVO", align: "center" },
-            ]
+            ],
+            configModelo: { ID_MODELO: this.idmodelo, CAMPOS: [] }
+        }
+    },
+    watch: {
+        idmodelo(newValue) {
+            this.localIdModelo = newValue;
+            this.configModelo.ID_MODELO = newValue;
+        },
+        camposConfigurados(newValue) {
+            this.localCamposConfigurados = newValue;
         }
     },
     mounted() {
         this.$on('show-dialog', async (show) => {
             this.$refs.loading.dialog = true;
             await this.inicializar();
+            this.completarConfig();
             this.$refs.loading.dialog = false;
             this.showDialog = show;
         });
     },
     methods: {
+        onSwitchChange(item) {
+            return item;
+        },
         hideDialog() {
             this.showDialog = false;
         },
         async salvarLista() {
-            console.log(this.nomelista)
-            console.log(this.idUsuario);
-            console.log(this.nomeUsuario);
-            console.log(this.idplurima);
-            console.log(this.emailUsuario);
+            this.camposModelo.forEach(campo => {
+                if (this.configModelo.CAMPOS.find(config => config.ID_CAMPO === campo.ID_CAMPO)) {
+                    this.configModelo.CAMPOS.filter(config => config.ID_CAMPO === campo.ID_CAMPO).ATiVO = campo.ATIVO
+                } else {
+                    this.configModelo.CAMPOS.push({ ID_CAMPO: campo.ID, CAMPO: campo.CAMPO, ATIVO: campo.ATIVO })
+                }
+            })
+
+            this.$emit('update-config', this.configModelo);
+            this.hideDialog();
         },
         async inicializar() {
             this.loadingTable = true;
+            this.camposModelo = [];
+            this.configModelo = { ID_MODELO: this.idmodelo, CAMPOS: [] };
             await axios({
                 method: "get",
-                url: `${process.env.VUE_APP_ROOT_API_BASE_URL}regex/modelos/${this.idmodelo}/detalhes`,
+                url: `${process.env.VUE_APP_ROOT_API_BASE_URL}regex/modelos/${this.localIdModelo}/detalhes`,
             }).then((res) => {
                 this.modelodetalhado = res.data.result[0];
                 this.camposModelo = this.modelodetalhado.REGEXES;
-                this.loadingTable = false;
             }).catch((err) => {
                 console.log(err);
             });
+        },
+        completarConfig() {
+            if (this.camposModelo.length > 0) {
+                this.camposModelo.forEach(c => {
+                    if (this.camposConfigurados.length > 0) {                                                
+                        if (this.camposConfigurados.find(cc => cc.ID_CAMPO == c.ID)) {                            
+                            c.ATIVO = this.camposConfigurados.find(cc => cc.ID_CAMPO == c.ID).ATIVO
+                        } else {
+                            c.ATIVO = false
+                        }
+                    } else {
+                        c.ATIVO = false
+                    }
+                })
+            }
+
+            this.loadingTable = false;
         },
         convertData(item) {
             if (dayjs(item).format("DD/MM/YYYY") != "Invalid Date") {
@@ -140,5 +151,4 @@ export default {
         },
     },
 }
-
 </script>

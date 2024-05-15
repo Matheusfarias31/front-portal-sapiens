@@ -5,7 +5,7 @@
                 <v-toolbar color="deep-purple lighten-2" title="listareclamantes" dark>
                     <v-icon dark right>mdi-format-list-numbered</v-icon>
                     <v-divider class="mx-4" inset vertical></v-divider>
-                    <v-toolbar-title>Listas de Reclamantes - Plúrima: {{ this.numeroprocesso }}</v-toolbar-title>
+                    <v-toolbar-title>Listas de Reclamantes - Plúrima: {{ localNumeroProcesso }}</v-toolbar-title>
                     <v-spacer></v-spacer>
                     <v-divider class="mr-0 ml-0" inset vertical></v-divider>
                     <v-toolbar-items class="d-flex align-center my-2">
@@ -90,7 +90,7 @@
         <loading ref="loading" />
         <snack ref="snackbar" />
         <dialogCriarListaReclamantes ref="criarlistareclamantes" @atualizarlistas="this.buscarListas" />
-        <dialogStepper ref="steppereditlista" />
+        <dialogStepper :lista="listaSelecionada" ref="steppereditlista" />
     </div>
 </template>
 
@@ -106,8 +106,8 @@ export default {
     name: 'listareclamantes',
     props: {
         show: Boolean,
-        idplurima: { type: Number },
-        numeroprocesso: { type: String }
+        idplurima: Number,
+        numeroprocesso: String
     },
     components: {
         loading, snack, dialogCriarListaReclamantes, dialogStepper
@@ -115,6 +115,8 @@ export default {
     data() {
         return {
             showDialog: false,
+            localIdPlurima: this.idplurima,
+            localNumeroProcesso: this.numeroprocesso,
             loadingTable: false,
             listas: [],
             headerslistas: [
@@ -124,6 +126,7 @@ export default {
                 { text: "CRIADOR", value: "NOME_USUARIO", align: "center" },
                 { text: "DATA DE CRIAÇÃO", value: "CREATED_AT", align: "center" },
             ],
+            listaSelecionada: null
         }
     },
     mounted() {
@@ -134,24 +137,33 @@ export default {
             this.showDialog = show;
         });
     },
+    watch: {
+        idplurima(newValue) {
+            this.localIdPlurima = newValue;
+        },
+        numeroprocesso(newValue) {
+            this.localNumeroProcesso = newValue
+        }
+    },
     methods: {
         hideDialog() {
             this.listas = [];
             this.showDialog = false;
         },
         criarLista() {
-            this.$refs.criarlistareclamantes.idplurima = this.idplurima;
+            this.$refs.criarlistareclamantes.idplurima = this.localIdPlurima;
             this.$refs.criarlistareclamantes.$emit('show-dialog', true);
         },
         editarLista(item) {
-            this.$refs.steppereditlista.idplurima = this.idplurima;
-            this.$refs.steppereditlista.lista = item;
+            this.listaSelecionada = item;
+            this.$refs.steppereditlista.localLista = item;
+            this.$refs.steppereditlista.localIdPlurima = this.localIdPlurima;
             this.$refs.steppereditlista.$emit('show-dialog', true);
         },
         async buscarListas() {
             this.loadingTable = true;
             this.listas = [];
-            await axios.get(`${process.env.VUE_APP_ROOT_API_BASE_URL}plurimas/${this.idplurima}/listareclamantes`)
+            await axios.get(`${process.env.VUE_APP_ROOT_API_BASE_URL}plurimas/${this.localIdPlurima}/listareclamantes`)
                 .then((response) => {
                     this.listas = response.data.result;
                     this.loadingTable = false;
@@ -161,7 +173,7 @@ export default {
         },
         async deletarLista(lista) {
             this.$refs.loading.dialog = true;
-            await axios.delete(`${process.env.VUE_APP_ROOT_API_BASE_URL}plurimas/${this.idplurima}/listareclamantes/${lista.ID}`)
+            await axios.delete(`${process.env.VUE_APP_ROOT_API_BASE_URL}plurimas/${this.localIdPlurima}/listareclamantes/${lista.ID}`)
                 .then((response) => {
                     this.$refs.snackbar.show({
                         message: `${response.data.result}`,

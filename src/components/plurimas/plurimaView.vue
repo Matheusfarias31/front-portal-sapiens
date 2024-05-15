@@ -5,7 +5,7 @@
                 <v-card color="deep-purple lighten-5" light class="mt-0">
                     <v-toolbar color="deep-purple lighten-2" dark><v-icon dark
                             right>mdi-folder-information-outline</v-icon>
-                        <v-divider class="mx-4" inset vertical></v-divider><v-toolbar-title>Plurima</v-toolbar-title>
+                        <v-divider class="mx-4" inset vertical></v-divider><v-toolbar-title>Plurima | ID: {{ vPlurima.ID }} | Processo: {{ vPlurima.NUMERO_PROCESSO }}</v-toolbar-title>
                         <v-spacer></v-spacer>
                         <v-toolbar-items>
                             <v-btn icon dark @click="hideDialog">
