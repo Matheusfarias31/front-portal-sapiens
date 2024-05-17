@@ -1,22 +1,21 @@
 <template>
     <div v-if="this.lista">
-        <v-dialog v-model="showDialog" persistent max-width="1000px">
-            <v-card max-width="1000px" style="overflow-x: hidden; border: none;" outlined>
+        <v-dialog v-model="showDialog" fullscreen persistent>
+            <v-card flat style="overflow-x: hidden;border: none;" outlined>
                 <v-toolbar color="deep-purple lighten-2" title="listareclamantes" dark>
                     <v-icon dark right>mdi-text-box-edit-outline</v-icon>
                     <v-divider class="mx-4" inset vertical></v-divider>
                     <v-toolbar-title>Editar Lista de Reclamantes: {{ this.lista.REF_LISTA }}</v-toolbar-title>
                     <v-spacer></v-spacer>
-                </v-toolbar>
-                <stepperlsita :idplurima="localIdPlurima" :idlista="localLista.ID" ref="stepperlista" />
-                <v-form>
-                    <v-card-actions>
-                        <v-spacer></v-spacer>
-                        <v-btn color="red darken-1" text @click="hideDialog">
-                            Fechar
+
+                    <v-toolbar-items>
+                        <v-btn icon dark @click="hideDialog">
+                            <v-icon>mdi-close</v-icon>
                         </v-btn>
-                    </v-card-actions>
-                </v-form>
+                    </v-toolbar-items>
+                </v-toolbar>
+                <stepperlsita v-if="showDialog" :idplurima="localIdPlurima" :idlista="localLista.ID"
+                    ref="stepperlista" />
             </v-card>
         </v-dialog>
         <loading ref="loading" />
@@ -84,6 +83,9 @@ export default {
     },
     methods: {
         hideDialog() {
+            this.$refs.stepperlista.resetComponents();
+
+            this.$emit('update:show', false);
             this.showDialog = false;
         },
     },

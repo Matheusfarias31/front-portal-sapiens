@@ -120,19 +120,21 @@ export default {
                 url: `${process.env.VUE_APP_ROOT_API_BASE_URL}regex/modelos/${this.localIdModelo}/detalhes`,
             }).then((res) => {
                 this.modelodetalhado = res.data.result[0];
-                this.camposModelo = this.modelodetalhado.REGEXES;
+                this.camposModelo = this.modelodetalhado.REGEXES.filter(r => !r.VERBA && !r.REGISTRO_CP);                
             }).catch((err) => {
                 console.log(err);
             });
         },
-        completarConfig() {
+        completarConfig() {            
             if (this.camposModelo.length > 0) {
                 this.camposModelo.forEach(c => {
-                    if (this.camposConfigurados.length > 0) {                                                
-                        if (this.camposConfigurados.find(cc => cc.ID_CAMPO == c.ID)) {                            
-                            c.ATIVO = this.camposConfigurados.find(cc => cc.ID_CAMPO == c.ID).ATIVO
-                        } else {
-                            c.ATIVO = false
+                    if (this.camposConfigurados) {
+                        if (this.camposConfigurados.length > 0) {
+                            if (this.camposConfigurados.find(cc => cc.ID_CAMPO == c.ID)) {
+                                c.ATIVO = this.camposConfigurados.find(cc => cc.ID_CAMPO == c.ID).ATIVO
+                            } else {
+                                c.ATIVO = false
+                            }
                         }
                     } else {
                         c.ATIVO = false

@@ -1,98 +1,106 @@
 <template>
     <v-div>
         <v-stepper-content step="1">
-
-            <v-form>
-                <v-card class="mb-12" height="450px" style="overflow-x: hidden; border: none;" outlined>
-
-                    <v-row justify="center">
-                        <v-card class="mt-2 mr-2 ml-2 center" color="teal lighten-4" flat min-width="950px">
-                            <v-toolbar dense color="teal lighten-3" dark><v-icon dark right>mdi-regex</v-icon>
-                                <v-divider class="mx-4" inset vertical></v-divider><v-toolbar-title>Modelos de Regex
-                                    Utilizados</v-toolbar-title>
-                                <v-spacer></v-spacer>
-                            </v-toolbar>
-                            <v-col v-for="(items, indexitems) in modelosutilizados" :key="indexitems">
-                                <v-row justify="start">
-                                    <v-col cols="12" sm="12" md="12">
-                                        <v-card color="teal lighten-5" class="mt-0 mb-a" light elevation="0"
-                                            height="60">
-                                            <v-card-text class="d-flex justify-space-between align-center mt-0 mb-0">
-                                                <div>
-                                                    <v-icon light right>mdi-regex</v-icon>
-                                                    <v-divider class="mx-2" inset vertical></v-divider>
-                                                    <b>ID Modelo:</b> {{ items.ID_MODELO }} <v-divider class="mx-2"
-                                                        inset vertical></v-divider>
-                                                    <b>Tipo de
-                                                        Modelo:</b> {{ items.TIPO_MODELO }}
-                                                    <v-divider class="mx-2" inset vertical></v-divider> <b>Referência do
-                                                        Modelo:</b> {{
-                                items.REF_MODELO }}
-                                                </div>
-                                                <v-icon dark color="teal lighten-3"
-                                                    @click="showCamposModelo(items)">mdi-cog-outline</v-icon>
-                                            </v-card-text>
-                                        </v-card>
-                                    </v-col>
-                                </v-row>
-                            </v-col>
-                        </v-card>
-                    </v-row>
-
-
-                    <v-row justify="center">
-                        <v-card class="mt-2 mr-2 ml-2 mb-3 center" color="purple lighten-4" flat min-width="950px">
-                            <v-toolbar dense color="purple lighten-2" dark><v-icon dark
-                                    right>mdi-content-save-cog-outline</v-icon>
-                                <v-divider class="mx-4" inset vertical></v-divider><v-toolbar-title>Configuração
-                                    Atual</v-toolbar-title>
-                                <v-spacer></v-spacer>
-                            </v-toolbar>
-                            <v-col v-if="configuracaoatual.CONFIG_MODELOS.length == 0" cols="12" sm="12" md="12">
-                                <v-card color="purple lighten-5" class="mt-0 mb-a" light elevation="0" height="60">
-                                    <v-card-subtitle v-if="configuracaoatual.CONFIG_MODELOS.length == 0"
-                                        class="mt-0 mb-0">
-                                        Nenhuma configuração realizada.
-                                    </v-card-subtitle>
-                                </v-card>
-                            </v-col>
-                            <v-col v-for="(items, indexitems) in configuracaoatual.CONFIG_MODELOS" :key="indexitems">
-                                <v-row justify="start">
-                                    <v-col cols="12" sm="12" md="12">
-                                        <v-card color="purple lighten-5" class="mt-0 mb-1" light elevation="0"
-                                            min-height="60">
-                                            <v-card-text class="d-flex justify-space-between align-center mt-0 mb-0">
-                                                <div>
-                                                    <v-icon light right>mdi-regex</v-icon>
-                                                    <v-divider class="mx-2" inset vertical></v-divider>
-                                                    <b>ID Modelo:</b> {{ items.ID_MODELO }}
-                                                </div>
-                                            </v-card-text>
-                                            <v-card-text class="d-flex justify-space-between align-center mt-0 mb-0">
-                                                <div>
-                                                    <v-icon light right>mdi-select</v-icon>
-                                                    <v-divider class="mx-2" inset vertical></v-divider>
-                                                    <b>CAMPOS SELECIONADOS:</b> {{ camposSelecionadosItem(items) }}
-                                                </div>
-                                            </v-card-text>
-                                        </v-card>
-                                    </v-col>
-                                </v-row>
-                            </v-col>
-                        </v-card>
-                    </v-row>
+            <v-form v-if="carregado">
+                <v-card class="mb-12" min-height="700px" style="overflow-x: hidden; border: none;" outlined>
                     <v-row class="justify-end mr-0 mt-3">
                         <v-tooltip bottom>
                             <template v-slot:activator="{ on, attrs }">
-                                <v-btn height="40" width="300" dark color="blue-grey lighten-2" v-bind="attrs"
-                                    v-on="on">
-                                    Salvar e continuar<v-icon :size="25" right
-                                        dark>mdi-content-save-move-outline</v-icon>
+                                <v-btn v-if="carregado" height="40" width="300" dark color="deep-orange lighten-2"
+                                    v-bind="attrs" v-on="on" @click="nextStep">
+                                    Próxima Etapa<v-icon class="ml-3" :size="25" right
+                                        dark>mdi-page-next-outline</v-icon>
                                 </v-btn>
                             </template>
-                            <span>Salvar e continuar para a próxima etapa.</span>
+                            <span>Continuar para a próxima etapa.</span>
                         </v-tooltip>
                     </v-row>
+                    <v-row justify="center">
+                        <v-col cols="12">
+                            <v-card class="mt-2 mr-2 ml-2 center" color="teal lighten-4" flat>
+                                <v-toolbar dense color="teal lighten-3" dark><v-icon dark right>mdi-regex</v-icon>
+                                    <v-divider class="mx-4" inset vertical></v-divider><v-toolbar-title>Modelos de Regex
+                                        Utilizados</v-toolbar-title>
+                                    <v-spacer></v-spacer>
+                                </v-toolbar>
+                                <v-col v-for="(items, indexitems) in modelosutilizados" :key="indexitems">
+                                    <v-row justify="start">
+                                        <v-col cols="12" sm="12" md="12">
+                                            <v-card color="teal lighten-5" class="mt-0 mb-a" light elevation="0"
+                                                height="60">
+                                                <v-card-text
+                                                    class="d-flex justify-space-between align-center mt-0 mb-0">
+                                                    <div>
+                                                        <v-icon light right>mdi-regex</v-icon>
+                                                        <v-divider class="mx-2" inset vertical></v-divider>
+                                                        <b>ID Modelo:</b> {{ items.ID_MODELO }} <v-divider class="mx-2"
+                                                            inset vertical></v-divider>
+                                                        <b>Tipo de
+                                                            Modelo:</b> {{ items.TIPO_MODELO }}
+                                                        <v-divider class="mx-2" inset vertical></v-divider>
+                                                        <b>Referência do
+                                                            Modelo:</b> {{
+                items.REF_MODELO }}
+                                                    </div>
+                                                    <v-icon dark color="teal lighten-3"
+                                                        @click="showCamposModelo(items)">mdi-cog-outline</v-icon>
+                                                </v-card-text>
+                                            </v-card>
+                                        </v-col>
+                                    </v-row>
+                                </v-col>
+                            </v-card>
+                        </v-col>
+                    </v-row>
+
+
+                    <v-row justify="center">
+                        <v-col cols="12">
+                            <v-card class="mt-2 mr-2 ml-2 mb-3 center" color="purple lighten-4" flat min-width="950px">
+                                <v-toolbar dense color="purple lighten-2" dark><v-icon dark
+                                        right>mdi-content-save-cog-outline</v-icon>
+                                    <v-divider class="mx-4" inset vertical></v-divider><v-toolbar-title>Configuração
+                                        Atual</v-toolbar-title>
+                                    <v-spacer></v-spacer>
+                                </v-toolbar>
+                                <v-col v-if="configuracaoatual.CONFIG_MODELOS.length == 0" cols="12" sm="12" md="12">
+                                    <v-card color="purple lighten-5" class="mt-0 mb-a" light elevation="0" height="60">
+                                        <v-card-subtitle v-if="configuracaoatual.CONFIG_MODELOS.length == 0"
+                                            class="mt-0 mb-0">
+                                            Nenhuma configuração realizada.
+                                        </v-card-subtitle>
+                                    </v-card>
+                                </v-col>
+                                <v-col v-for="(items, indexitems) in configuracaoatual.CONFIG_MODELOS"
+                                    :key="indexitems">
+                                    <v-row justify="start">
+                                        <v-col cols="12" sm="12" md="12">
+                                            <v-card color="purple lighten-5" class="mt-0 mb-1" light elevation="0"
+                                                min-height="60">
+                                                <v-card-text
+                                                    class="d-flex justify-space-between align-center mt-0 mb-0">
+                                                    <div>
+                                                        <v-icon light right>mdi-regex</v-icon>
+                                                        <v-divider class="mx-2" inset vertical></v-divider>
+                                                        <b>ID Modelo:</b> {{ items.ID_MODELO }}
+                                                    </div>
+                                                </v-card-text>
+                                                <v-card-text
+                                                    class="d-flex justify-space-between align-center mt-0 mb-0">
+                                                    <div>
+                                                        <v-icon light right>mdi-select</v-icon>
+                                                        <v-divider class="mx-2" inset vertical></v-divider>
+                                                        <b>CAMPOS SELECIONADOS:</b> {{ camposSelecionadosItem(items) }}
+                                                    </div>
+                                                </v-card-text>
+                                            </v-card>
+                                        </v-col>
+                                    </v-row>
+                                </v-col>
+                            </v-card>
+                        </v-col>
+                    </v-row>
+
                 </v-card>
 
 
@@ -102,9 +110,9 @@
                 @update-config="atualizarConfiguracaoAtual" />
             <loading ref="loading" />
             <snack ref="snackbar" />
-            
+
         </v-stepper-content>
-        
+
     </v-div>
 </template>
 
@@ -151,17 +159,35 @@ export default {
             configuracaoatual: { ID_LISTA: this.localIdLista, CONFIG_MODELOS: [] },
             idmodeloSelecionado: null,
             camposConfigurados: null,
-            lista: null
+            lista: null,
+            carregado: false
         };
     },
     mounted() {
-        this.$refs.loading.dialog = true;
-        this.configuracaoatual = { ID_LISTA: this.localIdLista, CONFIG_MODELOS: [] };
-        this.getmodelosutilizados()
-            .then(() => {
-                this.getConfigsLista();
-            });
-        this.$refs.loading.dialog = false;
+        this.$on('reset-component', () => {
+            this.modelosutilizados = [];
+            this.configuracaoatual = { ID_LISTA: this.localIdLista, CONFIG_MODELOS: [] };
+            this.idmodeloSelecionado = null;
+            this.camposConfigurados = null;
+            this.lista = null;
+            this.carregado = false;
+        });
+
+        this.$on('start-component', async () => {
+            this.$refs.loading.dialog = true;
+            this.configuracaoatual = { ID_LISTA: this.localIdLista, CONFIG_MODELOS: [] };
+            this.modelosutilizados = [];
+            this.camposConfigurados = null;
+            this.lista = null;
+            await this.getmodelosutilizados()
+                .then(() => {
+                    this.getConfigsLista();
+                })
+                .finally(() => {
+                    this.$refs.loading.dialog = false;
+                    this.carregado = true;
+                });
+        });
     },
     watch: {
         idlista(newValue) {
@@ -233,14 +259,24 @@ export default {
         async getConfigsLista() {
             await axios.get(
                 `${process.env.VUE_APP_ROOT_API_BASE_URL}plurimas/${this.idplurima}/listareclamantes/${this.localIdLista}`
-            ).then((response) => {                
-                this.lista = response.data.result;                                                
-                if(this.lista.CONFIG_LISTA.CAMPOS_MODELOS){                    
+            ).then((response) => {
+                this.lista = response.data.result;
+                if (this.lista.CONFIG_LISTA.CAMPOS_MODELOS) {
                     this.configuracaoatual.CONFIG_MODELOS.push(JSON.parse(this.lista.CONFIG_LISTA.CAMPOS_MODELOS)[0])
-                }                
+                }
             }).catch((err) => {
                 console.log(err.response.data);
             });
+        },
+        nextStep() {
+            if (this.configuracaoatual.CONFIG_MODELOS.length === 0) {
+                this.$refs.snackbar.show({
+                    message: `Nenhum campo selecionado.`,
+                    status: 'alert',
+                });
+            } else {
+                this.$emit('next-step');
+            }
         }
     }
 }
