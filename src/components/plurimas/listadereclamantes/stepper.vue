@@ -22,7 +22,7 @@
 
       <v-divider></v-divider>
 
-      <v-stepper-step step="4">
+      <v-stepper-step step="4" color="brown lighten-2">
         <!-- Nome do passo 3 -->
         Lista Final
       </v-stepper-step>

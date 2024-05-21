@@ -9,14 +9,14 @@
                                 <v-btn class="mr-3" height="40" width="300" dark color="deep-orange lighten-2"
                                     v-bind="attrs" v-on="on" @click="backstep"><v-icon class="mr-3" :size="25" right
                                         dark>mdi-page-previous-outline</v-icon>
-                                    Etapa Anterior
+                                    Configurar Campos
                                 </v-btn>
                             </template>
-                            <span>Voltar para etapa anterior.</span>
+                            <span>Configurar Campos.</span>
                         </v-tooltip>
                         <v-tooltip bottom>
                             <template v-slot:activator="{ on, attrs }">
-                                <v-btn height="40" width="300" dark color="deep-purple lighten-2" v-bind="attrs"
+                                <v-btn height="40" width="300" dark color="brown lighten-2" v-bind="attrs"
                                     v-on="on">
                                     Finalizar Lista<v-icon class="ml-3" :size="25" right dark>mdi-account-group</v-icon>
                                 </v-btn>
@@ -30,7 +30,7 @@
                             Reclamantes</v-toolbar-title>
                         <v-spacer></v-spacer>
                     </v-toolbar>
-                    <v-data-table max-height="550px" :headers="headers" :items="prelista" class="elevation-1">
+                    <v-data-table height="550px" :headers="headers" :items="prelista" class="elevation-1">
                         <template v-slot:[`item.MANTER_NA_LISTA`]="{ item }">
                             <v-row justify="center">
                                 <v-switch color="deep-purple lighten-2" v-model="item.MANTER_NA_LISTA"

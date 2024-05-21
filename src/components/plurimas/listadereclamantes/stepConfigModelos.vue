@@ -8,11 +8,11 @@
                             <template v-slot:activator="{ on, attrs }">
                                 <v-btn v-if="carregado" height="40" width="300" dark color="deep-orange lighten-2"
                                     v-bind="attrs" v-on="on" @click="nextStep">
-                                    Próxima Etapa<v-icon class="ml-3" :size="25" right
+                                    Configurar Campos<v-icon class="ml-3" :size="25" right
                                         dark>mdi-page-next-outline</v-icon>
                                 </v-btn>
                             </template>
-                            <span>Continuar para a próxima etapa.</span>
+                            <span>Configurar Campos.</span>
                         </v-tooltip>
                     </v-row>
                     <v-row justify="center">
@@ -260,9 +260,10 @@ export default {
             await axios.get(
                 `${process.env.VUE_APP_ROOT_API_BASE_URL}plurimas/${this.idplurima}/listareclamantes/${this.localIdLista}`
             ).then((response) => {
-                this.lista = response.data.result;
-                if (this.lista.CONFIG_LISTA.CAMPOS_MODELOS) {
-                    this.configuracaoatual.CONFIG_MODELOS.push(JSON.parse(this.lista.CONFIG_LISTA.CAMPOS_MODELOS)[0])
+                this.lista = response.data.result;                
+                
+                if (this.lista.CONFIG_LISTA.CAMPOS_MODELOS) {                                                     
+                    this.configuracaoatual.CONFIG_MODELOS = JSON.parse(this.lista.CONFIG_LISTA.CAMPOS_MODELOS)                                        
                 }
             }).catch((err) => {
                 console.log(err.response.data);

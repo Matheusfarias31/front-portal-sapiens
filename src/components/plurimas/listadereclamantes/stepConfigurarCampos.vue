@@ -6,23 +6,23 @@
                     <v-row class="justify-end mr-0 mt-3">
                         <v-tooltip bottom>
                             <template v-slot:activator="{ on, attrs }">
-                                <v-btn class="mr-3" height="40" width="300" dark color="deep-purple lighten-2"
-                                    v-bind="attrs" v-on="on" @click="backstep"><v-icon class="mr-3" :size="25" right
+                                <v-btn class="mr-3" height="40" width="300" dark color="purple lighten-2" v-bind="attrs"
+                                    v-on="on" @click="backstep"><v-icon class="mr-3" :size="25" right
                                         dark>mdi-page-previous-outline</v-icon>
-                                    Etapa Anterior
+                                    Configurar Modelos
                                 </v-btn>
                             </template>
-                            <span>Voltar para etapa anterior.</span>
+                            <span>Configurar Modelos.</span>
                         </v-tooltip>
                         <v-tooltip bottom>
                             <template v-slot:activator="{ on, attrs }">
                                 <v-btn height="40" width="300" dark color="pink lighten-2" v-bind="attrs" v-on="on"
                                     @click="nextStep">
-                                    Próxima Etapa<v-icon class="ml-3" :size="25" right
+                                    Gerar Pré-Lista<v-icon class="ml-3" :size="25" right
                                         dark>mdi-page-next-outline</v-icon>
                                 </v-btn>
                             </template>
-                            <span>Continuar para a próxima etapa.</span>
+                            <span>Gerar Pré-Lista de Reclamantes.</span>
                         </v-tooltip>
                     </v-row>
                     <v-card-subtitle class="mt-0 mb-0">
@@ -51,21 +51,24 @@
                             <v-tooltip bottom>
                                 <template v-slot:activator="{ on, attrs }">
                                     <v-icon v-bind="attrs" v-on="on" color="deep-orange lighten-2" :size="26"
-                                        class="mr-2" >
-                                        mdi-filter-plus-outline
+                                        class="mr-2" @click="showConfigurarFiltros(item)">
+                                        mdi-filter-outline
                                     </v-icon>
                                 </template>
                                 <span>Atribuir Filtro</span>
                             </v-tooltip>
+                        </template>
+                        <template v-slot:[`item.FILTROS`]="{ item }">
+                            {{ formatFiltros(item.FILTROS) }}
                         </template>
                     </v-data-table>
                 </v-card>
             </v-form>
 
             <v-dialog v-model="editarNomeLista" persistent max-width="400px">
-                <v-card color="deep-orange lighten-4">
+                <v-card>
                     <v-toolbar color="deep-orange lighten-2" title="CriarStatus" dark>
-                        <v-toolbar-title>Adicionar Filtro Textual</v-toolbar-title>
+                        <v-toolbar-title>Definir Nome na Lista</v-toolbar-title>
                     </v-toolbar>
                     <v-card-text>
                         <v-textarea class="mt-3 mb-0 text-left align-start" label="Filtro..." placeholder="Filtro..."
@@ -74,9 +77,71 @@
                     <v-card-actions>
                         <v-spacer></v-spacer>
                         <v-btn color="deep-orange darken-1" text @click="salvarNomeLista">
-                            Salvar Nome
+                            Salvar
                         </v-btn>
-                        <v-btn color="red darken-1" text @click="editarNomeLista = false">
+                        <v-btn color="red darken-4" text @click="editarNomeLista = false">
+                            Fechar
+                        </v-btn>
+                    </v-card-actions>
+                </v-card>
+            </v-dialog>
+
+            <v-dialog v-model="configurarfiltros" persistent max-width="600px">
+                <v-card>
+                    <v-toolbar color="deep-orange lighten-2" title="editarfiltros" dark>
+                        <v-toolbar-title>Filtros do Campo</v-toolbar-title>
+                        <v-spacer></v-spacer>
+                        <v-toolbar-items>
+                            <v-tooltip bottom>
+                                <template v-slot:activator="{ on, attrs }">
+                                    <v-btn icon dark @click="showAdicionarFiltro">
+                                        <v-icon v-bind="attrs" v-on="on">mdi-filter-plus-outline</v-icon>
+                                    </v-btn>
+                                </template>
+                                <span>Cadastrar Filtro</span>
+                            </v-tooltip>
+                        </v-toolbar-items>
+                    </v-toolbar>
+                    <v-data-table :headers="headersFiltro" :items="campoEditado.FILTROS" class="elevation-1">
+                        <template v-slot:[`item.actions`]="{ item }">
+                            <v-tooltip bottom>
+                                <template v-slot:activator="{ on, attrs }">
+                                    <v-icon v-bind="attrs" v-on="on" color="deep-orange lighten-2" :size="26"
+                                        class="mr-2" @click="removerFiltro(item.FILTRO)">
+                                        mdi-delete
+                                    </v-icon>
+                                </template>
+                                <span>Excluir Filtro</span>
+                            </v-tooltip>
+                        </template>
+                    </v-data-table>
+                    <v-card-actions>
+                        <v-spacer></v-spacer>
+                        <v-btn color="deep-orange darken-1" text @click="configurarfiltros = false">
+                            Salvar
+                        </v-btn>
+                        <v-btn color="red darken-4" text @click="configurarfiltros = false">
+                            Fechar
+                        </v-btn>
+                    </v-card-actions>
+                </v-card>
+            </v-dialog>
+
+            <v-dialog v-model="adicionarFiltro" persistent max-width="400px">
+                <v-card>
+                    <v-toolbar color="deep-orange lighten-2" title="CriarStatus" dark>
+                        <v-toolbar-title>Adicionar Filtro</v-toolbar-title>
+                    </v-toolbar>
+                    <v-card-text>
+                        <v-textarea class="mt-3 mb-0 text-left align-start" label="Filtro..." placeholder="Filtro..."
+                            outlined maxlength="100" v-model="filtroNovo"></v-textarea>
+                    </v-card-text>
+                    <v-card-actions>
+                        <v-spacer></v-spacer>
+                        <v-btn color="deep-orange darken-1" text @click="salvarFiltro">
+                            Salvar
+                        </v-btn>
+                        <v-btn color="red darken-4" text @click="adicionarFiltro = false">
                             Fechar
                         </v-btn>
                     </v-card-actions>
@@ -135,13 +200,21 @@ export default {
                 { text: "ID_CAMPO", value: "ID_CAMPO", align: "center" },
                 { text: "CAMPO", value: "CAMPO", align: "center" },
                 { text: "NOME NA LISTA", value: "NOME_LISTA", align: "center" },
+                { text: "FILTROS", value: "FILTROS", align: "center" },
+                { text: "Ações", value: "actions", sortable: false, align: "center" },
+            ],
+            headersFiltro: [
+                { text: "Filtro", value: "FILTRO", align: "center" },
                 { text: "Ações", value: "actions", sortable: false, align: "center" },
             ],
             camposSelecionados: [],
             loadingTable: true,
             editarNomeLista: false,
             camposBd: [],
-            campoEditado: { ID_MODELO: 0, ID_CAMPO: 0, CAMPO: "", NOME_LISTA: "" }
+            campoEditado: { ID_MODELO: 0, ID_CAMPO: 0, CAMPO: "", NOME_LISTA: "", FILTROS: [] },
+            configurarfiltros: false,
+            adicionarFiltro: false,
+            filtroNovo: ''
         };
     },
     watch: {
@@ -154,9 +227,8 @@ export default {
         this.$on('reset-component', () => {
             this.camposConfig = [];
             this.camposSelecionados = [];
-            this.campoEditado = { ID_MODELO: 0, ID_CAMPO: 0, CAMPO: "", NOME_LISTA: "" };
             this.camposBd = [];
-            this.campoEditado = { ID_MODELO: 0, ID_CAMPO: 0, CAMPO: "", NOME_LISTA: "" };
+            this.campoEditado = { ID_MODELO: 0, ID_CAMPO: 0, CAMPO: "", NOME_LISTA: "", FILTROS: [] };
         });
 
         this.$on('start-component', async () => {
@@ -170,12 +242,72 @@ export default {
     },
     methods: {
         fecharEditarNomeLista() {
-            this.campoEditado = { ID_MODELO: 0, ID_CAMPO: 0, CAMPO: "", NOME_LISTA: "" };
+            this.campoEditado = { ID_MODELO: 0, ID_CAMPO: 0, CAMPO: "", NOME_LISTA: "", FILTROS: [] };
             this.editarNomeLista = false;
         },
         showEditarNomeLista(item) {
-            this.campoEditado = { ID_MODELO: item.ID_MODELO, ID_CAMPO: item.ID_CAMPO, CAMPO: item.CAMPO, NOME_LISTA: item.NOME_LISTA };
+            this.campoEditado = { ID_MODELO: item.ID_MODELO, ID_CAMPO: item.ID_CAMPO, CAMPO: item.CAMPO, NOME_LISTA: item.NOME_LISTA, FILTROS: item.FILTROS };
             this.editarNomeLista = true;
+        },
+        showConfigurarFiltros(item) {
+            this.campoEditado = { ID_MODELO: item.ID_MODELO, ID_CAMPO: item.ID_CAMPO, CAMPO: item.CAMPO, NOME_LISTA: item.NOME_LISTA, FILTROS: item.FILTROS };
+            this.configurarfiltros = true;
+        },
+        fecharConfigurarFiltro() {
+            this.campoEditado = { ID_MODELO: 0, ID_CAMPO: 0, CAMPO: "", NOME_LISTA: "", FILTROS: [] };
+            this.configurarfiltros = false;
+        },
+        showAdicionarFiltro() {
+            this.filtroNovo = '';
+            this.adicionarFiltro = true;
+        },
+        fecharAdicionarFiltro() {
+            this.filtroNovo = '';
+            this.adicionarFiltro = false;
+        },
+        removerFiltro(filtroParaRemover) {
+            // Remover do campoEditado
+            this.campoEditado.FILTROS = this.campoEditado.FILTROS.filter(filtro => filtro.FILTRO !== filtroParaRemover);
+
+            // Encontrar o índice do item em camposConfig
+            const index = this.camposConfig.findIndex(
+                campo => campo.ID_CAMPO === this.campoEditado.ID_CAMPO && campo.ID_MODELO === this.campoEditado.ID_MODELO
+            );
+
+            // Se encontrado, remover o filtro do item em camposConfig
+            if (index !== -1) {
+                this.camposConfig[index].FILTROS = this.camposConfig[index].FILTROS.filter(filtro => filtro.FILTRO !== filtroParaRemover);
+                this.camposConfig = [...this.camposConfig]; // Forçar a reatividade
+            }
+        },
+        salvarFiltro() {
+            if (this.filtroNovo === "") {
+                this.$refs.snackbar.show({
+                    message: `Informe um filtro válido.`,
+                    status: 'alert',
+                });
+            } else {
+                const index = this.camposConfig.findIndex(c => c.ID_CAMPO === this.campoEditado.ID_CAMPO && c.ID_MODELO === this.campoEditado.ID_MODELO);
+                if (index !== -1) {
+                    if (this.campoEditado.FILTROS === undefined) {
+                        this.campoEditado.FILTROS = [];
+                    }
+                    
+                    const filtroExistente = this.campoEditado.FILTROS.find(filtro => filtro.FILTRO === this.filtroNovo);
+                    if (!filtroExistente) {                        
+                        this.campoEditado.FILTROS.push({ FILTRO: this.filtroNovo });                        
+                    } else {
+                        this.$refs.snackbar.show({
+                            message: `Este filtro já foi adicionado.`,
+                            status: 'alert',
+                        });
+                    }
+                } else {
+                    console.error('Item não encontrado na matriz camposConfig');
+                }
+
+                this.fecharAdicionarFiltro();
+            }
         },
         salvarNomeLista() {
             if (this.campoEditado.NOME_LISTA === "") {
@@ -202,7 +334,7 @@ export default {
                 this.lista = response.data.result;
 
                 try {
-                    this.camposSelecionados.push(JSON.parse(this.lista.CONFIG_LISTA.CAMPOS_MODELOS)[0]);
+                    this.camposSelecionados = JSON.parse(this.lista.CONFIG_LISTA.CAMPOS_MODELOS);
                 } catch (error) {
                     this.camposSelecionados = [];
                 }
@@ -226,25 +358,32 @@ export default {
         backstep() {
             this.$emit('back-step');
         },
+        formatFiltros(filtros) {
+            if (Array.isArray(filtros)) {
+                return filtros.map(filtro => filtro.FILTRO).join('; ');
+            }
+            return filtros;
+        },
         completarConfigs() {
             if (this.camposSelecionados.length > 0) {
                 this.camposSelecionados.forEach(cs => {
                     cs.CAMPOS.forEach(campo => {
-                        console.log(campo);
                         if (this.camposBd[0] != undefined) {
                             if (this.camposBd[0].filter(cbd => cbd.ID_CAMPO === campo.ID_CAMPO && cs.ID_MODELO === cbd.ID_MODELO).length > 0 && campo.ATIVO) {
                                 this.camposConfig.push({
                                     ID_MODELO: cs.ID_MODELO,
                                     ID_CAMPO: campo.ID_CAMPO,
                                     CAMPO: campo.CAMPO,
-                                    NOME_LISTA: this.camposBd[0].filter(cbd => cbd.ID_CAMPO === campo.ID_CAMPO && cs.ID_MODELO === cbd.ID_MODELO)[0].NOME_LISTA
+                                    NOME_LISTA: this.camposBd[0].filter(cbd => cbd.ID_CAMPO === campo.ID_CAMPO && cs.ID_MODELO === cbd.ID_MODELO)[0].NOME_LISTA,
+                                    FILTROS: this.camposBd[0].filter(cbd => cbd.ID_CAMPO === campo.ID_CAMPO && cs.ID_MODELO === cbd.ID_MODELO)[0].FILTROS
                                 })
                             } else if (campo.ATIVO) {
                                 this.camposConfig.push({
                                     ID_MODELO: cs.ID_MODELO,
                                     ID_CAMPO: campo.ID_CAMPO,
                                     CAMPO: campo.CAMPO,
-                                    NOME_LISTA: ""
+                                    NOME_LISTA: "",
+                                    FILTROS: []
                                 })
                             }
                         }
@@ -253,7 +392,8 @@ export default {
                                 ID_MODELO: cs.ID_MODELO,
                                 ID_CAMPO: campo.ID_CAMPO,
                                 CAMPO: campo.CAMPO,
-                                NOME_LISTA: ""
+                                NOME_LISTA: "",
+                                FILTROS: []
                             })
                         }
                     })
