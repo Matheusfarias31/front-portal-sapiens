@@ -291,11 +291,19 @@ export default {
                 if (index !== -1) {
                     if (this.campoEditado.FILTROS === undefined) {
                         this.campoEditado.FILTROS = [];
+                        this.camposConfig[index].FILTROS = [];
                     }
-                    
+
+                    if (this.camposConfig[index].FILTROS === undefined) {                        
+                        this.camposConfig[index].FILTROS = [];
+                    }
+
                     const filtroExistente = this.campoEditado.FILTROS.find(filtro => filtro.FILTRO === this.filtroNovo);
                     if (!filtroExistente) {                        
-                        this.campoEditado.FILTROS.push({ FILTRO: this.filtroNovo });                        
+                        this.campoEditado.FILTROS.push({ FILTRO: this.filtroNovo });    
+                        this.camposConfig[index].FILTROS = this.campoEditado.FILTROS;
+                        console.log(this.campoEditado)                    
+                        console.log(this.camposConfig)                    
                     } else {
                         this.$refs.snackbar.show({
                             message: `Este filtro já foi adicionado.`,

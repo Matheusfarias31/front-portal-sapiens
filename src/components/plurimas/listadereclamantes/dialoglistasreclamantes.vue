@@ -49,7 +49,8 @@
                         </v-tooltip>
                         <v-tooltip bottom>
                             <template v-slot:activator="{ on, attrs }">
-                                <v-icon v-bind="attrs" v-on="on" color="brown lighten-2" :size="26" class="mr-2">
+                                <v-icon v-bind="attrs" v-on="on" color="brown lighten-2" :size="26" class="mr-2"
+                                    @click="baixarListaFinal(item)">
                                     mdi-download-circle-outline
                                 </v-icon>
                             </template>
@@ -101,6 +102,7 @@ import loading from "@/components/shared/loading.vue";
 import snack from "@/components/shared/snackBar.vue";
 import dialogCriarListaReclamantes from "./dialogCriarListaReclamantes.vue";
 import dialogStepper from "./dialogStepper.vue"
+import * as XLSX from 'xlsx';
 
 export default {
     name: 'listareclamantes',
@@ -146,6 +148,39 @@ export default {
         }
     },
     methods: {
+        async baixarListaFinal(item) {
+            this.$refs.loading.dialog = true;
+            await axios.get(
+                `${process.env.VUE_APP_ROOT_API_BASE_URL}plurimas/${this.localIdPlurima}/listareclamantes/${item.ID}`
+            ).then((response) => {
+                const lista = response.data.result;
+
+                if(lista.CONFIG_LISTA.LISTA_FINAL === undefined){
+                    this.$refs.loading.dialog = false;
+                    this.$refs.snackbar.show({
+                        message: `A lista final ainda não foi criada.`,
+                        status: 'alert',
+                    });
+                    return;
+                }
+                
+                const filteredItems = JSON.parse(lista.CONFIG_LISTA.LISTA_FINAL).filter(r => r.MANTER_NA_LISTA);
+                const ws = XLSX.utils.json_to_sheet(filteredItems);
+                const wb = XLSX.utils.book_new();
+                XLSX.utils.book_append_sheet(wb, ws, 'Data');
+                XLSX.writeFile(wb, `${item.REF_LISTA}.xlsx`);
+                this.$refs.loading.dialog = false;
+            }).catch((err) => {
+                console.log(err.response.data);
+            });
+        },
+        exportToExcel() {
+            const filteredItems = this.listafinal.filter(item => item.MANTER_NA_LISTA);
+            const ws = XLSX.utils.json_to_sheet(filteredItems);
+            const wb = XLSX.utils.book_new();
+            XLSX.utils.book_append_sheet(wb, ws, 'Data');
+            XLSX.writeFile(wb, `${this.lista.REF_LISTA}.xlsx`);
+        },
         hideDialog() {
             this.listas = [];
             this.showDialog = false;

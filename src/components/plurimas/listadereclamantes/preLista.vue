@@ -16,15 +16,14 @@
                         </v-tooltip>
                         <v-tooltip bottom>
                             <template v-slot:activator="{ on, attrs }">
-                                <v-btn height="40" width="300" dark color="brown lighten-2" v-bind="attrs"
-                                    v-on="on">
+                                <v-btn height="40" width="300" dark color="brown lighten-2" v-bind="attrs" v-on="on" @click="nextStep">
                                     Finalizar Lista<v-icon class="ml-3" :size="25" right dark>mdi-account-group</v-icon>
                                 </v-btn>
                             </template>
                             <span>Continuar para a próxima etapa.</span>
                         </v-tooltip>
                     </v-row>
-                    
+
                     <v-toolbar dense color="pink lighten-3" dark><v-icon dark right>mdi-human-queue</v-icon>
                         <v-divider class="mx-4" inset vertical></v-divider><v-toolbar-title>Pré-Lista de
                             Reclamantes</v-toolbar-title>
@@ -155,6 +154,27 @@ export default {
             });
 
             return Array.from(allFields);
+        },
+        async nextStep() {
+            this.$refs.loading.dialog = true;
+
+            await axios.put(`${process.env.VUE_APP_ROOT_API_BASE_URL}plurimas/${this.idplurima}/listareclamantes/${this.localIdLista}`, {
+                CAMPOS_MODELOS: this.lista.CONFIG_LISTA.CONFIG_MODELOS,
+                EDIT_CAMPOS_MODELOS: this.lista.CONFIG_LISTA.EDIT_CAMPOS_MODELOS,
+                PRE_LISTA: this.lista.CONFIG_LISTA.PRE_LISTA,
+                LISTA_FINAL: JSON.stringify(this.prelista),
+            }).then((response) => {
+                this.$refs.snackbar.show({
+                    message: `${response.data.result}`,
+                    status: response.data.status,
+                });
+
+            }).catch((err) => {
+                console.log(err);
+            });
+
+            this.$refs.loading.dialog = false;
+            this.$emit('next-step');
         },
         backstep() {
             this.$emit('back-step');

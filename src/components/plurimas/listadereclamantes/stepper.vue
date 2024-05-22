@@ -15,14 +15,14 @@
 
       <v-divider></v-divider>
 
-      <v-stepper-step :complete="e2 > 3" step="3" color="pink lighten-2">
+      <v-stepper-step :complete="e1 > 3" step="3" color="pink lighten-2">
         <!-- Nome do passo 2 -->
         Pré-Lista
       </v-stepper-step>
 
       <v-divider></v-divider>
 
-      <v-stepper-step step="4" color="brown lighten-2">
+      <v-stepper-step :complete="e1 > 4" step="4" color="brown lighten-2">
         <!-- Nome do passo 3 -->
         Lista Final
       </v-stepper-step>
@@ -41,6 +41,9 @@
         @back-step="backstep">
       </stepprelista>
 
+      <steplistafinal :idplurima="this.idplurima" :idlista="localIdLista" ref="steplistafinal" @back-step="backstep">
+      </steplistafinal>
+
       <!-- Conteúdo das outras etapas aqui -->
     </v-stepper-items>
 
@@ -53,6 +56,7 @@
 import stepconfigmodelos from "./stepConfigModelos.vue";
 import stepconfigurarcampos from "./stepConfigurarCampos.vue"
 import stepprelista from "./preLista.vue";
+import steplistafinal from "./listaFinal.vue";
 import loading from "@/components/shared/loading.vue";
 
 export default {
@@ -66,7 +70,7 @@ export default {
     }
   },
   components: {
-    stepconfigmodelos, stepconfigurarcampos, stepprelista, loading
+    stepconfigmodelos, stepconfigurarcampos, stepprelista, steplistafinal, loading
   },
   mounted() {
     this.$refs.stepconfigmodels.$emit('reset-component');
@@ -102,10 +106,16 @@ export default {
             this.$refs.stepprelista.$emit('start-component');
             this.$refs.loading.dialog = false;
             break;
-
+          case 3:
+            this.$refs.loading.dialog = true;
+            this.$refs.stepconfigmodels.$emit('reset-component');
+            this.$refs.stepconfigurarmodelos.$emit('reset-component');
+            this.$refs.stepprelista.$emit('reset-component');
+            this.$refs.steplistafinal.$emit('reset-component');
+            this.$refs.steplistafinal.$emit('start-component');
+            this.$refs.loading.dialog = false;
+            break;
         }
-
-
 
         this.e1++;
       }
@@ -119,16 +129,21 @@ export default {
             this.$refs.stepconfigmodels.$emit('reset-component');
             this.$refs.stepconfigmodels.$emit('start-component');
             break;
-          case 3:            
-            this.$refs.stepprelista.$emit('reset-component');            
+          case 3:
+            this.$refs.stepprelista.$emit('reset-component');
             this.$refs.stepconfigmodels.$emit('reste-component');
-            this.$refs.stepconfigurarmodelos.$emit('reset-component');            
-            this.$refs.stepconfigurarmodelos.$emit('start-component');            
+            this.$refs.stepconfigurarmodelos.$emit('reset-component');
+            this.$refs.stepconfigurarmodelos.$emit('start-component');
+            break;
+          case 4:
+            this.$refs.stepprelista.$emit('reset-component');
+            this.$refs.stepconfigmodels.$emit('reste-component');
+            this.$refs.stepconfigurarmodelos.$emit('reset-component');
+            this.$refs.stepprelista.$emit('reset-component');
+            this.$refs.stepprelista.$emit('start-component');
             break;
 
         }
-
-
 
         this.e1--; // Incrementa o valor de e1 para avançar para o próximo passo
       }
